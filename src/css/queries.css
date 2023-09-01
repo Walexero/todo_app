@@ -1,0 +1,93 @@
+/* --------------------------- */
+/* BELOW 1000px (smaller desktops) */
+/* ----------------------------- */
+@media (max-width: 63em) {
+  .container {
+    width: 80rem;
+  }
+
+  .component-content {
+    margin-left: 0;
+  }
+}
+
+/* --------------------------- */
+/* BELOW 800px (tablets) */
+/* ----------------------------- */
+@media (max-width: 50em) {
+  .container {
+    width: 100%;
+  }
+
+  .td-row {
+    grid-template-columns: 1fr 3.5fr;
+  }
+
+  .component-container {
+    grid-template-columns: 1fr;
+  }
+
+  .form-task-td {
+    width: 80%;
+  }
+
+  .td-label-container {
+    width: 80%;
+  }
+}
+
+/* --------------------------- */
+/* BELOW 650px (tablets) */
+/* ----------------------------- */
+@media (max-width: 41em) {
+  /* * {
+    border: 1px solid red;
+  } */
+  .td-row {
+    grid-template-columns: 1.7fr 3.5fr;
+  }
+
+  .form-task-td {
+    width: 65%;
+  }
+
+  .td-label-container {
+    width: 65%;
+  }
+
+  .component-editted-bar {
+    left: 35%;
+    transform: none;
+  }
+}
+
+/* --------------------------- */
+/* BELOW 450px (tablets) */
+/* ----------------------------- */
+
+@media (max-width: 29em) {
+  .td-row {
+    grid-template-columns: 1.7fr;
+  }
+
+  .component-container {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  /* activate for render container */
+  .mobile-nav--hidden {
+    display: none;
+  }
+
+  .draggable-component-btn {
+    display: none;
+  }
+
+  .td-component-actions .draggable-component-btn {
+    display: none;
+  }
+
+  .td-component-actions-container {
+    gap: 0.8rem;
+  }
+}

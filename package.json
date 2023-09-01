@@ -1,0 +1,19 @@
+{
+  "name": "td_app",
+  "version": "1.0.0",
+  "description": "A task logging App",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "Walexero",
+  "license": "ISC",
+  "dependencies": {
+    "parcel": "^2.9.3",
+    "sortablejs": "^1.15.0"
+  },
+  "devDependencies": {
+    "@types/sortablejs": "^1.15.1"
+  }
+}

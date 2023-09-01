@@ -1,0 +1,122 @@
+/* bg color: #7d7d7d;*/
+:root {
+  --color-primary--bg: #4b4b4b;
+  --color-component--container--border: gray;
+  --color-component--bg: #aaa;
+  --color-component--border: white;
+}
+
+.container {
+  width: 100rem;
+  margin: auto;
+}
+
+.td-row {
+  background-color: #4b4b4b;
+  width: 100%;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  border: 1px solid var(--color-primary--bg);
+  width: 2rem;
+  height: 1rem;
+  border-radius: 0.5rem;
+  display: inline-block;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Nudge component */
+.nudge-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 0.8rem;
+  height: 2rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(-80%, 16%);
+}
+
+.nudge-btn:hover > .nudge-action--bar {
+  display: block;
+}
+
+.nudge-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.nudge-btn-content {
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  background-color: var(--color-primary--bg);
+  border-radius: 50%;
+}
+
+.nudge-action--bar {
+  background-color: var(--color-nudge-bg);
+  width: 10rem;
+  height: 7rem;
+  overflow-y: scroll;
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  right: 0.5rem;
+  display: none;
+}
+
+.placeholder {
+  color: var(--color-primary--bg);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+/* .nudge-action--container {
+    
+  } */
+
+.nudge-actions {
+  list-style: none;
+}
+
+.nudge-action--btn,
+.nudge-action--delete {
+  font-size: 1rem;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.nudge-action--btn:not(:last-child) {
+  border-bottom: 1px solid var(--color-component--border);
+}
+
+/* Draggable component */
+.draggable-component-btn {
+  transform: translateY(10%);
+}
+
+.drag-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.drag-highlight {
+  box-shadow: 0px 1px 3px gray;
+}
+
+/* Delete component */
+.delete-component-btn {
+  transform: translateY(45%);
+}
+
+.delete-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  scale: 1.5;
+}
