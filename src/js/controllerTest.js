@@ -147,7 +147,6 @@ const controlTodoComplete = function (todoID) {
 };
 
 const controlRenderTodo = function (newCurrentTodo, mobileView = false) {
-  debugger;
   const addTodoBtnClicked =
     todoListComponentView.getinitRenderFormActiveState();
 
@@ -155,6 +154,10 @@ const controlRenderTodo = function (newCurrentTodo, mobileView = false) {
     //the first time this is triggereed, it invalidates the logic
     todoListComponentView.toggleRenderDisplay(true);
     model.state.loadedFromDb = false;
+
+    //listen for task related events
+    const taskActionsActive = taskAddRenderView.getTaskActionState();
+    if (!taskActionsActive) controlAddTaskEventHandlers();
   }
 
   if (!mobileView) taskAddRenderView.render(newCurrentTodo);
@@ -223,7 +226,6 @@ const controlAddTodo = function () {
 
   //remove currentTodo from model
   model.state.currentTodo = null;
-  console.log(model.state.currentTodo);
 
   if (mobileDeviceTrigger.matches) {
     // todoListComponentView.setClearAndHideContainer(true);
@@ -233,7 +235,6 @@ const controlAddTodo = function () {
 
 const controlSwitchTodoHandler = function () {
   //switches handler from controlTodoDataLoad to controlAddTodo after the data has been loaded
-  console.log("added eevents listcomponent");
   todoListComponentView.setAddTodoHandler(controlAddTodo);
   todoListComponentView.initAddTodoButtonListener();
 };
@@ -269,7 +270,6 @@ const controlCreateNewTodo = function (task) {
 };
 
 const controlUpdateTaskUIState = function (currentTask = undefined) {
-  console.log("update UI");
   const taskUIState = taskAddRenderView.getUIState();
 
   const updatedTodo = model.updateTaskIndex(taskUIState, currentTask);
