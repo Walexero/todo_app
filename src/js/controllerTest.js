@@ -146,7 +146,7 @@ const controlTodoComplete = function (todoID) {
   todoListComponentView.render(model.state.todo);
 };
 
-const controlRenderTodo = function (newCurrentTodo, mobileView = falsee) {
+const controlRenderTodo = function (newCurrentTodo, mobileView = false) {
   debugger;
   const addTodoBtnClicked =
     todoListComponentView.getinitRenderFormActiveState();
@@ -157,9 +157,14 @@ const controlRenderTodo = function (newCurrentTodo, mobileView = falsee) {
     model.state.loadedFromDb = false;
   }
 
-  taskAddRenderView.render(newCurrentTodo);
+  if (!mobileView) taskAddRenderView.render(newCurrentTodo);
 
   if (mobileView) {
+    //display the render container
+    controlAddTodoMobileView(newCurrentTodo);
+
+    //hide the todoview and add the mobilenav
+    todoListComponentView.mobileRender();
   }
 };
 

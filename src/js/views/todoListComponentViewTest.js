@@ -132,8 +132,7 @@ class TodoListComponentView {
   mobileRender(todos = undefined) {
     const cls = this;
     let mobileNav;
-    console.log("ran todolist mobile render");
-    console.log("mobile nav active", this._mobileNavActive);
+
     if (!this._mobileNavActive) {
       console.log("entered in here");
       //toggle container holding todoListView
@@ -158,7 +157,6 @@ class TodoListComponentView {
         this._mobileNav.addEventListener("click", function (e) {
           //set event as active
           cls._mobileNavEvent = true;
-          console.log("detected navigation click setting back to default");
 
           //set mobile nav active state to false so it can run blocks of code not related to the event listener
           cls._mobileNavActive = false;
