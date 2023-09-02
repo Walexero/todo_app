@@ -49,7 +49,6 @@ class TaskAddRenderView {
   }
 
   getUIState() {
-    // console.log(this._labelContainerSelector);
     const labelContainers = document.querySelectorAll(
       this._labelContainerSelector
     );
@@ -60,7 +59,6 @@ class TaskAddRenderView {
   }
 
   mobileRender(todo = undefined) {
-    console.log("rendering task cont mobile");
     if (!todo) {
       this._toggleRenderContainer();
       this._updateUI(null);
@@ -73,9 +71,7 @@ class TaskAddRenderView {
   }
 
   _toggleRenderContainer() {
-    console.log(this._renderContainer);
     this._renderContainer.classList.toggle("mobile-nav--hidden");
-    console.log(this._renderContainer);
   }
 
   _handleAddTaskEvent() {
@@ -169,7 +165,6 @@ class TaskAddRenderView {
   }
 
   _updateUI(markup = undefined, completedMarkup = undefined, title) {
-    console.log("the title", title);
     //clear container
     this._renderComponentContainerContent.innerHTML =
       this._renderCompletedContainer.innerHTML =
@@ -208,7 +203,6 @@ class TaskAddRenderView {
   }
 
   render(todo = undefined) {
-    console.log("about rendering");
     //generate UI markupg
     let markup, completedMarkup;
 
@@ -263,7 +257,6 @@ class TaskAddRenderView {
       return;
 
     //Guard clause against inputs without spaces
-    console.log(Object.values(formData).at(1));
     if (
       Object.values(formData).at(1) &&
       !Object.values(formData).at(1).includes(" ") &&
@@ -284,7 +277,6 @@ class TaskAddRenderView {
 
   getTaskBody(currentTask, formData) {
     //create task obj and task id from current task length + 1
-    console.log("the formdata", formData);
     const currentTaskLengthOrID = currentTask?.tasks?.length ?? 1;
     const taskObj = createObjectFromForm(
       currentTask.id + (currentTaskLengthOrID + 1),

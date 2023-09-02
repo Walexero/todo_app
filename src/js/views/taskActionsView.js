@@ -35,14 +35,12 @@ class TaskActionsView {
       this._completeHandler(taskID);
     }
     if (action === "drag") {
-      console.log("dragging");
       //if observer is active other actions cant run
       this._observerActive = true;
 
       this._dragElement.setObserver(true);
       this._dragElement._activateDragEvent(this._dragHandler);
     }
-    else console.log("obseerver currently observing",this._observerActive)
   }
 }
 

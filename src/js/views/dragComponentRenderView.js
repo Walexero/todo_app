@@ -6,7 +6,6 @@ class DragComponentRenderView extends DragComponentView {
     ".td-render-component-container-content"
   );
   _btnDrag = ".drag-icon";
-  _caller;
   _observe = false;
   _observerHandler;
 
@@ -26,10 +25,9 @@ class DragComponentRenderView extends DragComponentView {
     this._swapComponent();
   }
 
-  _activateDragEvent(dragHandler,notifyCallerOfObserverState=undefined) {
-    console.log(notifyCallerOfObserverState)
+  _activateDragEvent(dragHandler) {
+
     this._parentEl = this._parentElement;
-    // this._caller = notifyCallerOfObserverState
     this.setObserverHandler(dragHandler);
     this._addNudgeEvent();
   }

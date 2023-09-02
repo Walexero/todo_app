@@ -4,6 +4,7 @@ export let state = {
   todo: [],
   completed: [],
   currentTodo: null,
+  loadedFromDb: false,
 };
 
 const pass = () => {};
@@ -52,14 +53,12 @@ export const addTodoOrTask = function (currentTodoId, todo, formData = false) {
     //update lastAdded time for the todo
     currentTodo.lastAdded = Number(Date.now());
 
-    console.log("adding new task to todo");
   } else {
     //execute for adding new todo object
     state.todo.push(todo);
     state.currentTodo = currentTodoId;
     currentTodo = getCurrentTodo(state.currentTodo);
   }
-  console.log(state.todo);
   //persist data
   persistTodo();
   return currentTodo;
@@ -70,12 +69,8 @@ export const deleteTask = function (taskID) {
 
   const { currentTodo, taskIndex } = getTaskIndexAndCurrentTodo(taskID);
 
-  console.log(currentTodo);
-
   //delete task
   currentTodo.tasks.splice(taskIndex, 1);
-
-  console.log(currentTodo);
 
   //persist data
   persistTodo();
@@ -149,7 +144,6 @@ export const updateTaskIndex = function (valueArr, curTodo) {
   if (preventReordering) return currentTodo;
 
   if (!preventReordering) {
-    console.log(state);
     const clonedTask = reOrderObjectIndex(currentTodo.tasks, valueArr, "tasks");
 
     currentTodo.tasks = clonedTask;
@@ -205,7 +199,9 @@ export const completeTodo = function (todoID) {
 //get persisted data on page load
 const init = function () {
   const storage = localStorage.getItem("todos");
-  if (storage) state = JSON.parse(storage);
-  console.log("initialized db", state);
+  if (storage) {
+    state = JSON.parse(storage);
+    state.loadedFromDb = true;
+  }
 };
 init();

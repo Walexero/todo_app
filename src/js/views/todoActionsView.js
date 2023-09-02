@@ -37,11 +37,8 @@ class TodoActionsView {
       todoID = todo.closest(this._todoParentElement).dataset.id;
     }
 
-    console.log(todoID);
-
     //offload to controller
     if (action === "delete") {
-      console.log("got delete command");
       this._dragElement.setObserver(false);
       this._deleteHandler(todoID);
     }
@@ -50,7 +47,6 @@ class TodoActionsView {
       this._completeHandler(todoID);
     }
     if (action === "drag") {
-      console.log("dragging");
       this._dragElement.setObserver(true);
       this._dragElement._activateDragEvent(this._dragHandler);
     }
@@ -61,7 +57,6 @@ class TodoActionsView {
     }
 
     if (action === "switchNav") {
-      console.log("triggereed nav switch");
       this._dragElement.setObserver(false);
       this._navHandler();
     }
