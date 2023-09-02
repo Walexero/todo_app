@@ -50,12 +50,14 @@ class TodoListComponentView {
     const events = ["click", "mousedown"];
     events.forEach((ev) => {
       this._parentElement.addEventListener(ev, function (e) {
+        e.stopPropagation();
         console.log(e.target);
         //drag event
         if (
           (e.type === "mousedown" &&
             e.target.classList.contains("drag-icon")) ||
-          e.target.classList.contains("drag-icon-path")
+          (e.type === "mousedown" &&
+            e.target.classList.contains("drag-icon-path"))
         )
           cls._todoActions.actionHandler("drag", e.target);
 
@@ -80,8 +82,10 @@ class TodoListComponentView {
         if (
           (e.type === "click" &&
             e.target.classList.contains("component-content")) ||
-          e.target.classList.contains("component-heading")
+          (e.type === "click" &&
+            e.target.classList.contains("component-heading"))
         ) {
+          console.log("saveandrenderloading");
           cls._todoActions.actionHandler("saveAndRender", e.target);
         }
       });
@@ -117,13 +121,76 @@ class TodoListComponentView {
     return this._mobileNavActive;
   }
 
-  // getClearAndHideContainer
+  getClearAndHideContainer() {
+    return this._clearAndHideContainer;
+  }
 
   getAddListenerEventState() {
     return this._eventsActivated;
   }
 
-  mobileRender(todos = undefined) {}
+  mobileRender(todos = undefined) {
+    const cls = this;
+    let mobileNav;
+    console.log("ran todolist mobile render");
+    console.log("mobile nav active", this._mobileNavActive);
+    if (!this._mobileNavActive) {
+      console.log("entered in here");
+      //toggle container holding todoListView
+      this._parentElementContainer.classList.toggle("hidden");
+
+      //mobile nav to move between views
+      if (!this._mobileNav) {
+        mobileNav = document.querySelector(".navbar-back--btn");
+      }
+      //set mobile nav to global class el
+      this._mobileNav = mobileNav ?? this._mobileNav;
+
+      //toggle mobile nav
+      this._mobileNav.classList.toggle("hidden");
+
+      //set the mobile navigation as active so the current block of code doesn't get run again
+      this._mobileNavActive = true;
+
+      //only run if no current events for the nav
+      if (!this._mobileNavEvent) {
+        //add mobile nav Event Listener
+        this._mobileNav.addEventListener("click", function (e) {
+          //set event as active
+          cls._mobileNavEvent = true;
+          console.log("detected navigation click setting back to default");
+
+          //set mobile nav active state to false so it can run blocks of code not related to the event listener
+          cls._mobileNavActive = false;
+
+          //offload to control to switch nav
+          cls._todoActions.actionHandler("switchNav");
+        });
+      }
+    }
+
+    //render todos on todoList
+    if (todos) {
+      this.render(todos);
+    }
+
+    //if no todo clear todo container to display other container and display mobile nav button
+    if (this._clearAndHideContainer) {
+      console.log("about clearing container");
+      //set the clear and hide state back to false
+      this._clearAndHideContainer = false;
+      //clear the todo list
+      this._parentElement.innerHTML = "";
+
+      //hide the todo list parent container
+      console.log("cleared containeer");
+      // console.log(this._parentElementContainer);
+      this._parentElementContainer.classList.toggle("hidden");
+
+      //rendeer the nav button when the container is cleared
+      this._mobileNav.classList.toggle("hidden");
+    }
+  }
 
   _handleAddTodoEvent() {
     const cls = this;
@@ -158,19 +225,20 @@ class TodoListComponentView {
       this._renderContainerVisibility = true;
     }
 
-    //run controller controlAddTodo function
     if (this._toggledBeforeAddTodoBtn) {
       console.log("ran logic");
       this.toggleRenderDisplay();
       this._toggledBeforeAddTodoBtn = false;
     }
+    //run controller controlAddTodo function
     this._handler();
   }
 
   toggleRenderDisplay(toggledBeforeAddTodoBtn = false) {
     console.log("rendeerin");
+    console.log(this._renderContainer);
     this._renderContainer.classList.toggle("hidden");
-
+    console.log(this._renderContainer);
     //if the container is toggled before the add todo button meant to trigger it, set it to true
     if (toggledBeforeAddTodoBtn) this._toggledBeforeAddTodoBtn = true;
   }
@@ -203,13 +271,11 @@ class TodoListComponentView {
     return `Edited ${weekday}, ${month} ${day}.`;
   }
 
+  clearTodoContainer() {
+    this._parentElement.innerHTML = "";
+  }
+
   render(todos) {
-    console.log("the todos", todos);
-    if (!todos) {
-      console.log("triggered hide render display");
-      //hide renderContainer
-      this.toggleRenderDisplay();
-    }
     this._generateMarkup(todos);
   }
 
@@ -259,7 +325,7 @@ class TodoListComponentView {
 
       this._parentElement.innerHTML = "";
       this._parentElement.insertAdjacentHTML("afterbegin", markup);
-    } else this._parentElement.innerHTML = "";
+    }
   }
 
   _generateMarkupPreview(todo) {

@@ -20,11 +20,9 @@ let deleteHandler,
 const mobileDeviceTrigger = window.matchMedia(MOBILE_MAX_SCREEN_SIZE);
 
 const controlAddTodoMobile = function (renderTasks = undefined) {
-
   //if todo objects, set mobile nav active state to false so it can add it
   if (model.state.todo.length > 0)
     todoListComponentView.setMobileNavActiveState(false);
-  
 
   //render todo
   todoListComponentView.mobileRender();
@@ -34,9 +32,9 @@ const controlAddTodoMobile = function (renderTasks = undefined) {
     taskAddRenderView.mobileRender(renderTasks);
     taskAddRenderView.toggleContainer();
   }
-  
+
   //if a new todo is to be added run
-  if(!renderTasks){
+  if (!renderTasks) {
     //renders the task add form after a delete is detected
     taskAddRenderView.mobileRender();
   }
@@ -48,11 +46,11 @@ const controlNavSwitchMobile = function () {
   todoListComponentView.mobileRender(model.state.todo);
 
   //On nav switch reload app back to initial state
-  if(model.state.todo.length === 0) window.location.reload()
+  if (model.state.todo.length === 0) window.location.reload();
 };
 
 const controlAddTodo = function () {
-  console.log("inited ran func")
+  console.log("inited ran func");
   //Implement Todo actions delegation to be offloadeed to todoActionsView
   if (!todoListComponentView.getAddListenerEventState()) {
     todoListComponentView.addDelegateTodoActions(
@@ -65,15 +63,14 @@ const controlAddTodo = function () {
   }
 
   //implement the handler listens for todoList components if only thee addtodo button hasn't been clicked yet
-  if(!todoListComponentView.getinitRenderFormActiveState()){
-    console.log("added eevents listcomponent")
-    todoListComponentView.setAddTodoHandler(controlAddTodo)
-    todoListComponentView.initAddTodoButtonListener()
+  if (!todoListComponentView.getinitRenderFormActiveState()) {
+    console.log("added eevents listcomponent");
+    todoListComponentView.setAddTodoHandler(controlAddTodo);
+    todoListComponentView.initAddTodoButtonListener();
   }
 
   //remove currentTodo from model
   model.state.currentTodo = null;
-
 
   if (mobileDeviceTrigger.matches) {
     // todoListComponentView.setClearAndHideContainer(true);
@@ -81,27 +78,24 @@ const controlAddTodo = function () {
   }
 };
 
-const controlTodo = function(){
+const controlTodo = function () {
   //make check to see if data loaded from storage
-  if(model.state.todo.length > 0){
+  if (model.state.todo.length > 0) {
     //set storage data to true to reset handler in controlAddTodo
     storageData = true;
     //if data run below
     //else add _handleformevents
-    todoListComponentView.render(model.state.todo)
+    todoListComponentView.render(model.state.todo);
     controlAddTodo();
     //add event listeners
-    todoListComponentView.addTodoListEventListeners()
+    todoListComponentView.addTodoListEventListeners();
     //set event listeners state to true
-    todoListComponentView.setAddListenerEventState(true)
-  }
-  else{
+    todoListComponentView.setAddListenerEventState(true);
+  } else {
     //call controlAddTodo and handle form events
     controlAddTodo();
   }
-
-
-}
+};
 
 const controlAddTaskMobile = function (todoOrTask) {
   taskAddRenderView.mobileRender(todoOrTask);
@@ -160,7 +154,7 @@ const controlDeleteTask = function (taskID) {
   taskAddRenderView.render(updatedTask);
 
   //update the todolist view on task delete
-  todoListComponentView.render(model.state.todo)
+  todoListComponentView.render(model.state.todo);
 };
 
 const controlCompleteTask = function (taskID) {
@@ -171,7 +165,7 @@ const controlCompleteTask = function (taskID) {
   taskAddRenderView.render(updatedTask);
 
   //update the todolist view on task delete
-  todoListComponentView.render(model.state.todo)
+  todoListComponentView.render(model.state.todo);
 };
 
 const controlEditTask = function (taskID, taskData) {
@@ -214,15 +208,13 @@ const controlSyncTodoListDragStateWithModel = function (
 
 const controlTodoDelete = function (todoID) {
   //delete and return the remaining todo
-  const [deletedCurrentTodo,todo] = model.deleteTodo(Number(todoID));
+  const deletedCurrentTodo = model.deleteTodo(Number(todoID));
 
   //check if there's still todos left
-  if (todo.length > 0){
-    if(deletedCurrentTodo) taskAddRenderView.render()
-    todoListComponentView.render(todo); //render todo
-  } 
-  
-  else {
+  if (model.state.todo.length > 0) {
+    if (deletedCurrentTodo) taskAddRenderView.render();
+    todoListComponentView.render(model.state.todo); //render todo
+  } else {
     model.state.currentTodo = null;
     //runs if not mobile
     if (!mobileDeviceTrigger.matches) {
@@ -250,15 +242,14 @@ const controlTodoComplete = function (todoID) {
   todoListComponentView.render(todo);
 };
 
-const controlRenderTodo = function(newCurrentTodo){
-  if(!todoListComponentView.getinitRenderFormActiveState() && storageData){
+const controlRenderTodo = function (newCurrentTodo) {
+  if (!todoListComponentView.getinitRenderFormActiveState() && storageData) {
     //if add todo hasn't been clicked run loci
-    todoListComponentView.toggleRenderDisplay(true)
-    storageData = false
+    todoListComponentView.toggleRenderDisplay(true);
+    storageData = false;
   }
   taskAddRenderView.render(newCurrentTodo);
-}
-
+};
 
 const controlRenderTodoAndSaveCurrentTodoForMobile = function (todo) {
   //render for other mobile scrensizes
@@ -274,10 +265,9 @@ const controlRenderTodoAndSaveCurrentTodoForMobile = function (todo) {
 const controlRenderTodoAndSaveCurrentTodo = function (todoID) {
   console.log("thee gottn todoid", todoID);
 
-
   if (!mobileDeviceTrigger.matches) {
     //run this block if only theres a currentTodo to work on
-    if(model.state.currentTodo){
+    if (model.state.currentTodo) {
       //get UI state for currentTodo and save UI statee
       const currentTodo = model.getCurrentTodo();
       if (!currentTodo.tasks.length < 1) {
@@ -300,28 +290,26 @@ const controlRenderTodoAndSaveCurrentTodo = function (todoID) {
 };
 
 const init = function () {
-  
-    //tasks handlers
-    [deleteHandler, completeHandler, editHandler, dragSyncHandler] = [
-      controlDeleteTask,
-      controlCompleteTask,
-      controlEditTask,
-      controlSyncDragStateWithModel,
-    ];
-  
-    //todo handlers
-    [
-      todoDeleteHandler,
-      todoCompleteHandler,
-      todoListDragSyncHandler,
-      saveBeforeRenderHandler,
-    ] = [
-      controlTodoDelete,
-      controlTodoComplete,
-      controlSyncTodoListDragStateWithModel,
-      controlRenderTodoAndSaveCurrentTodo,
-    ];
+  //tasks handlers
+  [deleteHandler, completeHandler, editHandler, dragSyncHandler] = [
+    controlDeleteTask,
+    controlCompleteTask,
+    controlEditTask,
+    controlSyncDragStateWithModel,
+  ];
 
+  //todo handlers
+  [
+    todoDeleteHandler,
+    todoCompleteHandler,
+    todoListDragSyncHandler,
+    saveBeforeRenderHandler,
+  ] = [
+    controlTodoDelete,
+    controlTodoComplete,
+    controlSyncTodoListDragStateWithModel,
+    controlRenderTodoAndSaveCurrentTodo,
+  ];
 
   todoListComponentView.addHandlerTodoAdd(controlTodo);
 

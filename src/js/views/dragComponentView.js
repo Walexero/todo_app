@@ -6,7 +6,7 @@ export default class DragComponentView {
   _btnDrag = ".draggable-component-btn";
   _nudge = document.querySelector(this._btnDrag);
   _swapClass = ".drag-highlight";
-  _caller
+  _caller;
   _observe;
   _mutationObserver;
   _observerHandler;
@@ -22,7 +22,7 @@ export default class DragComponentView {
         console.log("Disconnected observer");
         observer.disconnect();
         //let taskActionsView know that the observer is no longer observing and allow other actions to function
-        this._caller.setObserverActiveState(false)
+        // this._caller.setObserverActiveState(false);
         resolve(cls._observerHandler());
       }, MUTATION_OBSERVER_TIMEOUT * 1000);
     });

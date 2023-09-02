@@ -4,6 +4,7 @@ export let state = {
   todo: [],
   completed: [],
   currentTodo: null,
+  loadedFromDb: false,
 };
 
 const pass = () => {};
@@ -205,7 +206,10 @@ export const completeTodo = function (todoID) {
 //get persisted data on page load
 const init = function () {
   const storage = localStorage.getItem("todos");
-  if (storage) state = JSON.parse(storage);
+  if (storage) {
+    state = JSON.parse(storage);
+    state.loadedFromDb = true;
+  }
   console.log("initialized db", state);
 };
 init();

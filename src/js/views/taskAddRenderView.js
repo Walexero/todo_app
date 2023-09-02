@@ -62,10 +62,8 @@ class TaskAddRenderView {
   mobileRender(todo = undefined) {
     console.log("rendering task cont mobile");
     if (!todo) {
-
       this._toggleRenderContainer();
       this._updateUI(null);
-
     }
     if (todo) this.render(todo);
   }
@@ -75,7 +73,9 @@ class TaskAddRenderView {
   }
 
   _toggleRenderContainer() {
+    console.log(this._renderContainer);
     this._renderContainer.classList.toggle("mobile-nav--hidden");
+    console.log(this._renderContainer);
   }
 
   _handleAddTaskEvent() {
@@ -169,6 +169,7 @@ class TaskAddRenderView {
   }
 
   _updateUI(markup = undefined, completedMarkup = undefined, title) {
+    console.log("the title", title);
     //clear container
     this._renderComponentContainerContent.innerHTML =
       this._renderCompletedContainer.innerHTML =
@@ -202,6 +203,10 @@ class TaskAddRenderView {
     }
   }
 
+  clearTaskContainer() {
+    this._updateUI(null); //set the title to null, only clears container
+  }
+
   render(todo = undefined) {
     console.log("about rendering");
     //generate UI markupg
@@ -224,7 +229,6 @@ class TaskAddRenderView {
 
     //update UI
     if (todo) this._updateUI(markup, completedMarkup, todo.title);
-    if (!todo) this._updateUI(null); //set the title to null, only clears container
   }
 
   _renderInput() {
@@ -280,6 +284,7 @@ class TaskAddRenderView {
 
   getTaskBody(currentTask, formData) {
     //create task obj and task id from current task length + 1
+    console.log("the formdata", formData);
     const currentTaskLengthOrID = currentTask?.tasks?.length ?? 1;
     const taskObj = createObjectFromForm(
       currentTask.id + (currentTaskLengthOrID + 1),

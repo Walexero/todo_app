@@ -4,6 +4,7 @@ export let state = {
   todo: [],
   completed: [],
   currentTodo: null,
+  loadedFromDb: false,
 };
 
 const pass = () => {};
@@ -187,9 +188,10 @@ export const deleteTodo = function (todoID) {
 
   //remove the todo
   state.todo.splice(todoIndex, 1);
+  debugger;
   //persist data
   persistTodo();
-  return checkIfTodoIsCurrentTodo;
+  return [checkIfTodoIsCurrentTodo, state.todo];
 };
 
 export const completeTodo = function (todoID) {
@@ -200,12 +202,16 @@ export const completeTodo = function (todoID) {
 
   //persist data
   persistTodo();
+  return state.todo;
 };
 
 //get persisted data on page load
 const init = function () {
   const storage = localStorage.getItem("todos");
-  if (storage) state = JSON.parse(storage);
+  if (storage) {
+    state = JSON.parse(storage);
+    state.loadedFromDb = true;
+  }
   console.log("initialized db", state);
 };
 init();
