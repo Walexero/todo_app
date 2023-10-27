@@ -1,0 +1,219 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html{
+    font-size: 62.5%;
+    overflow-x: hidden;
+}
+
+body{
+    background-color: rgb(24, 26, 27);
+    height: 100vh;
+    width: 100vw;
+    font-family: 'Crimson Text', serif;
+    overflow: hidden;
+}
+
+.nav-links{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    padding: 2rem 2rem;
+}
+
+/* .header-logo-box{
+    pa
+} */
+
+.header-logo{
+    font-size: 4.8rem;
+    color: #7d7d7d;
+}
+
+.content-container{
+    height: 32rem;
+}
+
+.content-container .row{
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 4rem 6rem;
+}
+
+.content{
+    background-image: url(../img/glenn-carstens-peters-RLw-UC03Gwc-unsplash.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+}
+
+.page-content{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.page-content-text{
+    font-size: 6.8rem;
+    color: #24272B;
+}
+
+.btn_list{
+    list-style: none;
+    display: flex;
+    gap: 4rem;
+    width: 100%;
+}
+
+.btn_link{
+    width: 13.8rem;
+    height: 3.4rem;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #24272B;
+    cursor: pointer;
+}
+
+.btn_link.btn-sm{
+    width: 10rem !important;
+}
+
+.btn-login{
+    background-color: #ededed;
+}
+
+.btn-create{
+    background-color: #4b4b4b;
+}
+
+.overlay{
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+}
+
+.contrast{
+    width: inherit;
+    height: inherit;
+    opacity: 0.8;
+    background-color: #3c3c3c;
+}
+
+.overlay-content{
+    position: absolute;
+    top: 25%;
+    left: 40%;
+}
+
+.login-container{
+    position: relative;
+    height: 30rem;
+    width: 30rem;
+    background-color: #4b4b4b;
+    border-radius: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.4rem;
+    padding: 2.4rem 2.4rem;
+    overflow: scroll;
+}
+
+.login-option{
+    display: flex;
+    /* gap: 0.2rem; */
+    /* background-color: #7d7d7d; */
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 0.2rem;
+    /* padding: 0rem 0.8rem; */
+}
+
+.login-option::before{
+    content: " ";
+    height: 100%;
+    z-index: 22;
+    background-color: #ededed;
+    width: 3px;
+    transform: translate(12.6rem,1%);
+}
+
+.option-box{
+    width: 50%;
+    padding: 0.4rem 1.8rem;
+    font-size: 1.4rem;
+}
+
+.login-box{
+    border-bottom-left-radius: 0.2rem;
+    border-top-left-radius: 0.2rem;
+}
+
+.create-box{
+    border-bottom-right-radius: 0.2rem;
+    border-top-right-radius: 0.2rem;
+}
+
+.option-heading{
+    text-align: center;
+}
+/* .login-heading{
+    font-size: 2.4rem;
+    color: #24272B;
+} */
+
+.form-class{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2.8rem;
+}
+
+#login-form{
+    
+}
+
+.form-box,.form-box > input{
+    width: 100%;
+}
+
+.form-box{
+    height: 3.4rem;
+}
+
+.form-box > input{
+    height: 100%;
+    border: none;
+    background-color: inherit;
+    border-bottom: 1px solid #aaa;
+}
+
+.form-box > input:focus{
+    outline: none;
+    box-shadow: 0px 0px 3px red;
+}
+
+.form-box > input::placeholder{
+    color: #aaa;
+    font-size: 1.8rem;
+    text-transform: capitalize;
+}
+
+.btn-submit{
+    background-color: #ededed;
+    height: 3.4rem;
+    border-radius: 0.2rem;
+    border: none;
+    font-size: 1.8rem;
+}

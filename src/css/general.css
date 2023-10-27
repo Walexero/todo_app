@@ -11,6 +11,8 @@
   margin: auto;
 }
 
+.container-row{}
+
 .td-row {
   background-color: #4b4b4b;
   width: 100%;
@@ -119,4 +121,21 @@ input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
   scale: 1.5;
+}
+
+
+.btn-sm{
+  width: 6rem !important;
+}
+
+.bd-radius{
+  border-radius: 0.2rem;
+}
+
+.inactive{
+  background-color: #7d7d7d;
+}
+
+.active{
+  background-color: #ededed;
 }

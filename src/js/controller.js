@@ -1,9 +1,9 @@
 import * as model from "./model.js";
-import dragComponentListView from "./views/dragComponentListView.js";
 import taskAddRenderView from "./views/taskAddRenderView.js";
 import todoListComponentView from "./views/todoListComponentView.js";
 import { MOBILE_MAX_SCREEN_SIZE } from "./config.js";
 import { CANNOT_UPDATE_COMPLETED_TASK } from "./views/alerts.js";
+import overlay from "./loginViews/overlay.js"
 
 //distinguish mobile render from other screensize
 const mobileDeviceTrigger = window.matchMedia(MOBILE_MAX_SCREEN_SIZE);
