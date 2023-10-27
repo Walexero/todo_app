@@ -4,6 +4,8 @@ import todoListComponentView from "./views/todoListComponentView.js";
 import { MOBILE_MAX_SCREEN_SIZE } from "./config.js";
 import { CANNOT_UPDATE_COMPLETED_TASK } from "./views/alerts.js";
 import Login from "./loginViews/login.js";
+import { TodoTemplate } from "./todoTemplate.js";
+import { LoginTemplate } from "./loginTemplate.js";
 
 //distinguish mobile render from other screensize
 const mobileDeviceTrigger = window.matchMedia(MOBILE_MAX_SCREEN_SIZE);
@@ -302,10 +304,24 @@ const controlAddTask = function (task) {
 };
 
 const init = function () {
-  Login.addEventListeners();
+  const token = null;
 
-  // todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
+  if (!token) {
+    // document.write('<link rel="stylesheet" href="src/css/login.css">')
+    document.body.innerHTML = LoginTemplate.template()
+    Login.addEventListeners();
+  }
 
-  // taskAddRenderView.addHandlerTaskAdd(controlAddTask);
+
+  if (token) {
+    // document.write('<link rel="stylesheet" href="src/css/style.css">')
+
+    document.body.innerHTML = TodoTemplate.template()
+    todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
+
+    taskAddRenderView.addHandlerTaskAdd(controlAddTask);
+
+  }
+
 };
 init();
