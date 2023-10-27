@@ -1,4 +1,4 @@
-import DragComponentView from "./dragComponentView";
+import DragComponentView from "./dragComponentView.js";
 
 class DragComponentListView extends DragComponentView {
   _parentElement = document.querySelector("#component-container");

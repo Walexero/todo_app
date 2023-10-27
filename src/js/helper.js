@@ -40,3 +40,8 @@ export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
   console.log("the cloned task", cloneCurrentTask);
   return cloneCurrentTask;
 };
+
+export const delegateMatch = (ev, className) => {
+  if (ev.target.classList.contains(className) || ev.target.closest(`.${className}`))
+    return true
+}
