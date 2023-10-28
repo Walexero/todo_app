@@ -1,10 +1,13 @@
 import { ComponentMethods } from "../componentMethods"
+import { delegateMatch } from "../helper"
 
 export class SwitchOption {
     AUTH_TYPES = {
         LOGIN: "login",
         CREATE: "create"
     }
+
+    _eventListeners = ["click"]
 
     customEvent = "switch"
 
@@ -19,8 +22,27 @@ export class SwitchOption {
     }
 
     component() {
-        this.component = ComponentMethods.HTMLToEl(this._generateMarkup())
-        return this.component
+        const cls = this;
+        this._component = ComponentMethods.HTMLToEl(this._generateMarkup())
+        this._eventListeners.forEach(ev => this._component.addEventListener(ev, cls._handleEvents.bind(cls)))
+
+        return this._component
+    }
+
+    _handleEvents(ev) {
+        if (delegateMatch(ev, "option-box")) this._handleSwitchToggle(ev)
+    }
+
+    _handleSwitchToggle(ev) {
+        const options = this._component.querySelectorAll(".option-box")
+        options.forEach(option => {
+            option.classList.toggle("active")
+            option.classList.toggle("inactive")
+        })
+
+        const authType = ev.target.textContent.toLowerCase().trim().replaceAll("\n", "")
+        this.authType = authType === "login" ? "login" : "create"
+        this.toggle()
     }
 
     addToggler(toggler) {
@@ -28,11 +50,10 @@ export class SwitchOption {
     }
 
     toggle() {
-        this.toggler.toggleEvent(this.authType)
+        this.toggler.updateDependency()
     }
 
     _generateMarkup() {
-        console.log(this.authType)
         return `
             <div class="login-option">
                 <div class="option-box login-box ${this.authType.includes(this.AUTH_TYPES.LOGIN) ? "active" : "inactive"}">
@@ -50,6 +71,8 @@ export class SwitchOption {
     }
 
     remove() {
+        const cls = this;
+        this._eventListeners.forEach(ev => this._component.removeEventListener(ev, cls._handleEvents))
         delete this;
     }
 }

@@ -6,13 +6,17 @@ export class LoginForm {
     }
 
     component() {
-        this.component = ComponentMethods.HTMLToEl(this._generateMarkup())
-        return this.component
+        this._component = ComponentMethods.HTMLToEl(this._generateMarkup())
+        return this._component
+    }
+
+    getComponent() {
+        return this._component
     }
 
     _generateMarkup() {
         return `
-            <form action="" id="login-form">
+            <form action="" id="login-form" class="form-class">
                 <div class="email-box form-box">
                     <input type="text" name="email" placeholder="email">
                 </div>
@@ -29,4 +33,8 @@ export class LoginForm {
         this.form.addEventListener()
     }
 
+    remove() {
+        this._component.remove()
+        delete this
+    }
 }

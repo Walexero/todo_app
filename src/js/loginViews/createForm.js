@@ -1,10 +1,21 @@
+import { ComponentMethods } from "../componentMethods"
 
-export class CreateForm{
-    constructor(){
+
+export class CreateForm {
+    constructor() {
 
     }
 
-    _generateMarkup(){
+    component() {
+        this._component = ComponentMethods.HTMLToEl(this._generateMarkup())
+        return this._component
+    }
+
+    getComponent() {
+        return this._component
+    }
+
+    _generateMarkup() {
         return `
             <form action="" id="create-form" class="form-class">
                 <div class="first-name-box form-box">
@@ -25,5 +36,14 @@ export class CreateForm{
                 <button class="btn-login btn-submit">Submit</button>
             </form>
         `
+    }
+
+    addEventListener() {
+        this.form.addEventListener()
+    }
+
+    remove() {
+        this._component.remove()
+        delete this
     }
 }

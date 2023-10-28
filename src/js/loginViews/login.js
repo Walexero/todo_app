@@ -1,6 +1,6 @@
 import { SwitchOption } from "./switchOptions.js"
 import { Form } from "./form.js"
-import { Overlay } from "./overlay.js"
+import { Overlay } from "../components/overlay.js"
 import { delegateMatch } from "../helper.js"
 import { ComponentMethods } from "../componentMethods.js"
 import { Toggles } from "../components/toggles.js"
@@ -10,6 +10,8 @@ class Login {
     _listenerNodes = []
 
     _eventListeners = ["click", "keyup"]
+
+    _children = []
 
     addHandlers() {
 
@@ -47,15 +49,22 @@ class Login {
     handleAuth(authType) {
         const switcher = new SwitchOption(authType)
         const form = Form.form(authType)
-        // switcher.addToggler(Toggles())
 
-        const component = this.component(this._generateMarkup(), switcher, form)
+        //toggle the form based on the swicher
+        switcher.addToggler(new Toggles(switcher, form, Form))
 
-        const overlay = new Overlay(component)
+        this._children.push(switcher, form)
+
+        this._component = this.component(this._generateMarkup(), switcher, form)
+
+        const overlay = new Overlay(this)
         overlay.render()
     }
 
     // handleLogin
+    getComponent() {
+        return this._component
+    }
 
     component(loginEl, switchComponent, formComponent) {
         const componentCont = loginEl
@@ -75,14 +84,20 @@ class Login {
         return markupEl
     }
 
-    remove() {
-        this._listenerNodes.forEach(listenerNode => {
-            listenerNode.ev.forEach(e =>
-                listenerNode.removeEventListener(e, listenerNode.handler)
-            )
-        })
+    remove(children = false) {
+        if (children) {
+            this._children.forEach(child => child.remove())
+        }
 
-        delete this;
+        if (!children) {
+            this._listenerNodes.forEach(listenerNode => {
+                listenerNode.ev.forEach(e =>
+                    listenerNode.removeEventListener(e, listenerNode.handler)
+                )
+            })
+
+            delete this;
+        }
     }
 }
 

@@ -6,10 +6,10 @@ export class Form {
     static form(formType) {
         switch (formType) {
             case "login":
-                return new LoginForm
+                return new LoginForm()
                 break;
             case "create":
-                return new CreateForm
+                return new CreateForm()
                 break;
         }
     }
