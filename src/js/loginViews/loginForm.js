@@ -1,11 +1,17 @@
+import { ComponentMethods } from "../componentMethods.js"
 
-export class LoginForm{
-    constructor(){
+export class LoginForm {
+    constructor() {
 
     }
 
-    _generateMarkup(){
-        return`
+    component() {
+        this.component = ComponentMethods.HTMLToEl(this._generateMarkup())
+        return this.component
+    }
+
+    _generateMarkup() {
+        return `
             <form action="" id="login-form">
                 <div class="email-box form-box">
                     <input type="text" name="email" placeholder="email">
@@ -18,4 +24,9 @@ export class LoginForm{
 
         `
     }
+
+    addEventListener() {
+        this.form.addEventListener()
+    }
+
 }

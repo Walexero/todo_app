@@ -1,21 +1,16 @@
 import { CreateForm } from "./createForm.js"
 import { LoginForm } from "./loginForm.js"
+import { ComponentMethods } from "../componentMethods.js"
 
 export class Form {
-    constructor(formType) {
+    static form(formType) {
         switch (formType) {
             case "login":
-                this.form = LoginForm
+                return new LoginForm
+                break;
             case "create":
-                this.form = CreateForm
+                return new CreateForm
+                break;
         }
-    }
-
-    component() {
-        return this.form.component()
-    }
-
-    addEventListener() {
-        this.form.addEventListener()
     }
 }

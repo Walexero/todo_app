@@ -1,4 +1,4 @@
-import { SwitchOption } from "./switchoptions.js"
+import { SwitchOption } from "./switchOptions.js"
 import { Form } from "./form.js"
 import { Overlay } from "./overlay.js"
 import { delegateMatch } from "../helper.js"
@@ -27,11 +27,12 @@ class Login {
     }
 
     addEventListeners() {
+        const cls = this;
         const loginBtns = document.querySelectorAll(".btn_link")
 
         //each node should return self
         loginBtns.forEach(btn => {
-            this._eventListeners.forEach(ev => btn.addEventListener(ev, this._handleEvents))
+            this._eventListeners.forEach(ev => btn.addEventListener(ev, this._handleEvents.bind(cls)))
             this.updateListenerNodeState(btn, this._handleEvents)
         })
     }
@@ -40,27 +41,29 @@ class Login {
         //login ev
         if (delegateMatch(ev, "btn-login")) this.handleAuth("login")
         //create ev
-        if (delegateMatch(ev, "btn-create")) handleAuth("create")
+        if (delegateMatch(ev, "btn-create")) this.handleAuth("create")
     }
 
     handleAuth(authType) {
-        const switcher = SwitchOption(authType)
-        const form = Form(authType)
+        const switcher = new SwitchOption(authType)
+        const form = Form.form(authType)
         // switcher.addToggler(Toggles())
 
-        const component = this.component(ComponentMethods(this._generateMarkup()), switcher, form)
+        const component = this.component(this._generateMarkup(), switcher, form)
 
-        const overlay = Overlay(component)
+        const overlay = new Overlay(component)
         overlay.render()
     }
 
     // handleLogin
 
     component(loginEl, switchComponent, formComponent) {
-        const componentCont = loginEl.querySelector(".login-container")
+        const componentCont = loginEl
 
-        componentCont.insertAdjacentElement("afterbegin", switchComponent)
-        componentCont.insertAdjacentElement("beforeend", formComponent)
+        componentCont.insertAdjacentElement("afterbegin", switchComponent.component())
+        componentCont.insertAdjacentElement("beforeend", formComponent.component())
+
+        return componentCont
     }
 
     _generateMarkup() {
@@ -68,7 +71,7 @@ class Login {
             <div class="login-container">
             </div>
         `
-        const markupEl = ComponentMethods(markup)
+        const markupEl = ComponentMethods.HTMLToEl(markup)
         return markupEl
     }
 

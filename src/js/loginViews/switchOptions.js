@@ -14,7 +14,7 @@ export class SwitchOption {
     }
 
     _validateAuthType(authType) {
-        authTypeExists = this.AUTH_TYPES[authType.upperCase()]
+        const authTypeExists = this.AUTH_TYPES[authType.toUpperCase()]
         if (!authTypeExists) throw Error("Cannot Identify Auth Type")
     }
 
@@ -32,14 +32,15 @@ export class SwitchOption {
     }
 
     _generateMarkup() {
+        console.log(this.authType)
         return `
             <div class="login-option">
-                <div class="option-box login-box ${this.authType.contains(this.AUTH_TYPES.LOGIN) ? "active" : "inactive"}">
+                <div class="option-box login-box ${this.authType.includes(this.AUTH_TYPES.LOGIN) ? "active" : "inactive"}">
                     <h2 class="login-heading option-heading">
                         Login
                     </h2>
                 </div>
-                <div class="option-box create-box ${this.authType.contains(this.AUTH_TYPES.CREATE) ? "active" : "inactive"}"">
+                <div class="option-box create-box ${this.authType.includes(this.AUTH_TYPES.CREATE) ? "active" : "inactive"}"">
                     <h2 class="create-heading option-heading">
                         Sign Up
                     </h2>

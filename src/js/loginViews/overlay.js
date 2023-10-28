@@ -3,18 +3,21 @@ import { ComponentMethods } from "../componentMethods";
 
 export class Overlay {
     constructor(contentComponent) {
-        this.contentComponent = this.contentComponent
+        this.contentComponent = contentComponent
         this.positionEl = document.querySelector(".content");
+        this._component = this.component()
     }
 
     component() {
-        this.component = ComponentMethods(this._generateMarkup())
-        const overlayContent = component.querySelector(".overlay-content")
+        this._component = ComponentMethods.HTMLToEl(this._generateMarkup())
+        console.log(this._component)
+        const overlayContent = this._component.querySelector(".overlay-content")
         overlayContent.insertAdjacentElement("beforeend", this.contentComponent)
+        return this._component
     }
 
     render() {
-        this.positionEl.insertAdjacentElement("afterend", this.component)
+        this.positionEl.insertAdjacentElement("afterend", this._component)
     }
 
     _generateMarkup() {
