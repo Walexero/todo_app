@@ -3,8 +3,10 @@ import taskAddRenderView from "./views/taskAddRenderView.js";
 import todoListComponentView from "./views/todoListComponentView.js";
 import { MOBILE_MAX_SCREEN_SIZE, CANNOT_UPDATE_COMPLETED_TASK } from "./config.js";
 import Login from "./loginViews/login.js";
-import { TodoTemplate } from "./todoTemplate.js";
-import { LoginTemplate } from "./loginTemplate.js";
+import { Loader } from "./components/loader.js";
+import { TodoTemplate } from "./templates/todoTemplate.js";
+import { LoginTemplate } from "./templates/loginTemplate.js";
+import { DEFAULT_LOGIN_PAGE_TIMEOUT } from "./config.js";
 
 //distinguish mobile render from other screensize
 const mobileDeviceTrigger = window.matchMedia(MOBILE_MAX_SCREEN_SIZE);
@@ -18,6 +20,22 @@ const controlNavSwitchMobile = function () {
   switchMobileView();
   if (model.state.todo.length === 0) window.location.reload();
 };
+
+const controlLogin = function (loginComponentCallBack, token) {
+  const loader = new Loader(DEFAULT_LOGIN_PAGE_TIMEOUT)
+  loader.component()
+
+  //set model token
+  model.token.value = token.token
+  model.persistToken()
+
+  //remove auth components
+  loginComponentCallBack()
+
+  //switch template
+  init();
+  loader.remove()
+}
 
 const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
   //update UI
@@ -303,18 +321,14 @@ const controlAddTask = function (task) {
 };
 
 const init = function () {
-  const token = null;
 
-  if (!token) {
-    // document.write('<link rel="stylesheet" href="src/css/login.css">')
+  if (!model.token.value) {
     document.body.innerHTML = LoginTemplate.template()
-    Login.addEventListeners();
+    Login.addEventListeners(controlLogin);
   }
 
 
-  if (token) {
-    // document.write('<link rel="stylesheet" href="src/css/style.css">')
-
+  if (model.token.value) {
     document.body.innerHTML = TodoTemplate.template()
     todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
 

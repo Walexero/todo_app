@@ -1,24 +1,28 @@
-import { queryAPI } from "../helper.js";
 import { Overlay } from "./overlay.js";
 import { ComponentMethods } from "../componentMethods.js";
+import { timeout } from "../helper.js";
 import { Alert } from "./alerts.js";
+// import { API } from "../api.js";
 
-class Loader {
+export class Loader {
 
-    constructor(timeout) {
+    constructor(timeout, actionType) {
         this.timeout = timeout
     }
 
     component() {
         this._component = ComponentMethods.HTMLToEl(this._generateMarkup())
-        this.overlay = Overlay(this._component, true)
-        overlay.render()
 
-
+        this.overlay = new Overlay(this, true, {
+            top: 40,
+            left: 50
+        })
+        this.overlay.render()
     }
 
-    //TODO: add alert based on promise resolve
-
+    getComponent() {
+        return this._component;
+    }
 
     _generateMarkup() {
         return `

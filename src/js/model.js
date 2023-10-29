@@ -7,11 +7,17 @@ export let state = {
   loadedFromDb: false,
 };
 
-const pass = () => {};
+export let token = {}
+
+const pass = () => { };
 
 const persistTodo = function () {
   localStorage.setItem("todos", JSON.stringify(state));
 };
+
+export const persistToken = function () {
+  localStorage.setItem("token", JSON.stringify(token))
+}
 
 export const getCurrentTodo = function (todoID = state.currentTodo) {
   const currentTodo = state.todo.find((curTodo) => curTodo.id === todoID);
@@ -199,9 +205,12 @@ export const completeTodo = function (todoID) {
 //get persisted data on page load
 const init = function () {
   const storage = localStorage.getItem("todos");
+  const storedToken = localStorage.getItem("token")
   if (storage) {
     state = JSON.parse(storage);
     state.loadedFromDb = true;
   }
+
+  if (storedToken) token = JSON.parse(storedToken)
 };
 init();

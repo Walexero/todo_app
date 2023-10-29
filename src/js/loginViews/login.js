@@ -13,10 +13,6 @@ class Login {
 
     _children = []
 
-    addHandlers() {
-
-    }
-
     updateListenerNodeState(node, handler) {
         const nodeExists = this._listenerNodes.find(listenerNode => listenerNode.node === node)
         if (nodeExists) return;
@@ -28,7 +24,10 @@ class Login {
         this._listenerNodes.push(nodeObj)
     }
 
-    addEventListeners() {
+    addEventListeners(controlHandler) {
+        //handler that gets called on login
+        this.controlHandler = controlHandler.bind(this, this.remove.bind(this));
+
         const cls = this;
         const loginBtns = document.querySelectorAll(".btn_link")
 
@@ -52,6 +51,9 @@ class Login {
 
         //toggle the form based on the swicher
         switcher.addToggler(new Toggles(switcher, form, Form))
+
+        //add control handler to form
+        form.addControlHandler(this.controlHandler)
 
         this._children.push(switcher, form)
 
@@ -92,9 +94,10 @@ class Login {
         if (!children) {
             this._listenerNodes.forEach(listenerNode => {
                 listenerNode.ev.forEach(e =>
-                    listenerNode.removeEventListener(e, listenerNode.handler)
+                    listenerNode.node.removeEventListener(e, listenerNode.handler)
                 )
             })
+            this._children.forEach(child => child.remove())
 
             delete this;
         }

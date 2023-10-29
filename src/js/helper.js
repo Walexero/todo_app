@@ -43,6 +43,12 @@ export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
   return cloneCurrentTask;
 };
 
+export const selector = (identifier, nodeObj = undefined) => {
+  if (nodeObj) return nodeObj.querySelector(identifier)
+
+  if (!nodeObj) return document.querySelector(identifier)
+}
+
 export const delegateMatch = (ev, className, optional = undefined) => {
   if (ev.target.classList.contains(className) || ev.target.closest(`.${className}`))
     return true
@@ -55,10 +61,11 @@ export const delegateConditional = (ev, className, optional = undefined) => {
   if (condition) return delegateMatch(ev, className, optional)
 }
 
-export const timeout = (sec, actionType) => {
+export const timeout = (sec, actionType, fn = undefined) => {
   return new Promise((_, reject) => {
     setTimeout(() => {
-      reject(`Could not ${actionType} at this moment, Please try again later!`)
+      const error = new Error(`Could not ${actionType} at this moment, Please try again later!`)
+      reject(fn ? fn() && error : error)
     }, sec * 1000)
   })
 }
@@ -66,20 +73,13 @@ export const timeout = (sec, actionType) => {
 export const timeoutWithoutPromise = (sec, fn) => {
   return new Promise((resolve, _) => {
     setTimeout(() => {
-      resolve(fn)
-    })
+      resolve(fn())
+    }, sec * 1000)
   })
 }
 
-export const queryAPI = async (endpoint, sec, actionType) => {
-  try {
+// export const 
 
-    const res = await Promise.race([fetch(`${BASE_API_URL}/${endpoint}`), timeout(sec, actionType)])
-    const data = await res.json()
+// function asyncWrapper(fn) {
 
-    if (!res.ok) throw Error(`${res.message}(${res.status})`)
-    return data
-  } catch (err) {
-    throw err;
-  }
-}
+// }

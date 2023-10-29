@@ -143,7 +143,7 @@ input[type="checkbox"] {
 .custom-loader {
   width:50px;
   height:50px;
-  --c:radial-gradient(farthest-side,#766DF4 92%,#0000);
+  --c:radial-gradient(farthest-side,#0c0c0c 92%,#0000);
   background: 
     var(--c) 50% 0,
     var(--c) 50% 100%,
@@ -154,3 +154,63 @@ input[type="checkbox"] {
   animation:s7 1s infinite;
 }
 @keyframes s7 {to{transform: rotate(.5turn)}}
+
+.renderAbove{
+  z-index: 100;
+}
+
+/* alert component */
+.alert{
+  width: 20rem;
+  height: 4rem;
+  border-radius: 0.2rem;
+  background-color: #4b4b4b;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  position: absolute;
+  z-index: 100;
+  top: 5%;
+  left: 43%;
+}
+
+.alert-msg{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ededed;
+  font-size: 1.2rem;
+}
+
+.alert-success{
+  background-color: #1aff1a;
+}
+
+.alert-error{
+  background-color: #660000;
+}
+
+.alert-icon{
+  width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alert-success-icon,.alert-error-icon{
+  height: 50%;
+}
+
+.alert-success-icon{
+
+}
+
+.alert-error-icon{
+
+}
+
+.form-field-error{
+  border-bottom: 3px solid #660000 !important;
+}
+
+.new-comp{}
