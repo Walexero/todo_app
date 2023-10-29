@@ -169,7 +169,7 @@ class TaskAddRenderView {
     this._renderComponentContainerContent.innerHTML =
       this._renderCompletedContainer.innerHTML =
       this._renderTitleInput.value =
-        "";
+      "";
     if (markup) {
       //add markup to task container
       this._renderComponentContainerContent.insertAdjacentHTML(
@@ -288,8 +288,7 @@ class TaskAddRenderView {
 
   _inputMarkup(value = undefined) {
     return `
-      <textarea name="form-task-td" class="form-task-td" cols="25" rows="3" wrap="soft">${
-        value ?? ""
+      <textarea name="form-task-td" class="form-task-td" cols="25" rows="3" wrap="soft">${value ?? ""
       }</textarea>
     `;
   }
@@ -364,4 +363,4 @@ class TaskAddRenderView {
   }
 }
 
-export default new TaskAddRenderView();
+export const importTaskAddRenderView = (() => new TaskAddRenderView());

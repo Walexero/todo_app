@@ -336,9 +336,8 @@ class TodoListComponentView {
                   <ul class="nudge-actions">
                     <!-- <li class="nudge-action--btn">Edit</li> -->
                     <li class="nudge-action--btn nudge-action--delete">Delete</li>
-                    <li class="nudge-action--btn nudge-action--complete">${
-                      todo.completed ? "Unmark Complete" : "Mark Complete"
-                    }</li>
+                    <li class="nudge-action--btn nudge-action--complete">${todo.completed ? "Unmark Complete" : "Mark Complete"
+      }</li>
                   </ul>
                 </div>
               </div>
@@ -360,20 +359,20 @@ class TodoListComponentView {
                 </svg>
               </div>
               <h3 class="component-heading">${todo.title
-                .slice(0, 10)
-                .padEnd(13, ".")}</h3>
+        .slice(0, 10)
+        .padEnd(13, ".")}</h3>
             </div>
             <div class="component-content-container">
               <ul>
                 ${todo.tasks
-                  .slice(0, 3)
-                  .map((task) => this._generateComponentContentMarkup(task))
-                  .join("")}
+        .slice(0, 3)
+        .map((task) => this._generateComponentContentMarkup(task))
+        .join("")}
 
               </ul>
               <p class="component-editted-bar">${this._formatEditDate(
-                todo.lastAdded
-              )}</p>
+          todo.lastAdded
+        )}</p>
             </div>
         </div>
     `;
@@ -384,18 +383,17 @@ class TodoListComponentView {
       <div class="component-content">
         <input type="checkbox" id="td-complete" />
 
-        <label for="td-complete">${
-          task.task.startsWith("<s>")
-            ? `<s>${task.task
-                .replace("<s>", "")
-                .replace("</s>", "")
-                .slice(0, 15)
-                .padEnd(18, ".")}</s>`
-            : task.task.slice(0, 15).padEnd(18, ".")
-        }</label>
+        <label for="td-complete">${task.task.startsWith("<s>")
+        ? `<s>${task.task
+          .replace("<s>", "")
+          .replace("</s>", "")
+          .slice(0, 15)
+          .padEnd(18, ".")}</s>`
+        : task.task.slice(0, 15).padEnd(18, ".")
+      }</label>
       </div>
     `;
   }
 }
 
-export default new TodoListComponentView();
+export const importTodoListComponentView = (() => new TodoListComponentView());

@@ -19,7 +19,9 @@ html {
 body {
   height: 100vh;
   overflow-y: scroll;
-  font-family: sans-serif;
+  /* font-family: sans-serif;
+   */
+  font-family: 'Crimson Text', serif;
   background-color: #0c0c0c;
 }
 

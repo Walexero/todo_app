@@ -198,11 +198,12 @@ body{
     border: none;
     background-color: inherit;
     border-bottom: 1px solid #aaa;
+    color: #ededed;
 }
 
 .form-box > input:focus{
     outline: none;
-    box-shadow: 0px 0px 3px red;
+    box-shadow: 0px 0px 3px gray;
 }
 
 .form-box > input::placeholder{

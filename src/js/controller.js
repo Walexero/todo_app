@@ -1,12 +1,17 @@
 import * as model from "./model.js";
-import taskAddRenderView from "./views/taskAddRenderView.js";
-import todoListComponentView from "./views/todoListComponentView.js";
+import { importTodoListComponentView } from "./views/todoListComponentView.js";
+import { importTaskAddRenderView } from "./views/taskAddRenderView.js";
 import { MOBILE_MAX_SCREEN_SIZE, CANNOT_UPDATE_COMPLETED_TASK } from "./config.js";
 import Login from "./loginViews/login.js";
 import { Loader } from "./components/loader.js";
 import { TodoTemplate } from "./templates/todoTemplate.js";
 import { LoginTemplate } from "./templates/loginTemplate.js";
 import { DEFAULT_LOGIN_PAGE_TIMEOUT } from "./config.js";
+import { importTaskAddRenderView } from "./views/taskAddRenderView.js";
+
+//make the modules a variable before init
+let todoListComponentView;
+let taskAddRenderView;
 
 //distinguish mobile render from other screensize
 const mobileDeviceTrigger = window.matchMedia(MOBILE_MAX_SCREEN_SIZE);
@@ -330,10 +335,14 @@ const init = function () {
 
   if (model.token.value) {
     document.body.innerHTML = TodoTemplate.template()
+
+    //initialize the components so it only gets loaded after its template is present
+
+    todoListComponentView = importTodoListComponentView()
+    taskAddRenderView = importTaskAddRenderView()
+
     todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
-
     taskAddRenderView.addHandlerTaskAdd(controlAddTask);
-
   }
 
 };
