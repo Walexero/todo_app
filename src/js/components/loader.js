@@ -16,7 +16,7 @@ export class Loader {
         this.overlay = new Overlay(this, true, {
             top: 40,
             left: 50
-        })
+        }, true)
         this.overlay.render()
     }
 

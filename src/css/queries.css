@@ -9,6 +9,26 @@
   .component-content {
     margin-left: 0;
   }
+
+  .page-content {
+    width: 60% !important;
+  }
+
+  .page-content-text {
+    font-size: 5.8rem !important;
+  }
+
+  .overlay-content {
+    left: 35% !important;
+  }
+
+  .overlay-content-above{
+    left: 47% !important;
+  }
+
+  .alert{
+    left: 40%;
+  }
 }
 
 /* --------------------------- */
@@ -34,6 +54,30 @@
   .td-label-container {
     width: 80%;
   }
+
+  .content-container .row {
+    padding: 4rem 3rem !important;
+  }
+
+  .page-content-text {
+    font-size: 5.4rem !important;
+  }
+
+  .page-content {
+    width: 65% !important;
+  }
+
+  .overlay-content {
+    left: 32% !important;
+  }
+
+  .overlay-content-above{
+    left: 46% !important;
+  }
+
+  .alert {
+    left: 37%;
+  }
 }
 
 /* --------------------------- */
@@ -58,6 +102,34 @@
   .component-editted-bar {
     left: 35%;
     transform: none;
+  }
+
+  .content-container .row{
+    grid-template-columns: 1fr;
+  }
+
+  .page-content {
+    width: 100% !important;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .content-container .row {
+    padding: 4rem 0rem !important;
+  }
+
+  .overlay-content {
+    left: calc(28vw - 22px) !important;
+    transform: translateX(-4%);
+  }
+
+  .overlay-content-above{
+    left: 41% !important;
+  }
+
+  .alert{
+    left: 30%;
   }
 }
 
@@ -89,5 +161,43 @@
 
   .td-component-actions-container {
     gap: 0.8rem;
+  }
+
+  .page-content-text {
+    font-size: 4.4rem !important;
+  }
+
+  .login-container {
+    width: 26rem !important;
+  }
+
+  .login-option {
+    white-space: nowrap;
+  }
+
+  .login-option::before {
+    transform: translate(10.6rem, 1%) !important;
+  }
+
+  .overlay-content{
+    left: calc(28vw - 31px) !important;
+  }
+
+  .alert {
+    left: 24%;
+  }
+}
+
+
+/* --------------------------- */
+/* BELOW 350px (tablets) */
+/* ----------------------------- */
+@media (max-width: 22em) {
+  .overlay-content{
+    left: calc(28vw - 45px) !important;
+  }
+
+  .alert {
+    left: 19%;
   }
 }

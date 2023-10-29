@@ -110,7 +110,7 @@ body{
     background-color: #3c3c3c;
 }
 
-.overlay-content{
+.overlay-content,.overlay-content-above{
     position: absolute;
     top: 25%;
     left: 40%;

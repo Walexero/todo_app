@@ -5,19 +5,19 @@ import { delegateConditional } from "../helper";
 export class Overlay {
     _eventListeners = ["click", "keyup"]
 
-    constructor(contentComponent, disableEvents = false, position = undefined) {
+    constructor(contentComponent, disableEvents = false, position = undefined, extraClassName = false) {
         this.contentComponent = contentComponent
         this.positionEl = document.querySelector("body");
         this.position = position
+        this.extraClassName = extraClassName
         this._component = this.component()
         this.disableEvents = disableEvents
-        // this.renderAbove = this.renderAbove
     }
 
     component() {
         this._component = ComponentMethods.HTMLToEl(this._generateMarkup())
         this.contrast = this._component.querySelector(".contrast")
-        const overlayContent = this._component.querySelector(".overlay-content")
+        const overlayContent = this._component.querySelector(`${this.extraClassName ? ".overlay-content-above" : ".overlay-content"}`)
 
         //change content position based on defined params
         if (this.position) this._modifyPosition(this.position, overlayContent)
@@ -48,11 +48,11 @@ export class Overlay {
 
     _generateMarkup() {
         return `
-            <div class="overlay ${this.renderAbove ? "renderAbove" : ""}">
+            <div class="overlay">
                 <div class="contrast ">
 
                 </div>
-                <div class="overlay-content">
+                <div class="${this.extraClassName ? "overlay-content-above" : "overlay-content"}">
                     
                 </div>
             </div>
