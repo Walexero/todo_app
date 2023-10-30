@@ -58,7 +58,7 @@ export class API {
             if (returnData) {
                 queryObj.loader ? queryObj.loader.remove() : null
                 queryObj.alert ? new Alert(HTTP_200_RESPONSE[queryObj.actionType], null, "success").component() : null
-                if (queryObj.callBack) queryObj.callBack(returnData, true)
+                if (queryObj.callBack) queryObj.callBack(returnData, queryObj.callBackParam ?? true)
 
                 queryObj = {};
             }

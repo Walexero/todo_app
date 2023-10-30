@@ -229,7 +229,7 @@ const controlAddAndSetTodoEventListeners = function () {
 const controlAddTodoIdToRenderContainer = function (renderContainer, todo) {
   //add created todoId to the render container
   renderContainer.setAttribute("data-id", todo.id)
-  model.APIAddTodoOrTask(todo)
+  model.APIAddTodoOrTask(todo, "todo")
 }
 
 const controlAddTodo = function (currentTodoContainer = undefined) {
@@ -278,23 +278,49 @@ const controlTodoDataLoad = function () {
     controlAddTodo();
 };
 
-const controlAddTaskToExistingTodo = function (task) {
+const controlUpdateTodoTitle = function (todoId, title) {
+  const queryObj = {
+    endpoint: API.APIEnum.TODO.PATCH(todoId),
+    token: model.token.value,
+    sec: null,
+    actionType: "updateTodo",
+    queryData: { title: title },
+    spinner: false,
+    alert: false,
+    type: "PATCH",
+    callBack: model.updateTodoTitle
+  }
+  API.queryAPI(queryObj)
+}
+
+const controlCallBackAddTaskToTodo = function (callerCurrentTodo, taskObj, type) {
+  //callerCurrentTodo is the currentTodo variable in the controlAddTask 
+  callerCurrentTodo = model.APIAddTodoOrTask(taskObj, type)
+}
+
+const controlAddTaskToExistingTodo = function (task, callerCurrentTodo) {
   //adds a task to the an existing todo and returns the todo
+  debugger;
+  const currentTodo = model.getCurrentTodo(task.todoId);
+
+  //check if todo Title has changed and update
+  if (currentTodo.title !== task.todoTitle) controlUpdateTodoTitle(task.todoId, task.todoTitle)
 
   const queryObj = {
     endpoint: API.APIEnum.TASK.CREATE,
     token: model.token.value,
     sec: null,
     actionType: "createTask",
-    queryData: { task: task.task, todo_id: task.todoId, completed: null },//TODO: add completeed from view
-    callBack: controlAddTodoIdToRenderContainer.bind(null, currentTodoContainer),
+    queryData: { task: task.task, todo_id: task.todoId, completed: task.completed },
+    callBack: controlCallBackAddTaskToTodo.bind(null, callerCurrentTodo),
     spinner: false,
     alert: false,
-    type: "POST"
+    type: "POST",
+    callBackParam: "task"
   }
   API.queryAPI(queryObj)
 
-  const currentTodo = model.getCurrentTodo();
+
   // const createTask = API.
   // const currentTask = model.getCurrentTodo();
 
@@ -354,7 +380,7 @@ const controlAddTask = function (task) {
   const currentTodoExists = model.state.currentTodo;
 
   //add a task
-  if (currentTodoExists) currentTodo = controlAddTaskToExistingTodo(task);
+  if (currentTodoExists) controlAddTaskToExistingTodo(task, currentTodo);
 
   //add a todo
   if (!currentTodoExists) currentTodo = controlCreateNewTodo(task);

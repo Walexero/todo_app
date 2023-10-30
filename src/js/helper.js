@@ -87,17 +87,24 @@ export const formatAPIResponseBody = (responseBody, type) => {
 
   if (type === "todo")
     formattedBody = {
-      id: responseBody.id,
+      todoId: responseBody.id,
       title: responseBody.title,
       tasks: responseBody.tasks,
       lastAdded: formatDateTime(responseBody.last_added),
       completed: responseBody.completed
     }
 
+  if (type === "task")
+    formattedBody = {
+      taskId: responseBody.id,
+      task: responseBody.task,
+      completed: responseBody.completed,
+      todoId: responseBody.todo_id,
+      todoLastAdded: responseBody.todo_last_added
+    }
+
   return formattedBody
 }
-// export const
-
 // function asyncWrapper(fn) {
 
 // }

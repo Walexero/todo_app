@@ -251,14 +251,8 @@ class TaskAddRenderView {
     debugger;
     const formData = Object.fromEntries([...new FormData(this._form)]);
 
-    //for contenteditable
-    const taskData = e.target.closest(".form-task-td").textContent.trim();
-    const taskCompleted = e.target.closest(".td-component-actions").querySelector("#td-complete").checked
-    const todoId = e.target.closest(".td-render--content").dataset.id;
-
-    formData.task = taskData
-    formData.todoId = todoId
-    formData.completed = taskCompleted
+    //adds the task related info from the DOM
+    this._getTaskInfo(e, formData)
 
     //Allow input to add task to be rendered again
     if (this._inputRendered) this._inputRendered = false;
@@ -296,6 +290,19 @@ class TaskAddRenderView {
     );
 
     return taskObj;
+  }
+
+  _getTaskInfo(e, formData) {
+    //for contenteditable
+    const taskInput = e.target.closest(".form-task-td")
+    const taskData = taskInput.textContent.trim();
+    const taskCompleted = taskInput.previousElementSibling.querySelector("#td-complete").checked
+    const todoId = e.target.closest(".td-render--content").dataset.id;
+
+    formData.task = taskData
+    formData.todoId = +todoId
+    formData.completed = taskCompleted
+    formData.todoTitle = formData["form-title-td"]
   }
 
   _inputMarkup(value = undefined) {

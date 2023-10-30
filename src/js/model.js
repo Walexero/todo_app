@@ -20,9 +20,15 @@ export const persistToken = function () {
 }
 
 export const getCurrentTodo = function (todoID = state.currentTodo) {
-  const currentTodo = state.todo.find((curTodo) => curTodo.id === todoID);
+  const currentTodo = state.todo.find((curTodo) => curTodo.todoId === todoID);
   return currentTodo;
 };
+
+export const updateTodoTitle = function (updateObj) {
+  const currentTodo = getCurrentTodo(+updateObj.id)
+  currentTodo.title = updateObj.title
+  persistTodo()
+}
 
 const getTaskIndexAndCurrentTodo = (taskID) => {
   const currentTodo = getCurrentTodo();
@@ -40,14 +46,21 @@ const getTodoIndexAndTodo = (todoID) => {
   return { currentTodo, todoIndex };
 };
 
-export const APIAddTodoOrTask = function (todo) {
+export const APIAddTodoOrTask = function (typeObj, type) {
   let currentTodo;
-  todo = formatAPIResponseBody(todo, "todo")
+  typeObj = formatAPIResponseBody(typeObj, type)
+
   if (state.currentTodo) {
-    alert("impleement func")
+    currentTodo = getCurrentTodo(typeObj.todoId);
+
+    //only push to tasks if there's a task added
+    if (typeObj.task) currentTodo.tasks.push(typeObj);
+
+    //update lastAdded time for the todo
+    currentTodo.lastAdded = typeObj.todoLastAdded;
   } else {
-    state.todo.push(todo)
-    state.currentTodo = todo.id
+    state.todo.push(typeObj)
+    state.currentTodo = typeObj.todoId
     currentTodo = getCurrentTodo(state.currentTodo);
   }
 
