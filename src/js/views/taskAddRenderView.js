@@ -1,6 +1,7 @@
 import taskActionsView from "./taskActionsView.js";
 import { cleanFormData, createObjectFromForm } from "../helper.js";
 import { MAX_LENGTH_INPUT_TEXT_WITHOUT_SPACE } from "../config.js";
+import { ComponentMethods } from "../componentMethods.js";
 
 class TaskAddRenderView {
   _handler;
@@ -21,10 +22,12 @@ class TaskAddRenderView {
   _taskEditHandler;
   _editingTask = { editing: false };
   _inputRendered = false;
+  _currentTodo;
 
-  addHandlerTaskAdd(handler) {
+  addHandlerTaskAdd(handler, handlerCreateNewTask) {
     const cls = this;
     this._handler = handler;
+    this._handlerCreateNewTask = handlerCreateNewTask
     this._handleFormEvents();
   }
 
@@ -42,6 +45,10 @@ class TaskAddRenderView {
 
   setTaskActionState(value) {
     this._taskActionsActive = value;
+  }
+
+  setCurrentTodoState(value) {
+    this._currentTodo = value
   }
 
   getTaskActionState() {
@@ -226,13 +233,18 @@ class TaskAddRenderView {
   }
 
   _renderInput() {
-    const markup = this._generateInputMarkup();
-    this._renderComponentContainerContent.insertAdjacentHTML(
+    const inputEl = ComponentMethods.HTMLToEl(this._generateInputMarkup())
+    this._renderComponentContainerContent.insertAdjacentElement(
       "afterbegin",
-      markup
+      inputEl
     );
+
+    //calls controlCreateNewTask
+    this._handlerCreateNewTask(this._currentTodo, true, inputEl)
+
     //TODO: reemove inputRendered
     this._inputRendered = true;
+
   }
 
   _renderAddedTask(task) {
@@ -302,6 +314,7 @@ class TaskAddRenderView {
     formData.task = taskData
     formData.todoId = +todoId
     formData.completed = taskCompleted
+    formData.taskId = +taskInput.dataset.todoid
     formData.todoTitle = formData["form-title-td"]
   }
 

@@ -53,8 +53,10 @@ export const APIAddTodoOrTask = function (typeObj, type) {
   if (state.currentTodo) {
     currentTodo = getCurrentTodo(typeObj.todoId);
 
+    const task = { task: typeObj.task, taskId: typeObj.taskId, completed: typeObj.completed }
+
     //only push to tasks if there's a task added
-    if (typeObj.task) currentTodo.tasks.push(typeObj);
+    if (typeObj.task.length > -1) currentTodo.tasks.push(task);
 
     //update lastAdded time for the todo
     currentTodo.lastAdded = typeObj.todoLastAdded;

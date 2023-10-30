@@ -230,6 +230,7 @@ const controlAddTodoIdToRenderContainer = function (renderContainer, todo) {
   //add created todoId to the render container
   renderContainer.setAttribute("data-id", todo.id)
   model.APIAddTodoOrTask(todo, "todo")
+  taskAddRenderView.setCurrentTodoState(todo.id)
 }
 
 const controlAddTodo = function (currentTodoContainer = undefined) {
@@ -293,11 +294,6 @@ const controlUpdateTodoTitle = function (todoId, title) {
   API.queryAPI(queryObj)
 }
 
-const controlCallBackAddTaskToTodo = function (callerCurrentTodo, taskObj, type) {
-  //callerCurrentTodo is the currentTodo variable in the controlAddTask 
-  callerCurrentTodo = model.APIAddTodoOrTask(taskObj, type)
-}
-
 const controlAddTaskToExistingTodo = function (task, callerCurrentTodo) {
   //adds a task to the an existing todo and returns the todo
   debugger;
@@ -353,6 +349,32 @@ const controlCreateNewTodo = function (task, api = false, currentTodoContainer =
 
 };
 
+const controlAddTaskIdToTaskInput = function (taskInput, task) {
+  //add created task to the task Input
+  taskInput.setAttribute("data-taskId", task.id)
+  model.APIAddTodoOrTask(task, "task")
+}
+
+const controlCreateNewTask = function (todoId, api = false, currentTaskInput = undefined) {
+  if (api) {
+    const currentTodo = model.getCurrentTodo(todoId);
+
+    const queryObj = {
+      endpoint: API.APIEnum.TASK.CREATE,
+      token: model.token.value,
+      sec: null,
+      actionType: "createTask",
+      queryData: { task: "", todo_id: todoId, completed: false },
+      callBack: controlAddTaskIdToTaskInput.bind(null, currentTaskInput),
+      spinner: false,
+      alert: false,
+      type: "POST",
+      callBackParam: "task"
+    }
+    API.queryAPI(queryObj)
+  }
+}
+
 const controlUpdateTaskUIState = function (currentTask = undefined) {
   const taskUIState = taskAddRenderView.getUIState();
 
@@ -380,7 +402,7 @@ const controlAddTask = function (task) {
   const currentTodoExists = model.state.currentTodo;
 
   //add a task
-  if (currentTodoExists) controlAddTaskToExistingTodo(task, currentTodo);
+  if (currentTodoExists) currentTodo = controlAddTaskToExistingTodo(task, currentTodo);
 
   //add a todo
   if (!currentTodoExists) currentTodo = controlCreateNewTodo(task);
@@ -411,7 +433,7 @@ const init = function () {
     taskAddRenderView = importTaskAddRenderView()
 
     todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
-    taskAddRenderView.addHandlerTaskAdd(controlAddTask);
+    taskAddRenderView.addHandlerTaskAdd(controlAddTask, controlCreateNewTask);
   }
 
 };
