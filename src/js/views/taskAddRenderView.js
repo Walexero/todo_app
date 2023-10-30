@@ -136,7 +136,7 @@ class TaskAddRenderView {
           }
 
           //Submit Event
-          if (e.key === "Enter") cls._handlerAddTask();
+          if (e.key === "Enter") cls._handlerAddTask(e);
         });
     });
   }
@@ -231,6 +231,7 @@ class TaskAddRenderView {
       "afterbegin",
       markup
     );
+    //TODO: reemove inputRendered
     this._inputRendered = true;
   }
 
@@ -246,29 +247,35 @@ class TaskAddRenderView {
     );
   }
 
-  _handlerAddTask() {
+  _handlerAddTask(e) {
     debugger;
     const formData = Object.fromEntries([...new FormData(this._form)]);
+
+    //for contenteditable
+    const taskData = e.target.closest(".form-task-td").textContent;
+
+    formData.task = taskData
 
     //Allow input to add task to be rendered again
     if (this._inputRendered) this._inputRendered = false;
 
     //Guard clause for empty form submission
-    if (!Object.values(formData).at(0) && !Object.values(formData).at(1))
-      return;
+    // if (!Object.values(formData).at(0) && !Object.values(formData).at(1))
+    //   return;
 
     //Guard clause against inputs without spaces
-    if (
-      Object.values(formData).at(1) &&
-      !Object.values(formData).at(1).includes(" ") &&
-      Object.values(formData).at(1).length > MAX_LENGTH_INPUT_TEXT_WITHOUT_SPACE
-    )
-      return alert(
-        "Task values must include spaces. A maximum of 25 character is allowed without spaces"
-      );
+    // if (
+    //   Object.values(formData).at(1) &&
+    //   !Object.values(formData).at(1).includes(" ") &&
+    //   Object.values(formData).at(1).length > MAX_LENGTH_INPUT_TEXT_WITHOUT_SPACE
+    // )
+    //   return alert(
+    //     "Task values must include spaces. A maximum of 25 character is allowed without spaces"
+    //   );
 
     //check if a current task is being editted to determine type of form submission
     if (this._editingTask.editing) {
+      //TODO: remove after inputRendered
       this._taskEditHandler(this._editingTask.id, formData);
       this._editingTask = { editing: false };
     } else this._handler(formData);

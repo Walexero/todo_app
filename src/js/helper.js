@@ -78,7 +78,25 @@ export const timeoutWithoutPromise = (sec, fn) => {
   })
 }
 
-// export const 
+export const formatDateTime = (dateTime) => {
+  return new Date(dateTime)
+}
+
+export const formatAPIResponseBody = (responseBody, type) => {
+  let formattedBody;
+
+  if (type === "todo")
+    formattedBody = {
+      id: responseBody.id,
+      title: responseBody.title,
+      tasks: responseBody.tasks,
+      lastAdded: formatDateTime(responseBody.last_added),
+      completed: responseBody.completed
+    }
+
+  return formattedBody
+}
+// export const
 
 // function asyncWrapper(fn) {
 

@@ -223,7 +223,8 @@ class TodoListComponentView {
       this._toggledBeforeAddTodoBtn = false;
     }
     //run controller controlAddTodo function and pass in the renderContainer
-    this._handler(this._renderContainer);
+    const renderContentNode = document.querySelector(".td-render--content")
+    this._handler(renderContentNode);
   }
 
   toggleRenderDisplay(toggledBeforeAddTodoBtn = false) {

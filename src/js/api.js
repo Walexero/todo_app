@@ -120,10 +120,10 @@ export class API {
         return fetch(`${BASE_API_URL}${queryObj.endpoint}`, {
             method: queryObj.type,
             headers: {
-                Authorization: "Bearer Token",
-                "X-Custom-Header": queryObj.token
+                Authorization: `Token ${queryObj.token}`,
+                "Content-Type": "application/json"
             },
-            body: queryObj.queryData
+            body: JSON.stringify(queryObj.queryData)
         })
     }
 }

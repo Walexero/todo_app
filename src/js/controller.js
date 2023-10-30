@@ -226,12 +226,13 @@ const controlAddAndSetTodoEventListeners = function () {
   todoListComponentView.setAddListenerEventState(true);
 };
 
-const controlAddTodoIdToRenderContainer = function (renderContainer, todoId) {
-  renderContainer.setAttribute("data-id", todoId)
+const controlAddTodoIdToRenderContainer = function (renderContainer, todo) {
+  //add created todoId to the render container
+  renderContainer.setAttribute("data-id", todo.id)
+  model.APIAddTodoOrTask(todo)
 }
 
 const controlAddTodo = function (currentTodoContainer = undefined) {
-  debugger;
   //add eventlisteners for todo if not added
   const eventListenersOnTodoView =
     todoListComponentView.getAddListenerEventState();
@@ -248,7 +249,7 @@ const controlAddTodo = function (currentTodoContainer = undefined) {
 
   //query API to create new Todo
   if (addTodoBtnClicked)
-    API.queryAPI(API.APIEnum.TODO.CREATE, null, "createTodo", null, controlAddTodoIdToRenderContainer.bind(null, currentTodoContainer), false)
+    controlCreateNewTodo(null, true, currentTodoContainer)
 
   if (mobileDeviceTrigger.matches) {
     // todoListComponentView.setClearAndHideContainer(true);
@@ -279,17 +280,51 @@ const controlTodoDataLoad = function () {
 
 const controlAddTaskToExistingTodo = function (task) {
   //adds a task to the an existing todo and returns the todo
-  const currentTask = model.getCurrentTodo();
 
-  const todo = taskAddRenderView.getTaskBody(currentTask, task);
+  const queryObj = {
+    endpoint: API.APIEnum.TASK.CREATE,
+    token: model.token.value,
+    sec: null,
+    actionType: "createTask",
+    queryData: { task: task.task, todo_id: task.todoId, completed: null },//TODO: add completeed from view
+    callBack: controlAddTodoIdToRenderContainer.bind(null, currentTodoContainer),
+    spinner: false,
+    alert: false,
+    type: "POST"
+  }
+  API.queryAPI(queryObj)
 
-  return model.addTodoOrTask(currentTask.id, todo, task);
+  const currentTodo = model.getCurrentTodo();
+  // const createTask = API.
+  // const currentTask = model.getCurrentTodo();
+
+  // const todo = taskAddRenderView.getTaskBody(currentTask, task);
+
+  // return model.addTodoOrTask(currentTask.id, todo, task);
 };
 
-const controlCreateNewTodo = function (task) {
-  //create a new todo and return it
-  const { currentTask, todo } = todoListComponentView.getTodoAndTaskBody(task);
-  return model.addTodoOrTask(currentTask, todo);
+const controlCreateNewTodo = function (task, api = false, currentTodoContainer = undefined) {
+  if (api) {
+
+    const queryObj = {
+      endpoint: API.APIEnum.TODO.CREATE,
+      token: model.token.value,
+      sec: null,
+      actionType: "createTodo",
+      queryData: { "title": "" },
+      callBack: controlAddTodoIdToRenderContainer.bind(null, currentTodoContainer),
+      spinner: false,
+      alert: false,
+      type: "POST"
+    }
+    API.queryAPI(queryObj)
+  }
+  if (!api) {
+    //create a new todo and return it
+    const { currentTask, todo } = todoListComponentView.getTodoAndTaskBody(task);
+    return model.addTodoOrTask(currentTask, todo);
+  }
+
 };
 
 const controlUpdateTaskUIState = function (currentTask = undefined) {

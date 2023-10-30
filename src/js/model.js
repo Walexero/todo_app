@@ -1,4 +1,4 @@
-import { cleanFormData, checkValidator, reOrderObjectIndex } from "./helper.js";
+import { cleanFormData, checkValidator, reOrderObjectIndex, formatAPIResponseBody } from "./helper.js";
 
 export let state = {
   todo: [],
@@ -39,6 +39,23 @@ const getTodoIndexAndTodo = (todoID) => {
   const todoIndex = state.todo.findIndex((todo) => todo.id === currentTodo.id);
   return { currentTodo, todoIndex };
 };
+
+export const APIAddTodoOrTask = function (todo) {
+  let currentTodo;
+  todo = formatAPIResponseBody(todo, "todo")
+  if (state.currentTodo) {
+    alert("impleement func")
+  } else {
+    state.todo.push(todo)
+    state.currentTodo = todo.id
+    currentTodo = getCurrentTodo(state.currentTodo);
+  }
+
+  //persist data
+  persistTodo();
+  console.log(state.todo)
+  return currentTodo;
+}
 
 export const addTodoOrTask = function (currentTodoId, todo, formData = false) {
   let currentTodo;
