@@ -247,6 +247,7 @@ class TaskAddRenderView {
   }
 
   _handlerAddTask() {
+    debugger;
     const formData = Object.fromEntries([...new FormData(this._form)]);
 
     //Allow input to add task to be rendered again
@@ -287,10 +288,19 @@ class TaskAddRenderView {
   }
 
   _inputMarkup(value = undefined) {
+    // return `
+    //   <textarea name="form-task-td" class="form-task-td" cols="25" rows="3" wrap="soft">${value ?? ""
+    //   }</textarea>
+    // `;
+    return this._contentEditableInputMarkup(value)
+  }
+
+  _contentEditableInputMarkup(value) {
     return `
-      <textarea name="form-task-td" class="form-task-td" cols="25" rows="3" wrap="soft">${value ?? ""
-      }</textarea>
-    `;
+      <div contenteditable="true" class="form-task-td">
+        ${value ?? ""}
+      </div>
+    `
   }
 
   _generateInputMarkup() {
@@ -304,7 +314,6 @@ class TaskAddRenderView {
               viewBox="0 0 320 512"
               class="drag-icon"
             >
-              <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
               <path
                 d="M40 352l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zm192 0l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 320c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 192l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 160c-22.1 0-40-17.9-40-40L0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40z"
               />

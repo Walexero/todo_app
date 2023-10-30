@@ -12,6 +12,24 @@ export class API {
             PUT: "user/me/",
             PATCH: "user/me/",
             TOKEN: "user/token/",
+        },
+
+        TODO: {
+            CREATE: "todo/todos/",
+            LIST: "todo/todos/",
+            GET: ((todoId) => `todo/todos/${todoId}`),
+            PUT: ((todoId) => `todo/todos/${todoId}`),
+            PATCH: ((todoId) => `todo/todos/${todoId}`),
+            DELETE: ((todoId) => `todo/todos/${todoId}`)
+        },
+
+        TASK: {
+            CREATE: "todo/tasks/",
+            LIST: "todo/tasks/",
+            GET: ((taskId) => `todo/tasks/${taskId}`),
+            PUT: ((taskId) => `todo/tasks/${taskId}`),
+            PATCH: ((taskId) => `todo/tasks/${taskId}`),
+            DELETE: ((taskId) => `todo/tasks/${taskId}`),
         }
     }
     static timeout = 20 //timeout in 20s

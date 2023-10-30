@@ -7,7 +7,7 @@ import { Loader } from "./components/loader.js";
 import { TodoTemplate } from "./templates/todoTemplate.js";
 import { LoginTemplate } from "./templates/loginTemplate.js";
 import { DEFAULT_LOGIN_PAGE_TIMEOUT } from "./config.js";
-import { importTaskAddRenderView } from "./views/taskAddRenderView.js";
+import { API } from "./api.js";
 
 //make the modules a variable before init
 let todoListComponentView;
@@ -301,6 +301,7 @@ const controlAddTaskMobileView = function (todoOrTask) {
 };
 
 const controlAddTask = function (task) {
+  debugger;
   let currentTodo;
 
   //add task handlers if they dont exist yet
@@ -337,7 +338,6 @@ const init = function () {
     document.body.innerHTML = TodoTemplate.template()
 
     //initialize the components so it only gets loaded after its template is present
-
     todoListComponentView = importTodoListComponentView()
     taskAddRenderView = importTaskAddRenderView()
 

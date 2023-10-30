@@ -194,6 +194,7 @@ class TodoListComponentView {
   }
 
   _renderAddTodoForm() {
+    debugger;
     //notify Controller that the form logic has been triggered
     this._initRenderFormActivated = true;
 
