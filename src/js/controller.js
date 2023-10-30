@@ -294,7 +294,7 @@ const controlUpdateTodoTitle = function (todoId, title) {
   API.queryAPI(queryObj)
 }
 
-const controlAddTaskToExistingTodo = function (task, callerCurrentTodo) {
+const controlUpdateTaskOfExistingTodo = function (task) {
   //adds a task to the an existing todo and returns the todo
   debugger;
   const currentTodo = model.getCurrentTodo(task.todoId);
@@ -302,19 +302,31 @@ const controlAddTaskToExistingTodo = function (task, callerCurrentTodo) {
   //check if todo Title has changed and update
   if (currentTodo.title !== task.todoTitle) controlUpdateTodoTitle(task.todoId, task.todoTitle)
 
-  const queryObj = {
-    endpoint: API.APIEnum.TASK.CREATE,
-    token: model.token.value,
-    sec: null,
-    actionType: "createTask",
-    queryData: { task: task.task, todo_id: task.todoId, completed: task.completed },
-    callBack: controlCallBackAddTaskToTodo.bind(null, callerCurrentTodo),
-    spinner: false,
-    alert: false,
-    type: "POST",
-    callBackParam: "task"
+  //check if task value has changed
+  const currentTodoTask = currentTodo.tasks.find(taskInstance => taskInstance.taskId === task.taskId)
+  const currentTodoTaskHasChanged = currentTodoTask.task.trim() === task.task.trim()
+
+
+  if (currentTodoTaskHasChanged) {
+    //update api value
+    const queryObj = {
+      endpoint: API.APIEnum.TASK.PATCH(task.taskId),
+      token: model.token.value,
+      sec: null,
+      actionType: "updateTask",
+      queryData: { task: task, completed: task.completed },
+      callBack: model.APIAddTodoOrTask,
+      spinner: false,
+      alert: false,
+      type: "PATCH",
+      callBackParam: "task"
+    }
+    API.queryAPI(queryObj)
   }
-  API.queryAPI(queryObj)
+
+  //update the model before api response
+  return model.APIAddTodoOrTask(task, "task")
+
 
 
   // const createTask = API.
@@ -402,7 +414,7 @@ const controlAddTask = function (task) {
   const currentTodoExists = model.state.currentTodo;
 
   //add a task
-  if (currentTodoExists) currentTodo = controlAddTaskToExistingTodo(task, currentTodo);
+  if (currentTodoExists) currentTodo = controlUpdateTaskOfExistingTodo(task, currentTodo);
 
   //add a todo
   if (!currentTodoExists) currentTodo = controlCreateNewTodo(task);

@@ -48,6 +48,7 @@ const getTodoIndexAndTodo = (todoID) => {
 
 export const APIAddTodoOrTask = function (typeObj, type) {
   let currentTodo;
+  debugger;
   typeObj = formatAPIResponseBody(typeObj, type)
 
   if (state.currentTodo) {
