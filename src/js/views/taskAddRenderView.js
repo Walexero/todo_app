@@ -252,9 +252,13 @@ class TaskAddRenderView {
     const formData = Object.fromEntries([...new FormData(this._form)]);
 
     //for contenteditable
-    const taskData = e.target.closest(".form-task-td").textContent;
+    const taskData = e.target.closest(".form-task-td").textContent.trim();
+    const taskCompleted = e.target.closest(".td-component-actions").querySelector("#td-complete").checked
+    const todoId = e.target.closest(".td-render--content").dataset.id;
 
     formData.task = taskData
+    formData.todoId = todoId
+    formData.completed = taskCompleted
 
     //Allow input to add task to be rendered again
     if (this._inputRendered) this._inputRendered = false;
@@ -326,7 +330,7 @@ class TaskAddRenderView {
               />
             </svg>
           </div>
-          <input type="checkbox" id="td-complete" />
+          <input type="checkbox" id="td-complete" checked />
         </div>
         ${this._inputMarkup()}
     </div>
