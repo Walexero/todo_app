@@ -14,7 +14,17 @@ export class LoginForm extends BaseForm {
         const payload = this.createPayload(ev)
         if (!payload) return;
         //entrypoint to api
-        API.queryAPI(API.APIEnum.USER.TOKEN, null, "login", payload, this.loginWithToken.bind(this))
+        const queryObj = {
+            endpoint: API.APIEnum.USER.TOKEN,
+            sec: null,
+            actionType: "login",
+            queryData: payload,
+            callBack: this.loginWithToken.bind(this),
+            spinner: true,
+            alert: true,
+            type: null
+        }
+        API.queryAPI(queryObj)
     }
 
     loginWithToken(token, success) { //NOTE: do not remove success param

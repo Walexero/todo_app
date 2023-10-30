@@ -3,6 +3,8 @@ import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400
 import { Loader } from "./components/loader.js"
 import { Alert } from "./components/alerts.js"
 
+// TODO: js docs for params
+
 export class API {
     static APIEnum = {
 
@@ -42,41 +44,47 @@ export class API {
         switch (actionType) {
             case "createTodo":
                 return API.createTodoPayload
+                break;
         }
     }
 
-    static queryAPI(endpoint, sec, actionType, queryData, callBack, spinner = true) {
-        const loader = API.loaderCreator(spinner, sec);
+    static queryAPI(queryObj) {
+        //switch the timeout secs if null
+        queryObj.sec = queryObj.sec ?? API.timeout
+        //create the loader based on the queryObj
+        API.loaderCreator(queryObj);
 
-        (async () => await API.querier(endpoint, sec ?? API.timeout, actionType, queryData ?? API.getDefaultPayloadType(actionType), loader, callBack))().then(returnData => {
+        (async () => await API.querier(queryObj))().then(returnData => {
             if (returnData) {
-                loader.remove()
-                new Alert(HTTP_200_RESPONSE[actionType], null, "success").component()
-                if (callBack) callBack(returnData, true)
+                queryObj.loader ? queryObj.loader.remove() : null
+                queryObj.alert ? new Alert(HTTP_200_RESPONSE[queryObj.actionType], null, "success").component() : null
+                if (queryObj.callBack) queryObj.callBack(returnData, true)
+
+                queryObj = {};
             }
         })
     }
 
-    static async querier(endpoint, sec, actionType, queryData, loader, callBack) {
+    static async querier(queryObj) {
         let data = null;
 
         try {
-            const res = await Promise.race([fetch(`${BASE_API_URL}${endpoint}`, queryData), timeout(sec, actionType)])
+            const res = await Promise.race([API.makeRequest(queryObj), timeout(queryObj.sec, queryObj.actionType)])
 
             const resContent = await res.json()
 
-            if (!res.ok) throw new Error(`${res.status === 400 ? API.getResponseToRender(resContent, callBack) : res.message} (${res.status})`)
+            if (!res.ok) throw new Error(`${res.status === 400 ? API.getResponseToRender(resContent, queryObj) : res.message} (${res.status})`)
 
             if (!resContent.non_field_errors) data = resContent
         } catch (err) {
-            if (loader) await loader.remove()
-            await new Alert(err.message, null, "error").component()
+            if (queryObj.loader) await queryObj.loader.remove()
+            if (queryObj.alert) await new Alert(err.message, null, "error").component()
         } finally {
             return data
         }
     }
 
-    static getResponseToRender(response, callBack) {
+    static getResponseToRender(response, queryObj) {
         if (response.non_field_errors)
             return HTTP_400_RESPONSE_LOGIN_USER
 
@@ -84,31 +92,38 @@ export class API {
         const formErrorsLength = Object.getOwnPropertyNames(response).length
 
         if (formErrorsLength > 0) return (() => {
-            callBack(response);
+            queryObj.callBack(response);
             return formErrorsLength === 1 ? response[formError[0]] : HTTP_400_RESPONSE_CREATE_USER
         })()
     }
 
-    static loaderCreator(spinner, sec) {
-        if (spinner) {
-            const loader = new Loader(sec)
-            loader.component();
-            return loader
+    static loaderCreator(queryObj) {
+        if (queryObj.spinner) {
+            //add the loader to the queryObj
+            queryObj.loader = new Loader(queryObj.sec)
+            queryObj.loader.component();
         }
     }
 
-    static requestJSON(url, type, token, payload) {
-        return fetch(url, {
-            method: type,
-            headers: {
-                Authorization: "Bearer Token",
-                "X-Custom-Header": token
-            },
-            body: payload
-        })
+    static makeRequest(queryObj) {
+        switch (queryObj.type) {
+            case "POST":
+                return API.requestJSON(queryObj)
+                break;
+            default:
+                return fetch(`${BASE_API_URL}${queryObj.endpoint}`, queryObj.queryData)
+                break;
+        }
     }
 
-    // static getUserToken() {
-    //     const token
-    // }
+    static requestJSON(queryObj) {
+        return fetch(`${BASE_API_URL}${queryObj.endpoint}`, {
+            method: queryObj.type,
+            headers: {
+                Authorization: "Bearer Token",
+                "X-Custom-Header": queryObj.token
+            },
+            body: queryObj.queryData
+        })
+    }
 }

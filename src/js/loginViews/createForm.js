@@ -24,7 +24,19 @@ export class CreateForm extends BaseForm {
         if (!payload) return
 
         //query create endpoint
-        API.queryAPI(API.APIEnum.USER.CREATE, null, "create", payload, this._renderFormErrors.bind(this))
+        const queryObj = {
+            endpoint: API.APIEnum.USER.CREATE,
+            sec: null,
+            actionType: "create",
+            queryData: payload,
+            callBack: this._renderFormErrors.bind(this),
+            spinner: true,
+            alert: true,
+            type: null
+        }
+        // API.queryAPI(, null, "create", payload, this._renderFormErrors.bind(this))
+        API.queryAPI(queryObj)
+
     }
 
     _renderFormErrors(errors, success = false) {
