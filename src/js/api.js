@@ -34,9 +34,8 @@ export class API {
     }
     static timeout = 20 //timeout in 20s
 
-    static queryAPI(endpoint, sec, actionType, queryData, callBack) {
-        const loader = new Loader(sec)
-        loader.component();
+    static queryAPI(endpoint, sec, actionType, queryData, callBack, spinner = true) {
+        const loader = API.loaderCreator(spinner, sec);
 
         (async () => await API.querier(endpoint, sec ?? API.timeout, actionType, queryData, loader, callBack))().then(returnData => {
             if (returnData) {
@@ -59,7 +58,7 @@ export class API {
 
             if (!resContent.non_field_errors) data = resContent
         } catch (err) {
-            await loader.remove()
+            if (loader) await loader.remove()
             await new Alert(err.message, null, "error").component()
         } finally {
             return data
@@ -77,6 +76,14 @@ export class API {
             callBack(response);
             return formErrorsLength === 1 ? response[formError[0]] : HTTP_400_RESPONSE_CREATE_USER
         })()
+    }
+
+    static loaderCreator(spinner, sec) {
+        if (spinner) {
+            const loader = new Loader(sec)
+            loader.component();
+            return loader
+        }
     }
 
     // static getUserToken() {
