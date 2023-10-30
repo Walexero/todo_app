@@ -34,10 +34,21 @@ export class API {
     }
     static timeout = 20 //timeout in 20s
 
+    static createTodoPayload = {
+        "title": ""
+    }
+
+    static getDefaultPayloadType(actionType) {
+        switch (actionType) {
+            case "createTodo":
+                return API.createTodoPayload
+        }
+    }
+
     static queryAPI(endpoint, sec, actionType, queryData, callBack, spinner = true) {
         const loader = API.loaderCreator(spinner, sec);
 
-        (async () => await API.querier(endpoint, sec ?? API.timeout, actionType, queryData, loader, callBack))().then(returnData => {
+        (async () => await API.querier(endpoint, sec ?? API.timeout, actionType, queryData ?? API.getDefaultPayloadType(actionType), loader, callBack))().then(returnData => {
             if (returnData) {
                 loader.remove()
                 new Alert(HTTP_200_RESPONSE[actionType], null, "success").component()
@@ -84,6 +95,17 @@ export class API {
             loader.component();
             return loader
         }
+    }
+
+    static requestJSON(url, type, token, payload) {
+        return fetch(url, {
+            method: type,
+            headers: {
+                Authorization: "Bearer Token",
+                "X-Custom-Header": token
+            },
+            body: payload
+        })
     }
 
     // static getUserToken() {

@@ -226,8 +226,12 @@ const controlAddAndSetTodoEventListeners = function () {
   todoListComponentView.setAddListenerEventState(true);
 };
 
-const controlAddTodo = function () {
+const controlAddTodoIdToRenderContainer = function (renderContainer, todoId) {
+  renderContainer.setAttribute("data-id", todoId)
+}
 
+const controlAddTodo = function (currentTodoContainer = undefined) {
+  debugger;
   //add eventlisteners for todo if not added
   const eventListenersOnTodoView =
     todoListComponentView.getAddListenerEventState();
@@ -241,6 +245,10 @@ const controlAddTodo = function () {
 
   //remove currentTodo from model
   model.state.currentTodo = null;
+
+  //query API to create new Todo
+  if (addTodoBtnClicked)
+    API.queryAPI(API.APIEnum.TODO.CREATE, null, "createTodo", null, controlAddTodoIdToRenderContainer.bind(null, currentTodoContainer), false)
 
   if (mobileDeviceTrigger.matches) {
     // todoListComponentView.setClearAndHideContainer(true);

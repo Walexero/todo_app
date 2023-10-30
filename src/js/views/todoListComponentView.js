@@ -222,8 +222,8 @@ class TodoListComponentView {
       this.toggleRenderDisplay();
       this._toggledBeforeAddTodoBtn = false;
     }
-    //run controller controlAddTodo function
-    this._handler();
+    //run controller controlAddTodo function and pass in the renderContainer
+    this._handler(this._renderContainer);
   }
 
   toggleRenderDisplay(toggledBeforeAddTodoBtn = false) {
