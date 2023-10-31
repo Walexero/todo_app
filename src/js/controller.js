@@ -61,7 +61,6 @@ const controlDeleteTask = function (taskID) {
 
 const controlCompleteTask = function (taskId, completeStatus) {
   debugger;
-
   const queryObj = {
     endpoint: API.APIEnum.TASK.PATCH(taskId),
     token: model.token.value,
@@ -76,22 +75,22 @@ const controlCompleteTask = function (taskId, completeStatus) {
   API.queryAPI(queryObj)
 
   //mark task as complete
-  const updatedTodo = model.completeTask(taskId);
+  const updatedTodo = model.completeTask(taskId, completeStatus);
   //update todo and task view
   controlUpdateTodoAndTaskView(updatedTodo);
 };
 
-const controlEditTask = function (taskID, taskData) {
-  //update the taskvalue in the model
-  const { currentTodo: updatedTask, completedTask } = model.editTask(
-    taskID,
-    taskData
-  );
-  if (completedTask) alert(CANNOT_UPDATE_COMPLETED_TASK);
+// const controlEditTask = function (taskID, taskData) {
+//   //update the taskvalue in the model
+//   const { currentTodo: updatedTask, completedTask } = model.editTask(
+//     taskID,
+//     taskData
+//   );
+//   if (completedTask) alert(CANNOT_UPDATE_COMPLETED_TASK);
 
-  //update todo and task view
-  controlUpdateTodoAndTaskView(updatedTask);
-};
+//   //update todo and task view
+//   controlUpdateTodoAndTaskView(updatedTask);
+// };
 
 const controlSyncTaskUIState = function (currentTask = undefined) {
 
@@ -104,7 +103,7 @@ const controlAddTaskEventHandlers = function () {
   taskAddRenderView.addDelegateTaskActions(
     controlDeleteTask,
     controlCompleteTask,
-    controlEditTask,
+    // controlEditTask,
     controlSyncTaskUIState
   );
 
@@ -411,6 +410,7 @@ const controlAddTaskMobileView = function (todoOrTask) {
 
 const controlAddTask = function (task) {
   let currentTodo;
+  debugger;
 
   //add task handlers if they dont exist yet
   const taskActionsActive = taskAddRenderView.getTaskActionState();

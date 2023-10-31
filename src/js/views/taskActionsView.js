@@ -21,7 +21,7 @@ class TaskActionsView {
     this._dragHandler = dragHandler;
   }
 
-  actionHandler(action, task, completeStatus) {
+  actionHandler(action, task) {
     //get task id
     const taskID = task.closest(this._taskParentElement).dataset.taskid;
 
@@ -32,8 +32,7 @@ class TaskActionsView {
     }
     if (action === "complete") {
       this._dragElement.setObserver(false);
-      console.log(this._completeHandler)
-      this._completeHandler(+taskID, completeStatus);
+      this._completeHandler(+taskID, task.checked);
     }
     if (action === "drag") {
       //if observer is active other actions cant run
