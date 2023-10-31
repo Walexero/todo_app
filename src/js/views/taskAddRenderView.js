@@ -21,7 +21,7 @@ class TaskAddRenderView {
   _taskActions = taskActionsView;
   _taskEditHandler;
   _editingTask = { editing: false };
-  _inputRendered = false;
+  // _inputRendered = false;
   _currentTodo;
 
   addHandlerTaskAdd(handler, handlerCreateNewTask) {
@@ -104,9 +104,10 @@ class TaskAddRenderView {
           if (
             e.target === cls._addTaskFormbtn ||
             e.target.parentElement === cls._addTaskFormbtn
-          ) {
-            if (!cls._inputRendered) cls._renderInput();
-          }
+          ) cls._renderInput()
+          // {
+          //   if (!cls._inputRendered) cls._renderInput();
+          // }
 
           //refactor check into a function
           //drag event
@@ -126,10 +127,14 @@ class TaskAddRenderView {
             const taskToDelete = e.target.closest(".delete-component-btn");
             cls._taskActions.actionHandler("delete", taskToDelete);
           }
-
           //complete event
-          if (e.target.classList.contains("td-complete"))
-            cls._taskActions.actionHandler("complete", e.target);
+          if (e.target.classList.contains("td-complete")) {
+            debugger;
+
+            cls._taskActions.actionHandler("complete", e.target,
+              e.target.checked)
+          }
+
 
           //edit event
           if (
@@ -217,13 +222,13 @@ class TaskAddRenderView {
     if (todo && todo.tasks) {
       markup = todo.tasks
         .map((task) => {
-          if (!task.completed) return this._generateTaskMarkup(task);
+          if (!task.completed) return this._generateMarkup(task);
         })
         .join("");
 
       completedMarkup = todo.tasks
         .map((task) => {
-          if (task.completed) return this._generateTaskMarkup(task);
+          if (task.completed) return this._generateMarkup(task);
         })
         .join("");
     }
@@ -233,7 +238,7 @@ class TaskAddRenderView {
   }
 
   _renderInput() {
-    const inputEl = ComponentMethods.HTMLToEl(this._generateInputMarkup())
+    const inputEl = ComponentMethods.HTMLToEl(this._generateMarkup())
     this._renderComponentContainerContent.insertAdjacentElement(
       "afterbegin",
       inputEl
@@ -243,7 +248,7 @@ class TaskAddRenderView {
     this._handlerCreateNewTask(this._currentTodo, true, inputEl)
 
     //TODO: reemove inputRendered
-    this._inputRendered = true;
+    // this._inputRendered = true;
 
   }
 
@@ -252,7 +257,7 @@ class TaskAddRenderView {
     document.querySelector(".input-container").remove();
 
     //add task
-    const markup = this._generateTaskMarkup(task);
+    const markup = this._generateMarkup(task);
     this._renderComponentContainerContent.insertAdjacentHTML(
       "afterbegin",
       markup
@@ -267,21 +272,7 @@ class TaskAddRenderView {
     this._getTaskInfo(e, formData)
 
     //Allow input to add task to be rendered again
-    if (this._inputRendered) this._inputRendered = false;
-
-    //Guard clause for empty form submission
-    // if (!Object.values(formData).at(0) && !Object.values(formData).at(1))
-    //   return;
-
-    //Guard clause against inputs without spaces
-    // if (
-    //   Object.values(formData).at(1) &&
-    //   !Object.values(formData).at(1).includes(" ") &&
-    //   Object.values(formData).at(1).length > MAX_LENGTH_INPUT_TEXT_WITHOUT_SPACE
-    // )
-    //   return alert(
-    //     "Task values must include spaces. A maximum of 25 character is allowed without spaces"
-    //   );
+    // if (this._inputRendered) this._inputRendered = false;
 
     //check if a current task is being editted to determine type of form submission
     if (this._editingTask.editing) {
@@ -291,17 +282,6 @@ class TaskAddRenderView {
     } else this._handler(formData);
 
     //return data to controller
-  }
-
-  getTaskBody(currentTask, formData) {
-    //create task obj and task id from current task length + 1
-    const currentTaskLengthOrID = currentTask?.tasks?.length ?? 1;
-    const taskObj = createObjectFromForm(
-      currentTask.id + (currentTaskLengthOrID + 1),
-      formData
-    );
-
-    return taskObj;
   }
 
   _getTaskInfo(e, formData) {
@@ -319,48 +299,24 @@ class TaskAddRenderView {
     formData.todoTitle = formData["form-title-td"]
   }
 
-  _inputMarkup(value = undefined) {
-    // return `
-    //   <textarea name="form-task-td" class="form-task-td" cols="25" rows="3" wrap="soft">${value ?? ""
-    //   }</textarea>
-    // `;
-    return this._contentEditableInputMarkup(value)
-  }
+  _inputMarkup(task = undefined) {
+    function taskContent(task) {
+      if (task?.task && task.completed) return `<s>${task.task}</s>`
+      if (task?.task && !task.completed) return task.task
 
-  _contentEditableInputMarkup(value) {
+      return ""
+    }
+
     return `
       <div contenteditable="true" class="form-task-td">
-        ${value ?? ""}
+        ${taskContent(task)}
       </div>
     `
   }
 
-  _generateInputMarkup() {
+  _generateMarkup(task = undefined) {
     return `
-    <div class="td-component-content input-container">
-        <div class="td-component-actions">
-          <div class="draggable-component-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="1em"
-              viewBox="0 0 320 512"
-              class="drag-icon"
-            >
-              <path
-                d="M40 352l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zm192 0l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 320c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 192l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 160c-22.1 0-40-17.9-40-40L0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40z"
-              />
-            </svg>
-          </div>
-          <input type="checkbox" id="td-complete" checked />
-        </div>
-        ${this._inputMarkup()}
-    </div>
-    `;
-  }
-
-  _generateTaskMarkup(task) {
-    return `
-    <div class="td-component-content">
+    <div class="td-component-content" data-taskid="${task?.taskId ?? ''}">
       <div class="td-component-actions">
         <div class="draggable-component-btn">
           <svg
@@ -391,15 +347,56 @@ class TaskAddRenderView {
               />
             </svg>
           </div>
-          <input type="checkbox" id="td-complete" class="td-complete" ${task.completed ? "checked" : ""}/>
+          <input type="checkbox" id="td-complete" class="td-complete" ${task?.completed ? "checked" : ""}/>
         </div>
       </div>
-      <div class="td-label-container" data-id="${task.taskID}">
-        <label class="td-label" for="td-complete">${task.task}</label>
-      </div>
+      ${this._inputMarkup(task)}
     </div>
     `;
   }
+
+  // _generateTaskMarkup(task) {
+  //   return `
+  //   <div class="td-component-content">
+  //     <div class="td-component-actions">
+  //       <div class="draggable-component-btn">
+  //         <svg
+  //           xmlns="http://www.w3.org/2000/svg"
+  //           height="1em"
+  //           viewBox="0 0 320 512"
+  //           class="drag-icon"
+  //         >
+  //           <path
+  //             class="drag-icon-path"
+  //             d="M40 352l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zm192 0l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 320c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 192l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 160c-22.1 0-40-17.9-40-40L0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40z"
+  //           />
+  //         </svg>
+  //       </div>
+  //       <div class="td-component-actions-container">
+
+  //         <div class="delete-component-btn">
+  //           <svg
+  //             xmlns="http://www.w3.org/2000/svg"
+  //             height="1em"
+  //             viewBox="0 0 384 512"
+  //             class="delete-icon"
+  //             preserveAspectRatio="xMinYMin meet"
+  //           >
+  //             <path
+  //               class="delete-icon-path"
+  //               d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
+  //             />
+  //           </svg>
+  //         </div>
+  //         <input type="checkbox" id="td-complete" class="td-complete" ${task.completed ? "checked" : ""}/>
+  //       </div>
+  //     </div>
+  //     <div class="td-label-container" data-id="${task.taskID}">
+  //       <label class="td-label" for="td-complete">${task.task}</label>
+  //     </div>
+  //   </div>
+  //   `;
+  // }
 }
 
 export const importTaskAddRenderView = (() => new TaskAddRenderView());

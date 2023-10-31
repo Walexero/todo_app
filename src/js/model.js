@@ -34,7 +34,7 @@ const getTaskIndexAndCurrentTodo = (taskID) => {
   const currentTodo = getCurrentTodo();
 
   const taskIndex = currentTodo.tasks.findIndex(
-    (task) => task.taskID === Number(taskID)
+    (task) => task.taskId === Number(taskID)
   );
 
   return { currentTodo, taskIndex };
@@ -42,7 +42,7 @@ const getTaskIndexAndCurrentTodo = (taskID) => {
 
 const getTodoIndexAndTodo = (todoID) => {
   const currentTodo = getCurrentTodo(todoID);
-  const todoIndex = state.todo.findIndex((todo) => todo.id === currentTodo.id);
+  const todoIndex = state.todo.findIndex((todo) => todo.todoId === currentTodo.todoId);
   return { currentTodo, todoIndex };
 };
 
@@ -127,26 +127,19 @@ export const deleteTask = function (taskID) {
   return currentTodo;
 };
 
-export const completeTask = function (taskID) {
-  const { currentTodo, taskIndex } = getTaskIndexAndCurrentTodo(taskID);
+export const completeTask = function (taskId, completedStatus, typeObj, type) {
+  debugger
+  let currentTask;
+  if (type) currentTask = formatAPIResponseBody(typeObj, type)
+
+  const { currentTodo, taskIndex } = getTaskIndexAndCurrentTodo(taskId);
 
   //uncheck complete
   if (currentTodo.tasks[taskIndex].completed) {
-    currentTodo.tasks[taskIndex].completed = false;
-    currentTodo.tasks[taskIndex].task = currentTodo.tasks[taskIndex].task
-      .replace("<s>", "")
-      .replace("</s>", "");
+    currentTodo.tasks[taskIndex].completed = completedStatus;
 
     //update lastAdded time for the todo
-    currentTodo.lastAdded = Number(Date.now());
-  } else {
-    //complete task by strikethrough
-    currentTodo.tasks[
-      taskIndex
-    ].task = `<s> ${currentTodo.tasks[taskIndex].task} </s>`;
-    currentTodo.tasks[taskIndex].completed = true;
-    //update lastAdded time for the todo
-    currentTodo.lastAdded = Number(Date.now());
+    currentTodo.lastAdded = currentTask.lastAdded ?? currentTodo.lastAdded;
   }
 
   //persist data

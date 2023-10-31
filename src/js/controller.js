@@ -59,9 +59,24 @@ const controlDeleteTask = function (taskID) {
   controlUpdateTodoAndTaskView(updatedTodo);
 };
 
-const controlCompleteTask = function (taskID) {
+const controlCompleteTask = function (taskId, completeStatus) {
+  debugger;
+
+  const queryObj = {
+    endpoint: API.APIEnum.TASK.PATCH(taskId),
+    token: model.token.value,
+    sec: null,
+    actionType: "updateTask",
+    queryData: { completed: completeStatus },
+    spinner: false,
+    alert: false,
+    type: "PATCH",
+    callBack: model.completeTask.bind(null, taskId, completeStatus)
+  }
+  API.queryAPI(queryObj)
+
   //mark task as complete
-  const updatedTodo = model.completeTask(taskID);
+  const updatedTodo = model.completeTask(taskId);
   //update todo and task view
   controlUpdateTodoAndTaskView(updatedTodo);
 };
@@ -326,15 +341,6 @@ const controlUpdateTaskOfExistingTodo = function (task) {
 
   //update the model before api response
   return model.APIAddTodoOrTask(task)
-
-
-
-  // const createTask = API.
-  // const currentTask = model.getCurrentTodo();
-
-  // const todo = taskAddRenderView.getTaskBody(currentTask, task);
-
-  // return model.addTodoOrTask(currentTask.id, todo, task);
 };
 
 const controlCreateNewTodo = function (task, api = false, currentTodoContainer = undefined) {
