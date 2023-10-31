@@ -347,7 +347,7 @@ class TaskAddRenderView {
               />
             </svg>
           </div>
-          <input type="checkbox" class="td-complete" ${task?.completed ? "checked" : ""} />
+          <input type="checkbox" class="td-complete" checked />
         </div>
       </div>
       ${this._inputMarkup(task)}
