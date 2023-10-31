@@ -301,7 +301,6 @@ const controlUpdateTaskOfExistingTodo = function (task) {
   //check if todo Title has changed and update
   if (currentTodo.title !== task.todoTitle) controlUpdateTodoTitle(task.todoId, task.todoTitle)
 
-  debugger;
   //check if task value has changed
   const currentTodoTask = currentTodo.tasks.find(taskInstance => taskInstance.taskId === task.taskId)
   const currentTodoTaskHasChanged = currentTodoTask.task.trim() !== task.task.trim()
