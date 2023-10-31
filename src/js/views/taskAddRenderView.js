@@ -89,10 +89,10 @@ class TaskAddRenderView {
   _handleFormEvents() {
     const cls = this;
     //listen for form submit and prevent event
-    this._form.addEventListener("submit", function (e) {
-      // e.preventDefault();
-      return;
-    });
+    // this._form.addEventListener("submit", function (e) {
+    //   // e.preventDefault();
+    //   return;
+    // });
 
     //listen for event delegation events
     const events = ["click", "keydown", "mousedown"];
