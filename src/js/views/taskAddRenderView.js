@@ -307,6 +307,7 @@ class TaskAddRenderView {
   _getTaskInfo(e, formData) {
     //for contenteditable
     const taskInput = e.target.closest(".form-task-td")
+    const taskId = taskInput.closest(".td-component-content")
     const taskData = taskInput.textContent.trim();
     const taskCompleted = taskInput.previousElementSibling.querySelector("#td-complete").checked
     const todoId = e.target.closest(".td-render--content").dataset.id;
@@ -314,7 +315,7 @@ class TaskAddRenderView {
     formData.task = taskData
     formData.todoId = +todoId
     formData.completed = taskCompleted
-    formData.taskId = +taskInput.dataset.todoid
+    formData.taskId = +taskId.dataset.taskid
     formData.todoTitle = formData["form-title-td"]
   }
 

@@ -296,15 +296,15 @@ const controlUpdateTodoTitle = function (todoId, title) {
 
 const controlUpdateTaskOfExistingTodo = function (task) {
   //adds a task to the an existing todo and returns the todo
-  debugger;
   const currentTodo = model.getCurrentTodo(task.todoId);
 
   //check if todo Title has changed and update
   if (currentTodo.title !== task.todoTitle) controlUpdateTodoTitle(task.todoId, task.todoTitle)
 
+  debugger;
   //check if task value has changed
   const currentTodoTask = currentTodo.tasks.find(taskInstance => taskInstance.taskId === task.taskId)
-  const currentTodoTaskHasChanged = currentTodoTask.task.trim() === task.task.trim()
+  const currentTodoTaskHasChanged = currentTodoTask.task.trim() !== task.task.trim()
 
 
   if (currentTodoTaskHasChanged) {
@@ -314,7 +314,7 @@ const controlUpdateTaskOfExistingTodo = function (task) {
       token: model.token.value,
       sec: null,
       actionType: "updateTask",
-      queryData: { task: task, completed: task.completed },
+      queryData: { task: task.task, completed: task.completed },
       callBack: model.APIAddTodoOrTask,
       spinner: false,
       alert: false,
@@ -325,7 +325,7 @@ const controlUpdateTaskOfExistingTodo = function (task) {
   }
 
   //update the model before api response
-  return model.APIAddTodoOrTask(task, "task")
+  return model.APIAddTodoOrTask(task)
 
 
 

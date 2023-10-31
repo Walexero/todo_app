@@ -49,24 +49,36 @@ const getTodoIndexAndTodo = (todoID) => {
 export const APIAddTodoOrTask = function (typeObj, type) {
   let currentTodo;
   debugger;
-  typeObj = formatAPIResponseBody(typeObj, type)
+  if (type)
+    typeObj = formatAPIResponseBody(typeObj, type)
 
   if (state.currentTodo) {
     currentTodo = getCurrentTodo(typeObj.todoId);
 
     const task = { task: typeObj.task, taskId: typeObj.taskId, completed: typeObj.completed }
+    const taskBeforeUpdate = currentTodo.tasks.find(task => task.taskId === typeObj.taskId)
 
     //only push to tasks if there's a task added
-    if (typeObj.task.length > -1) currentTodo.tasks.push(task);
+    if (type) { //
+
+      if (!taskBeforeUpdate && typeObj.task.length > -1)
+        currentTodo.tasks.push(task);
+    }
+
+    if (taskBeforeUpdate) {
+      //replace the task with value from either api or UI
+      taskBeforeUpdate.task = typeObj.task
+      taskBeforeUpdate.completed = typeObj.completed
+    }
 
     //update lastAdded time for the todo
-    currentTodo.lastAdded = typeObj.todoLastAdded;
+    currentTodo.lastAdded = typeObj.todoLastAdded ?? currentTodo.lastAdded;
   } else {
     state.todo.push(typeObj)
     state.currentTodo = typeObj.todoId
     currentTodo = getCurrentTodo(state.currentTodo);
   }
-
+  debugger;
   //persist data
   persistTodo();
   console.log(state.todo)
