@@ -32,6 +32,7 @@ class TaskActionsView {
     }
     if (action === "complete") {
       this._dragElement.setObserver(false);
+      console.log(this._completeHandler)
       this._completeHandler(+taskID, completeStatus);
     }
     if (action === "drag") {

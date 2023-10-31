@@ -135,11 +135,11 @@ export const completeTask = function (taskId, completedStatus, typeObj, type) {
   const { currentTodo, taskIndex } = getTaskIndexAndCurrentTodo(taskId);
 
   //uncheck complete
-  if (currentTodo.tasks[taskIndex].completed) {
+  if (currentTodo.tasks[taskIndex]) {
     currentTodo.tasks[taskIndex].completed = completedStatus;
 
     //update lastAdded time for the todo
-    currentTodo.lastAdded = currentTask.lastAdded ?? currentTodo.lastAdded;
+    currentTodo.lastAdded = currentTask?.lastAdded ?? currentTodo.lastAdded;
   }
 
   //persist data

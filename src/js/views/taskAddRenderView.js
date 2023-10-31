@@ -90,7 +90,7 @@ class TaskAddRenderView {
     const cls = this;
     //listen for form submit and prevent event
     this._form.addEventListener("submit", function (e) {
-      e.preventDefault();
+      // e.preventDefault();
       return;
     });
 
@@ -289,7 +289,7 @@ class TaskAddRenderView {
     const taskInput = e.target.closest(".form-task-td")
     const taskId = taskInput.closest(".td-component-content")
     const taskData = taskInput.textContent.trim();
-    const taskCompleted = taskInput.previousElementSibling.querySelector("#td-complete").checked
+    const taskCompleted = taskInput.previousElementSibling.querySelector(".td-complete").checked
     const todoId = e.target.closest(".td-render--content").dataset.id;
 
     formData.task = taskData
@@ -347,7 +347,7 @@ class TaskAddRenderView {
               />
             </svg>
           </div>
-          <input type="checkbox" id="td-complete" class="td-complete" ${task?.completed ? "checked" : ""}/>
+          <input type="checkbox" class="td-complete" ${task?.completed ? "checked" : ""} />
         </div>
       </div>
       ${this._inputMarkup(task)}
