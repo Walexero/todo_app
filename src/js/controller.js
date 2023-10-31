@@ -43,6 +43,7 @@ const controlLogin = function (loginComponentCallBack, token) {
 }
 
 const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
+  debugger;
   //update UI
   if (currentTodo) taskAddRenderView.render(currentTodo);
   if (!currentTodo) taskAddRenderView.clearTaskContainer(); //clears the task view container
@@ -403,7 +404,6 @@ const controlAddTaskMobileView = function (todoOrTask) {
 };
 
 const controlAddTask = function (task) {
-  debugger;
   let currentTodo;
 
   //add task handlers if they dont exist yet

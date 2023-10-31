@@ -48,7 +48,7 @@ const getTodoIndexAndTodo = (todoID) => {
 
 export const APIAddTodoOrTask = function (typeObj, type) {
   let currentTodo;
-  debugger;
+
   if (type)
     typeObj = formatAPIResponseBody(typeObj, type)
 
@@ -78,7 +78,6 @@ export const APIAddTodoOrTask = function (typeObj, type) {
     state.currentTodo = typeObj.todoId
     currentTodo = getCurrentTodo(state.currentTodo);
   }
-  debugger;
   //persist data
   persistTodo();
   console.log(state.todo)
