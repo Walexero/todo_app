@@ -13,7 +13,7 @@ class TaskAddRenderView {
   _renderCompletedContainer = document.querySelector(
     ".completed-td-component-content"
   );
-  _labelContainerSelector = ".td-label-container";
+  _taskContainerSelector = ".td-component-content";
   _taskActionsActive = false;
   _taskActions = taskActionsView;
   _taskEditHandler;
@@ -50,12 +50,12 @@ class TaskAddRenderView {
   }
 
   getUIState() {
-    const labelContainers = document.querySelectorAll(
-      this._labelContainerSelector
+    const taskContainers = document.querySelectorAll(
+      this._taskContainerSelector
     );
 
-    const contentEls = Array.from(labelContainers);
-    const updatedIndex = contentEls.map((el, i) => [el.dataset.id, i]);
+    const contentEls = Array.from(taskContainers);
+    const updatedIndex = contentEls.map((el, i) => [el.dataset.taskid, i]);
     return updatedIndex;
   }
 

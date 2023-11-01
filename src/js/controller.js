@@ -79,7 +79,6 @@ const controlCompleteTask = function (taskId, completeStatus) {
 };
 
 const controlSyncTaskUIState = function (currentTask = undefined) {
-  debugger;
   //get content drag position
   const updatedTodo = controlUpdateTaskUIState(currentTask);
   controlUpdateTodoAndTaskView(updatedTodo);
@@ -378,7 +377,6 @@ const controlCreateNewTask = function (todoId, api = false, currentTaskInput = u
 }
 
 const controlUpdateTaskUIState = function (currentTask = undefined) {
-  debugger;
   const taskUIState = taskAddRenderView.getUIState();
 
   const updatedTodo = model.updateTaskIndex(taskUIState, currentTask);

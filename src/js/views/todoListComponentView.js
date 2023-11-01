@@ -381,21 +381,25 @@ class TodoListComponentView {
   }
 
   _generateComponentContentMarkup(task) {
+    console.log("the task", task)
     return `
       <div class="component-content">
         <input type="checkbox" id="td-complete" />
 
-        <label for="td-complete">${task.task.startsWith("<s>")
-        ? `<s>${task.task
-          .replace("<s>", "")
-          .replace("</s>", "")
-          .slice(0, 15)
-          .padEnd(18, ".")}</s>`
-        : task.task.slice(0, 15).padEnd(18, ".")
-      }</label>
+        <label for="td-complete">${task?.completed ? `<s>${task.task}</s>`.slice(0, 15)
+        .padEnd(18, ".") : task?.task ? task.task.slice(0, 15).padEnd(18, ".") : ""} 
+      </label>
       </div>
     `;
   }
+  //   ${task.task.startsWith("<s>")
+  //   ? `<s>${task.task
+  //     .replace("<s>", "")
+  //     .replace("</s>", "")
+  //     .slice(0, 15)
+  //     .padEnd(18, ".")}</s>`
+  //   : 
+  // }
 }
 
 export const importTodoListComponentView = (() => new TodoListComponentView());

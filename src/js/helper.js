@@ -18,9 +18,9 @@ export const createObjectFromForm = function (id, formData, add = false) {
 
 export const checkValidator = function (arr, valueArr, arrFrom) {
   if (arrFrom === "tasks")
-    return arr.every((task, i) => task.taskID === Number(valueArr[i].at(0)));
+    return arr.every((task, i) => task.taskId === Number(valueArr[i].at(0)));
   if (arrFrom === "todos")
-    return arr.every((task, i) => task.id === Number(valueArr[i].at(0)));
+    return arr.every((todo, i) => todo.todoId === Number(valueArr[i].at(0)));
 };
 
 export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
@@ -30,13 +30,13 @@ export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
 
   if (arrFrom === "tasks")
     valueArr.forEach((ind, i) => {
-      const toPush = arr.find((task) => task.taskID === Number(ind.at(0)));
+      const toPush = arr.find((task) => task.taskId === Number(ind.at(0)));
       cloneCurrentTask.push(toPush);
     });
 
   if (arrFrom === "todos")
     valueArr.forEach((ind, i) => {
-      const toPush = arr.find((task) => task.id === Number(ind.at(0)));
+      const toPush = arr.find((todo) => todo.todoId === Number(ind.at(0)));
       cloneCurrentTask.push(toPush);
     });
   console.log("the cloned task", cloneCurrentTask);
