@@ -14,25 +14,21 @@ class TaskAddRenderView {
     ".completed-td-component-content"
   );
   _labelContainerSelector = ".td-label-container";
-  _form = document.querySelector("#addTaskForm");
   _taskActionsActive = false;
   _taskActions = taskActionsView;
   _taskEditHandler;
-  _editingTask = { editing: false };
+  _handlerUpdateTodoTitle
   _currentTodo;
 
-  addHandlerTaskAdd(handler, handlerCreateNewTask) {
+  addHandlerTaskAdd(handler, handlerCreateNewTask, handlerUpdateTodoTitle) {
     const cls = this;
     this._handler = handler;
+    this._handlerUpdateTodoTitle = handlerUpdateTodoTitle
     this._handlerCreateNewTask = handlerCreateNewTask
     this._handleFormEvents();
   }
 
   addDelegateTaskActions(delHandler, compHandler, dragHandler) {
-    // editHandler,
-    //edit handler only works from render view
-    // this._taskEditHandler = editHandler;
-
     //All nudge related actions executed from taskActionView
     this._taskActions.addHandlerTaskActions(
       delHandler,
@@ -86,11 +82,6 @@ class TaskAddRenderView {
 
   _handleFormEvents() {
     const cls = this;
-    //listen for form submit and prevent event
-    this._form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      return;
-    });
 
     //listen for event delegation events
     const events = ["click", "keydown", "mousedown", "change"];
@@ -103,9 +94,6 @@ class TaskAddRenderView {
             e.target === cls._addTaskFormbtn ||
             e.target.parentElement === cls._addTaskFormbtn
           ) cls._renderInput()
-          // {
-          //   if (!cls._inputRendered) cls._renderInput();
-          // }
 
           //refactor check into a function
           //drag event
@@ -130,45 +118,20 @@ class TaskAddRenderView {
             cls._taskActions.actionHandler("complete", e.target)
           }
 
-
-          //edit event
-          if (
-            e.target.classList.contains("td-label-container") ||
-            e.target.classList.contains("td-label")
-          ) {
-            //if there's current edit prevent another edit
-            if (cls._editingTask.editing) return;
-            //if no current edit allow edit
-            else cls._handleTaskEdit(e);
-          }
-
           //Submit Event
-          if (e.key === "Enter") cls._handlerAddTask(e);
+          if (e.key === "Enter") {
+            if (e.target.closest(".td-render-title")) cls._handleTitleUpdate(e)
+            else cls._handlerAddTask(e);
+          }
         });
     });
   }
 
-  _handleTaskEdit(e) {
-    //get task container to a add edit classList to
-    const taskToEditContainer = e.target.closest(".td-component-content");
-    taskToEditContainer.classList.add("input-container");
-
-    //get the container containing the task to edit
-    const taskToEdit = e.target.closest(".td-label-container");
-
-    //get the content from the task to edit and clear it
-    const taskToEditLabelContainerContent = taskToEdit.textContent.trim();
-    taskToEdit.innerHTML = "";
-
-    //render input and its previous content on task to edit container
-    const inputFormAndValue = this._inputMarkup(
-      taskToEditLabelContainerContent
-    );
-    taskToEdit.insertAdjacentHTML("afterbegin", inputFormAndValue);
-
-    //keep state of the current task being editted
-    this._editingTask.editing = true;
-    this._editingTask.id = taskToEdit.dataset.id;
+  _handleTitleUpdate(e) {
+    e.preventDefault();
+    const todoId = e.target.closest(".td-render--content").dataset.id
+    const todoTitle = e.target.textContent.trim()
+    this._handlerUpdateTodoTitle(+todoId, todoTitle)
   }
 
   _updateUI(markup = undefined, completedMarkup = undefined, title) {
@@ -261,34 +224,31 @@ class TaskAddRenderView {
 
   _handlerAddTask(e) {
     debugger;
-    const formData = Object.fromEntries([...new FormData(this._form)]);
-
+    const todoUIData = {}
     //adds the task related info from the DOM
-    this._getTaskInfo(e, formData)
+    this._getTaskInfo(e, todoUIData)
 
-    //check if a current task is being editted to determine type of form submission
-    // if (this._editingTask.editing) {
-    //   this._taskEditHandler(this._editingTask.id, formData);
-    //   this._editingTask = { editing: false };
-    // } else 
-    this._handler(formData);
+    this._handler(todoUIData);
 
     //return data to controller
   }
 
-  _getTaskInfo(e, formData) {
+  _getTaskInfo(e, todoUIData) {
+    debugger;
     //for contenteditable
+    const todoTitle = e.target.closest(".td-render-title") ?? e.target.closest(".td-render-component-container").previousElementSibling.querySelector(".td-render-title")
+    console.log("the todo title", todoTitle)
     const taskInput = e.target.closest(".form-task-td")
     const taskId = taskInput.closest(".td-component-content")
     const taskData = taskInput.textContent.trim();
     const taskCompleted = taskInput.previousElementSibling.querySelector(".td-complete").checked
     const todoId = e.target.closest(".td-render--content").dataset.id;
 
-    formData.task = taskData
-    formData.todoId = +todoId
-    formData.completed = taskCompleted
-    formData.taskId = +taskId.dataset.taskid
-    formData.todoTitle = formData["form-title-td"]
+    todoUIData.task = taskData
+    todoUIData.todoId = +todoId
+    todoUIData.completed = taskCompleted
+    todoUIData.taskId = +taskId.dataset.taskid
+    todoUIData.todoTitle = todoTitle.textContent.trim()
   }
 
   _inputMarkup(task = undefined) {

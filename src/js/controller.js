@@ -80,18 +80,6 @@ const controlCompleteTask = function (taskId, completeStatus) {
   controlUpdateTodoAndTaskView(updatedTodo);
 };
 
-// const controlEditTask = function (taskID, taskData) {
-//   //update the taskvalue in the model
-//   const { currentTodo: updatedTask, completedTask } = model.editTask(
-//     taskID,
-//     taskData
-//   );
-//   if (completedTask) alert(CANNOT_UPDATE_COMPLETED_TASK);
-
-//   //update todo and task view
-//   controlUpdateTodoAndTaskView(updatedTask);
-// };
-
 const controlSyncTaskUIState = function (currentTask = undefined) {
 
   //get content drag position
@@ -103,8 +91,8 @@ const controlAddTaskEventHandlers = function () {
   taskAddRenderView.addDelegateTaskActions(
     controlDeleteTask,
     controlCompleteTask,
-    // controlEditTask,
-    controlSyncTaskUIState
+    controlSyncTaskUIState,
+    controlUpdateTodoTitle
   );
 
   //notify class that task handlers are added
@@ -450,7 +438,7 @@ const init = function () {
     taskAddRenderView = importTaskAddRenderView()
 
     todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
-    taskAddRenderView.addHandlerTaskAdd(controlAddTask, controlCreateNewTask);
+    taskAddRenderView.addHandlerTaskAdd(controlAddTask, controlCreateNewTask, controlUpdateTodoTitle);
   }
 
 };

@@ -139,6 +139,8 @@ body {
 .td-render-component-title {
   padding-top: 2rem;
   padding-left: 2rem;
+  width: 55rem;
+  word-break: break-word;
 }
 
 .td-component-content {
@@ -199,6 +201,22 @@ body {
 .td-render-title:focus,
 .form-task-td:focus {
   outline: none;
+}
+
+.td-render-title[contenteditable="true"] {
+  display: inline-block;
+  background-color: inherit;
+  caret-color: #bec1c6;
+}
+
+.td-render-title[contenteditable="true"] > div {
+  padding: 0;
+} 
+
+.td-render-title:empty::before {
+  content: attr(placeholder) " ";
+  -webkit-text-fill-color: var(--color-primary--bg);
+  z-index: 200;
 }
 
 .form-task-td {
