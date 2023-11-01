@@ -204,10 +204,6 @@ class TaskAddRenderView {
 
     //calls controlCreateNewTask
     this._handlerCreateNewTask(this._currentTodo, true, inputEl)
-
-    //TODO: reemove inputRendered
-    // this._inputRendered = true;
-
   }
 
   _renderAddedTask(task) {
@@ -223,25 +219,21 @@ class TaskAddRenderView {
   }
 
   _handlerAddTask(e) {
-    debugger;
     const todoUIData = {}
     //adds the task related info from the DOM
     this._getTaskInfo(e, todoUIData)
 
+    //return data to controller
     this._handler(todoUIData);
 
-    //return data to controller
   }
 
   _getTaskInfo(e, todoUIData) {
-    debugger;
-    //for contenteditable
     const todoTitle = e.target.closest(".td-render-title") ?? e.target.closest(".td-render-component-container").previousElementSibling.querySelector(".td-render-title")
-    console.log("the todo title", todoTitle)
     const taskInput = e.target.closest(".form-task-td")
     const taskId = taskInput.closest(".td-component-content")
     const taskData = taskInput.textContent.trim();
-    const taskCompleted = taskInput.previousElementSibling.querySelector(".td-complete").checked
+    const taskCompleted = taskInput?.previousElementSibling?.querySelector(".td-complete")?.checked ?? false
     const todoId = e.target.closest(".td-render--content").dataset.id;
 
     todoUIData.task = taskData
@@ -264,6 +256,13 @@ class TaskAddRenderView {
         ${taskContent(task)}
       </div>
     `
+  }
+
+  _generateCheckbox(task = undefined) {
+    if (task) return `
+      <input type="checkbox" class="td-complete" ${task?.completed ? "checked" : ""} />
+    `
+    return ""
   }
 
   _generateMarkup(task = undefined) {
@@ -299,7 +298,7 @@ class TaskAddRenderView {
               />
             </svg>
           </div>
-          <input type="checkbox" class="td-complete" ${task?.completed ? "checked" : ""} />
+          ${this._generateCheckbox(task)}
         </div>
       </div>
       ${this._inputMarkup(task)}
