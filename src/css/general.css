@@ -74,7 +74,7 @@ input[type="checkbox"] {
 
 .placeholder {
   color: var(--color-primary--bg);
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   font-weight: 900;
 }
 
@@ -99,6 +99,7 @@ input[type="checkbox"] {
 
 /* Draggable component */
 .draggable-component-btn {
+  cursor: grab;
   transform: translateY(10%);
 }
 
@@ -113,6 +114,7 @@ input[type="checkbox"] {
 
 /* Delete component */
 .delete-component-btn {
+  cursor: pointer;
   transform: translateY(45%);
 }
 

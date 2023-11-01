@@ -26,11 +26,10 @@ class DragComponentRenderView extends DragComponentView {
   }
 
   _activateDragEvent(dragHandler) {
-
     this._parentEl = this._parentElement;
     this.setObserverHandler(dragHandler);
     this._addNudgeEvent();
   }
 }
 
-export default new DragComponentRenderView();
+export const importDragComponentRenderView = () => new DragComponentRenderView();

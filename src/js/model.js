@@ -146,30 +146,6 @@ export const completeTask = function (taskId, completedStatus, typeObj, type) {
   return currentTodo;
 };
 
-// export const editTask = function (taskID, taskData) {
-//   let completedTask;
-//   const { currentTodo, taskIndex } = getTaskIndexAndCurrentTodo(taskID);
-
-//   //format gotten data to readable form
-//   taskData = cleanFormData(taskData);
-
-//   // run task and value change only if the task is not completed
-//   completedTask = currentTodo.tasks[taskIndex].completed;
-//   if (!completedTask) {
-//     //determine whether to listen for title change?
-//     currentTodo.tasks[taskIndex].title = taskData.title;
-//     currentTodo.tasks[taskIndex].task = taskData.task;
-//   }
-
-//   //update lastAdded time for the todo
-//   currentTodo.lastAdded = Number(Date.now());
-
-//   //persist data
-//   persistTodo();
-
-//   return { currentTodo, completedTask };
-// };
-
 export const updateTaskIndex = function (valueArr, curTodo) {
   const currentTodo = curTodo ? curTodo : getCurrentTodo();
 

@@ -1,4 +1,4 @@
-import dragComponentRenderView from "./dragComponentRenderView.js";
+import { importDragComponentRenderView } from "./dragComponentRenderView.js";
 
 // const taskId = e.target.closest(".td-component-content").dataset.taskid
 class TaskActionsView {
@@ -6,7 +6,8 @@ class TaskActionsView {
   _deleteHandler;
   _completeHandler;
   _dragHandler;
-  _dragElement = dragComponentRenderView;
+  _dragElementActive = false;
+  _dragElement;
   _observerActive = false
 
   setObserverActiveState(value) {
@@ -22,6 +23,10 @@ class TaskActionsView {
   }
 
   actionHandler(action, task) {
+    if (!this._dragElementActive) {
+      this._dragElement = importDragComponentRenderView();
+      this._dragElementActive = true;
+    }
     //get task id
     const taskID = task.closest(this._taskParentElement).dataset.taskid;
 

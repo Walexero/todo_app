@@ -43,7 +43,6 @@ const controlLogin = function (loginComponentCallBack, token) {
 }
 
 const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
-  debugger;
   //update UI
   if (currentTodo) taskAddRenderView.render(currentTodo);
   if (!currentTodo) taskAddRenderView.clearTaskContainer(); //clears the task view container
@@ -60,7 +59,6 @@ const controlDeleteTask = function (taskID) {
 };
 
 const controlCompleteTask = function (taskId, completeStatus) {
-  debugger;
   const queryObj = {
     endpoint: API.APIEnum.TASK.PATCH(taskId),
     token: model.token.value,
@@ -81,7 +79,7 @@ const controlCompleteTask = function (taskId, completeStatus) {
 };
 
 const controlSyncTaskUIState = function (currentTask = undefined) {
-
+  debugger;
   //get content drag position
   const updatedTodo = controlUpdateTaskUIState(currentTask);
   controlUpdateTodoAndTaskView(updatedTodo);
@@ -91,8 +89,7 @@ const controlAddTaskEventHandlers = function () {
   taskAddRenderView.addDelegateTaskActions(
     controlDeleteTask,
     controlCompleteTask,
-    controlSyncTaskUIState,
-    controlUpdateTodoTitle
+    controlSyncTaskUIState
   );
 
   //notify class that task handlers are added
@@ -381,6 +378,7 @@ const controlCreateNewTask = function (todoId, api = false, currentTaskInput = u
 }
 
 const controlUpdateTaskUIState = function (currentTask = undefined) {
+  debugger;
   const taskUIState = taskAddRenderView.getUIState();
 
   const updatedTodo = model.updateTaskIndex(taskUIState, currentTask);
@@ -398,8 +396,6 @@ const controlAddTaskMobileView = function (todoOrTask) {
 
 const controlAddTask = function (task) {
   let currentTodo;
-  debugger;
-
   //add task handlers if they dont exist yet
   const taskActionsActive = taskAddRenderView.getTaskActionState();
   if (!taskActionsActive) controlAddTaskEventHandlers();
