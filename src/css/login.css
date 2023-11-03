@@ -194,11 +194,11 @@ body{
 }
 
 .form-box > input{
+    color: #ededed !important;
     height: 100%;
     border: none;
     background-color: inherit;
     border-bottom: 1px solid #aaa;
-    color: #ededed;
 }
 
 .form-box > input:focus{

@@ -43,6 +43,7 @@ class TaskAddRenderView {
 
   setCurrentTodoState(value) {
     this._currentTodo = value
+    console.log("current todo set", this._currentTodo)
   }
 
   getTaskActionState() {
@@ -134,12 +135,14 @@ class TaskAddRenderView {
     this._handlerUpdateTodoTitle(+todoId, todoTitle)
   }
 
-  _updateUI(markup = undefined, completedMarkup = undefined, title) {
+  _updateUI(markup = undefined, completedMarkup = undefined, title, todo = undefined) {
     //clear container
     this._renderComponentContainerContent.innerHTML =
       this._renderCompletedContainer.innerHTML =
-      this._renderTitleInput.value =
+      this._renderTitleInput.textContent =
       "";
+
+
     if (markup) {
       //add markup to task container
       this._renderComponentContainerContent.insertAdjacentHTML(
@@ -164,7 +167,13 @@ class TaskAddRenderView {
 
     //update title from form
     if (title) {
-      this._renderTitleInput.value = title;
+      this._renderTitleInput.textContent = title;
+    }
+
+    //set id attribute for the todo on the content container
+    if (todo) {
+      const taskComponentContent = document.querySelector(".td-render--content")
+      taskComponentContent.setAttribute("data-id", todo.todoId)
     }
   }
 
@@ -173,26 +182,27 @@ class TaskAddRenderView {
   }
 
   render(todo = undefined) {
+    debugger;
     //generate UI markupg
     let markup, completedMarkup;
 
     //render tasks markup only if tasks exist
-    if (todo && todo.tasks) {
-      markup = todo.tasks
+    if (todo && todo?.tasks) {
+      markup = todo?.tasks
         .map((task) => {
-          if (!task.completed) return this._generateMarkup(task);
+          if (!task?.completed) return this._generateMarkup(task);
         })
         .join("");
 
-      completedMarkup = todo.tasks
+      completedMarkup = todo?.tasks
         .map((task) => {
-          if (task.completed) return this._generateMarkup(task);
+          if (task?.completed) return this._generateMarkup(task);
         })
         .join("");
     }
 
     //update UI
-    if (todo) this._updateUI(markup, completedMarkup, todo.title);
+    if (todo) this._updateUI(markup, completedMarkup, todo.title, todo);
   }
 
   _renderInput() {
@@ -203,6 +213,7 @@ class TaskAddRenderView {
     );
 
     //calls controlCreateNewTask
+    console.log("cur todo", this._currentTodo)
     this._handlerCreateNewTask(this._currentTodo, true, inputEl)
   }
 

@@ -1,13 +1,15 @@
 import * as model from "./model.js";
 import { importTodoListComponentView } from "./views/todoListComponentView.js";
 import { importTaskAddRenderView } from "./views/taskAddRenderView.js";
-import { MOBILE_MAX_SCREEN_SIZE, CANNOT_UPDATE_COMPLETED_TASK } from "./config.js";
+import { MOBILE_MAX_SCREEN_SIZE } from "./config.js";
 import Login from "./loginViews/login.js";
 import { Loader } from "./components/loader.js";
 import { TodoTemplate } from "./templates/todoTemplate.js";
 import { LoginTemplate } from "./templates/loginTemplate.js";
 import { DEFAULT_LOGIN_PAGE_TIMEOUT } from "./config.js";
 import { API } from "./api.js";
+import { formatAPIPayloadForUpdateReorder, timeoutWithoutPromise } from "./helper.js";
+
 
 //make the modules a variable before init
 let todoListComponentView;
@@ -51,9 +53,23 @@ const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
   todoListComponentView.render(model.state.todo);
 };
 
-const controlDeleteTask = function (taskID) {
+const controlDeleteTask = function (taskId, todoId) {
   //delete task and return the todo
-  const updatedTodo = model.deleteTask(taskID);
+  const updatedTodo = model.deleteTask(taskId);
+
+  const queryObj = {
+    endpoint: API.APIEnum.TASK.DELETE(taskId),
+    token: model.token.value,
+    sec: null,
+    actionType: "deleteTask",
+    queryData: { id: taskId },
+    spinner: false,
+    alert: false,
+    type: "DELETE",
+  }
+  API.queryAPI(queryObj)
+
+
   //update todo and task view
   controlUpdateTodoAndTaskView(updatedTodo);
 };
@@ -95,9 +111,27 @@ const controlAddTaskEventHandlers = function () {
   taskAddRenderView.setTaskActionState(true);
 };
 
+const controlUpdateAPITodoOrdering = function (updatedTodo) {
+  const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "todos")
+
+  const queryObj = {
+    endpoint: API.APIEnum.TODO.BATCH_UPDATE,
+    token: model.token.value,
+    sec: null,
+    actionType: "updateTodo",
+    queryData: payload,
+    spinner: false,
+    alert: false,
+    type: "PATCH",
+  }
+  API.queryAPI(queryObj)
+}
+
 const controlSyncTodoUIState = function (currentTodo = undefined) {
   const todoUIState = todoListComponentView.getUIState();
-  const updatedTodo = model.updateTodoIndex(todoUIState);
+  const { updatedTodo, reOrdered } = model.updateTodoIndex(todoUIState);
+
+  if (reOrdered) controlUpdateAPITodoOrdering(updatedTodo)
 
   //render todos
   todoListComponentView.render(updatedTodo);
@@ -134,6 +168,18 @@ const controlAddTodoMobileView = function (renderTasks = undefined) {
 };
 
 const controlTodoDelete = function (todoID) {
+  const queryObj = {
+    endpoint: API.APIEnum.TODO.DELETE(todoID),
+    token: model.token.value,
+    sec: null,
+    actionType: "deleteTodo",
+    queryData: { id: todoID },
+    spinner: false,
+    alert: false,
+    type: "DELETE",
+  }
+  API.queryAPI(queryObj)
+
   //delete and return the remaining todo
   const deletedCurrentTodo = model.deleteTodo(Number(todoID));
 
@@ -156,14 +202,29 @@ const controlTodoDelete = function (todoID) {
   }
 };
 
-const controlTodoComplete = function (todoID) {
+const controlTodoComplete = function (todoID, uncompleteStatus = undefined) {
+
   //complete a todo
-  const todo = model.completeTodo(Number(todoID));
+  const todo = model.completeTodo(Number(todoID), uncompleteStatus);
+
+  const queryObj = {
+    endpoint: API.APIEnum.TODO.PATCH(todoID),
+    token: model.token.value,
+    sec: null,
+    actionType: "updateTodo",
+    queryData: { completed: todo.completed },
+    spinner: false,
+    alert: false,
+    type: "PATCH",
+  }
+  API.queryAPI(queryObj)
+
   //render todo
   todoListComponentView.render(model.state.todo);
 };
 
 const controlRenderTodo = function (newCurrentTodo, mobileView = false) {
+  debugger
   const addTodoBtnClicked =
     todoListComponentView.getinitRenderFormActiveState();
 
@@ -190,6 +251,7 @@ const controlRenderTodo = function (newCurrentTodo, mobileView = false) {
 
 const controlRenderClickedTodo = function (todoID) {
   //renders the clicked todo and saves the current state for the previous rendered todo
+  debugger;
 
   if (!mobileDeviceTrigger.matches) {
     if (model.state.currentTodo) {
@@ -201,6 +263,7 @@ const controlRenderClickedTodo = function (todoID) {
 
   //reset currentTodo and get its data
   model.state.currentTodo = Number(todoID);
+  taskAddRenderView.setCurrentTodoState(Number(todoID))
   const currentTodo = model.getCurrentTodo();
 
   //render for mobile
@@ -230,6 +293,7 @@ const controlAddTodoIdToRenderContainer = function (renderContainer, todo) {
   renderContainer.setAttribute("data-id", todo.id)
   model.APIAddTodoOrTask(todo, "todo")
   taskAddRenderView.setCurrentTodoState(todo.id)
+
 }
 
 const controlAddTodo = function (currentTodoContainer = undefined) {
@@ -278,6 +342,13 @@ const controlTodoDataLoad = function () {
     controlAddTodo();
 };
 
+const controlUpdateTodoTitleCallback = function (updateObj) {
+  const updatedTodo = model.updateTodoTitle(updateObj)
+  //render todos
+  todoListComponentView.render(updatedTodo);
+
+}
+
 const controlUpdateTodoTitle = function (todoId, title) {
   const queryObj = {
     endpoint: API.APIEnum.TODO.PATCH(todoId),
@@ -288,7 +359,7 @@ const controlUpdateTodoTitle = function (todoId, title) {
     spinner: false,
     alert: false,
     type: "PATCH",
-    callBack: model.updateTodoTitle
+    callBack: controlUpdateTodoTitleCallback
   }
   API.queryAPI(queryObj)
 }
@@ -357,6 +428,7 @@ const controlAddTaskIdToTaskInput = function (taskInput, task) {
 }
 
 const controlCreateNewTask = function (todoId, api = false, currentTaskInput = undefined) {
+  debugger;
   if (api) {
     const currentTodo = model.getCurrentTodo(todoId);
 
@@ -376,10 +448,29 @@ const controlCreateNewTask = function (todoId, api = false, currentTaskInput = u
   }
 }
 
+const controlUpdateAPITaskOrdering = function (updatedTodo) {
+  const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "tasks")
+
+  const queryObj = {
+    endpoint: API.APIEnum.TASK.BATCH_UPDATE,
+    token: model.token.value,
+    sec: null,
+    actionType: "updateTask",
+    queryData: payload,
+    spinner: false,
+    alert: false,
+    type: "PATCH",
+  }
+  API.queryAPI(queryObj)
+}
+
 const controlUpdateTaskUIState = function (currentTask = undefined) {
   const taskUIState = taskAddRenderView.getUIState();
 
-  const updatedTodo = model.updateTaskIndex(taskUIState, currentTask);
+  const { updatedTodo, reOrdered } = model.updateTaskIndex(taskUIState, currentTask);
+
+  if (reOrdered) controlUpdateAPITaskOrdering(updatedTodo)
+
   return updatedTodo;
 };
 
@@ -416,7 +507,17 @@ const controlAddTask = function (task) {
   if (!eventListenersOnTodoView) controlAddAndSetTodoEventListeners();
 };
 
+const controlWaitForDB = function () {
+  if (model.dbDataLoaded) {
+
+    console.log(model.state.todo)
+    todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
+    taskAddRenderView.addHandlerTaskAdd(controlAddTask, controlCreateNewTask, controlUpdateTodoTitle);
+  }
+}
+
 const init = function () {
+  model.loadToken()
 
   if (!model.token.value) {
     document.body.innerHTML = LoginTemplate.template()
@@ -431,8 +532,8 @@ const init = function () {
     todoListComponentView = importTodoListComponentView()
     taskAddRenderView = importTaskAddRenderView()
 
-    todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
-    taskAddRenderView.addHandlerTaskAdd(controlAddTask, controlCreateNewTask, controlUpdateTodoTitle);
+    model.init(controlWaitForDB)
+
   }
 
 };

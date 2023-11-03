@@ -12,4 +12,4 @@ export const DEFAULT_ALERT_TIMEOUT = 1;
 export const DEFAULT_LOGIN_PAGE_TIMEOUT = 5;
 export const HTTP_400_RESPONSE_LOGIN_USER = "Email or Password Incorrect";
 export const HTTP_400_RESPONSE_CREATE_USER = "Invalid Data Supplied";
-export const HTTP_200_RESPONSE = { "login": "Authentication Successful", "create": "Account Created Successfully" } //if needed for other response, add here
+export const HTTP_200_RESPONSE = { "login": "Authentication Successful", "create": "Account Created Successfully", "loadTodos": "Data Loading Completed" } //if needed for other response, add here

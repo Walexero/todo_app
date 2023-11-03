@@ -82,6 +82,17 @@ export const formatDateTime = (dateTime) => {
   return new Date(dateTime)
 }
 
+const formatAPITodoTasks = (APITasks, formatType) => {
+  if (APITasks.length > 1) {
+    const APItaskList = []
+    APITasks.forEach(task => APItaskList.push(formatAPIResponseBody(task, formatType)))
+    const orderedTaskList = APItaskList.sort((a, d) => a?.ordering - d?.ordering)
+    if (!orderedTaskList) return APItaskList
+    return orderedTaskList
+  }
+  return APITasks
+}
+
 export const formatAPIResponseBody = (responseBody, type) => {
   let formattedBody;
 
@@ -89,7 +100,7 @@ export const formatAPIResponseBody = (responseBody, type) => {
     formattedBody = {
       todoId: responseBody.id,
       title: responseBody.title,
-      tasks: responseBody.tasks,
+      tasks: formatAPITodoTasks(responseBody.tasks, "todoTask"),
       lastAdded: formatDateTime(responseBody.last_added),
       completed: responseBody.completed
     }
@@ -103,8 +114,40 @@ export const formatAPIResponseBody = (responseBody, type) => {
       todoLastAdded: responseBody.todo_last_added
     }
 
+  if (type === "todoTask")
+    formattedBody = {
+      taskId: responseBody.id,
+      task: responseBody.task,
+      completed: responseBody.completed,
+      ordering: responseBody.ordering ?? null
+    }
   return formattedBody
 }
-// function asyncWrapper(fn) {
 
-// }
+export const formatAPIPayloadForUpdateReorder = function (payload, type) {
+  let requestObj;
+
+  if (type === "tasks") {
+    const listItems = []
+
+    payload.tasks.forEach((task, i) =>
+      listItems.push({ id: task.taskId, ordering: i + 1 })
+    )
+    requestObj = {
+      "ordering_list": listItems
+    }
+  }
+
+  if (type === "todos") {
+    const listItems = []
+
+    payload.forEach((todo, i) =>
+      listItems.push({ id: todo.todoId, ordering: i + 1 })
+    )
+    requestObj = {
+      "ordering_list": listItems
+    }
+  }
+
+  return requestObj
+}

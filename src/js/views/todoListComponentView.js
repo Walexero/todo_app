@@ -208,7 +208,7 @@ class TodoListComponentView {
       ".completed-td-component-content"
     );
 
-    renderContainerTitleInput.value = "";
+    renderContainerTitleInput.textContent = "";
     renderContainerTaskContent.innerHTML =
       renderContainerCompletedTaskContent.innerHTML = "";
 
@@ -279,35 +279,6 @@ class TodoListComponentView {
     return updatedIndex;
   }
 
-  getTodoAndTaskBody(formData) {
-    const curDate = Number(Date.now());
-
-    //create new task and todo
-    const taskObj = createObjectFromForm(curDate, formData, true);
-    const todoAndTaskObj = this._createNewTodo(curDate, formData, taskObj);
-
-    return { currentTask: curDate, todo: todoAndTaskObj };
-  }
-
-  _createNewTodo(id, formData, task) {
-    //get cleaned form data
-    formData = cleanFormData(formData);
-    const newTaskObj = {
-      id: id,
-      title: formData["title"],
-      tasks: [],
-      lastAdded: id,
-      completed: false,
-    };
-
-    //if no tasks and only title, create a todo with the title but no tasks
-    if (!formData["task"]) return newTaskObj;
-    //if there's tasks create the todo with task
-    if (formData["task"]) newTaskObj.tasks.push(task);
-
-    return newTaskObj;
-  }
-
   _generateMarkup(todos) {
     if (todos) {
       const markup = todos
@@ -321,7 +292,7 @@ class TodoListComponentView {
 
   _generateMarkupPreview(todo) {
     return `
-        <div class="component-container--box" data-id="${todo.id}">
+        <div class="component-container--box" data-id="${todo.todoId}">
             <span class="nudge-btn">
               <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -360,9 +331,7 @@ class TodoListComponentView {
                   />
                 </svg>
               </div>
-              <h3 class="component-heading">${todo.title
-        .slice(0, 10)
-        .padEnd(13, ".")}</h3>
+              <h3 class="component-heading">${this._formatTodoHeadingBasedOnCompletion(todo)}</h3>
             </div>
             <div class="component-content-container">
               <ul>
@@ -380,26 +349,25 @@ class TodoListComponentView {
     `;
   }
 
+  _formatTodoHeadingBasedOnCompletion(todo) {
+    const todoTitle = todo.title
+      .slice(0, 10)
+      .padEnd(13, ".")
+
+    return todo.completed ? `<s>${todoTitle}</s>` : todoTitle
+  }
+
   _generateComponentContentMarkup(task) {
-    console.log("the task", task)
     return `
       <div class="component-content">
-        <input type="checkbox" id="td-complete" />
+        <input type="checkbox" class="td-complete" />
 
-        <label for="td-complete">${task?.completed ? `<s>${task.task}</s>`.slice(0, 15)
-        .padEnd(18, ".") : task?.task ? task.task.slice(0, 15).padEnd(18, ".") : ""} 
+        <label for="td-complete">${task?.completed ? `<s>${task.task.slice(0, 15).padEnd(18, ".")}</s>`
+        : task?.task ? task.task.slice(0, 15).padEnd(18, ".") : ""} 
       </label>
       </div>
     `;
   }
-  //   ${task.task.startsWith("<s>")
-  //   ? `<s>${task.task
-  //     .replace("<s>", "")
-  //     .replace("</s>", "")
-  //     .slice(0, 15)
-  //     .padEnd(18, ".")}</s>`
-  //   : 
-  // }
 }
 
 export const importTodoListComponentView = (() => new TodoListComponentView());

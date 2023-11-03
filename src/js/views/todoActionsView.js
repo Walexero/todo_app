@@ -1,13 +1,12 @@
-import dragComponentListView from "./dragComponentListView.js";
-
+import { importDragComponentListView } from "./dragComponentListView.js";
 class TodoActionsView {
   _todoParentElement = ".component-container--box";
   _deleteHandler;
   _completeHandler;
   _saveBeforeRenderHandler;
   _navHandler;
-  _dragHandler;
-  _dragElement = dragComponentListView;
+  _dragElementActive = false;
+  _dragElement;
 
   addHandlerTodoActions(
     delHandler,
@@ -32,6 +31,11 @@ class TodoActionsView {
 
   actionHandler(action, todo = undefined) {
     let todoID;
+
+    if (!this._dragElementActive) {
+      this._dragElement = importDragComponentListView();
+    }
+
     //get todo id
     if (todo) {
       todoID = todo.closest(this._todoParentElement).dataset.id;
@@ -43,8 +47,10 @@ class TodoActionsView {
       this._deleteHandler(todoID);
     }
     if (action === "complete") {
+      const uncompleteStatus = todo.textContent.trim().toLowerCase().includes("unmark") ? false : null
+
       this._dragElement.setObserver(false);
-      this._completeHandler(todoID);
+      this._completeHandler(todoID, uncompleteStatus);
     }
     if (action === "drag") {
       this._dragElement.setObserver(true);

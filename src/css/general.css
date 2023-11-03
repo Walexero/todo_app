@@ -86,12 +86,17 @@ input[type="checkbox"] {
   list-style: none;
 }
 
+.nudge-actions > li{
+  font-size: 1.2rem;
+}
+
 .nudge-action--btn,
 .nudge-action--delete {
-  font-size: 1rem;
+  /* font-size: 1rem; */
   padding: 0.5rem;
   cursor: pointer;
 }
+
 
 .nudge-action--btn:not(:last-child) {
   border-bottom: 1px solid var(--color-component--border);

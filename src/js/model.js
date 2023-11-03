@@ -1,4 +1,7 @@
-import { cleanFormData, checkValidator, reOrderObjectIndex, formatAPIResponseBody } from "./helper.js";
+import { checkValidator, reOrderObjectIndex, formatAPIResponseBody } from "./helper.js";
+import { API } from "./api.js";
+
+export let dbDataLoaded;
 
 export let state = {
   todo: [],
@@ -28,6 +31,7 @@ export const updateTodoTitle = function (updateObj) {
   const currentTodo = getCurrentTodo(+updateObj.id)
   currentTodo.title = updateObj.title
   persistTodo()
+  return state.todo
 }
 
 const getTaskIndexAndCurrentTodo = (taskID) => {
@@ -159,7 +163,7 @@ export const updateTaskIndex = function (valueArr, curTodo) {
     "tasks"
   );
 
-  if (preventReordering) return currentTodo;
+  if (preventReordering) return { updatedTodo: currentTodo, reOrdered: false };
 
   if (!preventReordering) {
     const clonedTask = reOrderObjectIndex(currentTodo.tasks, valueArr, "tasks");
@@ -167,7 +171,7 @@ export const updateTaskIndex = function (valueArr, curTodo) {
     currentTodo.tasks = clonedTask;
     //persist data
     persistTodo();
-    return currentTodo;
+    return { updatedTodo: currentTodo, reOrdered: true };
   }
 };
 
@@ -178,7 +182,7 @@ export const updateTodoIndex = function (todoListArr) {
   //check if every index is still in its same position
   const preventReordering = checkValidator(state.todo, todoListArr, "todos");
 
-  if (preventReordering) return state.todo;
+  if (preventReordering) return { updatedTodo: state.todo, reOrdered: false };
 
   if (!preventReordering) {
     const clonedTodo = reOrderObjectIndex(state.todo, todoListArr, "todos");
@@ -186,14 +190,14 @@ export const updateTodoIndex = function (todoListArr) {
 
     //persist data
     persistTodo();
-    return state.todo;
+    return { updatedTodo: state.todo, reOrdered: true };
   }
 };
 
 export const deleteTodo = function (todoID) {
   const { currentTodo: _, todoIndex } = getTodoIndexAndTodo(todoID);
 
-  const checkIfTodoIsCurrentTodo = state.todo[todoIndex].id === todoID;
+  const checkIfTodoIsCurrentTodo = state.todo[todoIndex].todoId === todoID;
 
   if (checkIfTodoIsCurrentTodo) state.currentTodo = null;
 
@@ -204,25 +208,72 @@ export const deleteTodo = function (todoID) {
   return checkIfTodoIsCurrentTodo;
 };
 
-export const completeTodo = function (todoID) {
+export const completeTodo = function (todoID, uncompleteStatus) {
   const { currentTodo, todoIndex } = getTodoIndexAndTodo(todoID);
 
   //mark as completed
-  currentTodo.completed = true;
+  currentTodo.completed = uncompleteStatus ?? true;
 
   //persist data
   persistTodo();
+
+  return currentTodo
 };
+
+const formatLoadedAPIData = function (APIResp) {
+  const todoList = [];
+
+  APIResp.forEach(resp => todoList.push(formatAPIResponseBody(resp, "todo")))
+  const orderedTodoList = todoList.sort((a, d) => a?.ordering - d?.ordering)
+  if (!orderedTodoList) return todoList
+
+  return orderedTodoList
+}
+
+
+const loadDataFromAPI = function (token, callBack) {
+  const queryObj = {
+    endpoint: API.APIEnum.TODO.LIST,
+    token: token,
+    sec: null,
+    actionType: "loadTodos",
+    // queryData: { completed: completeStatus },
+    spinner: true,
+    alert: true,
+    type: "GET",
+    callBack: init.bind(null, callBack, true)
+  }
+  API.queryAPI(queryObj)
+}
+
+export const loadToken = function () {
+  const storedToken = localStorage.getItem("token")
+  if (storedToken) token = JSON.parse(storedToken)
+}
 
 //get persisted data on page load
-const init = function () {
-  const storage = localStorage.getItem("todos");
-  const storedToken = localStorage.getItem("token")
-  if (storage) {
-    state = JSON.parse(storage);
-    state.loadedFromDb = true;
-  }
+export function init(callBack, api = false, APIResp = undefined) {
+  if (!api)
+    //load the data from the API
+    loadDataFromAPI(token.value, callBack)
 
-  if (storedToken) token = JSON.parse(storedToken)
+  if (api) {
+    const APIData = formatLoadedAPIData(APIResp)
+    const storage = localStorage.getItem("todos");
+
+    if (storage)
+      state = JSON.parse(storage);
+
+
+    state.todo = APIData
+    state.loadedFromDb = true;
+
+    if (!storage)
+      persistTodo()
+
+    dbDataLoaded = true;
+
+    //load the UI
+    callBack()
+  }
 };
-init();

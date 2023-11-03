@@ -33,7 +33,7 @@ class TaskActionsView {
     //offload to controller
     if (action === "delete") {
       this._dragElement.setObserver(false);
-      this._deleteHandler(+taskID);
+      this._deleteHandler(+taskID, task.closest(".td-render--content").dataset.id);
     }
     if (action === "complete") {
       this._dragElement.setObserver(false);
@@ -42,7 +42,6 @@ class TaskActionsView {
     if (action === "drag") {
       //if observer is active other actions cant run
       this._observerActive = true;
-
       this._dragElement.setObserver(true);
       this._dragElement._activateDragEvent(this._dragHandler);
     }

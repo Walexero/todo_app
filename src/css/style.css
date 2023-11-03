@@ -93,10 +93,21 @@ body {
   border-radius: 0.5rem;
   padding: 0.5rem 0.5rem;
 }
+.component-container--box .td-complete:checked{
+  fill: none;
+  appearance: none;
+  background: #fff;
+  border: 2px solid gray;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  border-radius: 2px;
+}
 
 .component-header {
   display: flex;
   gap: 0.5rem;
+  font-size: 1.4rem;
+  cursor: pointer;
 }
 
 .component-content-container {
@@ -112,11 +123,12 @@ body {
 .component-editted-bar {
   text-align: center;
   margin-top: 1rem;
-  font-size: 0.5rem;
+  font-size: 0.8rem;
   position: absolute;
   bottom: 0;
   left: 0;
-  transform: translateX(100%);
+  transform: translateX(73%);
+  /* width: 100%; */
 }
 
 .td-complete {
@@ -207,7 +219,7 @@ body {
 .td-render-title[contenteditable="true"] {
   display: inline-block;
   background-color: inherit;
-  caret-color: #bec1c6;
+  caret-color: black;
 }
 
 .td-render-title[contenteditable="true"] > div {

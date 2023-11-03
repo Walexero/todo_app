@@ -33,4 +33,4 @@ class DragComponentListView extends DragComponentView {
     this._addNudgeEvent();
   }
 }
-export default new DragComponentListView();
+export const importDragComponentListView = () => new DragComponentListView();

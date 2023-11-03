@@ -22,7 +22,9 @@ export class API {
             GET: ((todoId) => `todo/todos/${todoId}/`),
             PUT: ((todoId) => `todo/todos/${todoId}/`),
             PATCH: ((todoId) => `todo/todos/${todoId}/`),
-            DELETE: ((todoId) => `todo/todos/${todoId}/`)
+            DELETE: ((todoId) => `todo/todos/${todoId}/`),
+            BATCH_UPDATE: "todo/todos/batch_update/",
+
         },
 
         TASK: {
@@ -32,6 +34,7 @@ export class API {
             PUT: ((taskId) => `todo/tasks/${taskId}/`),
             PATCH: ((taskId) => `todo/tasks/${taskId}/`),
             DELETE: ((taskId) => `todo/tasks/${taskId}/`),
+            BATCH_UPDATE: "todo/tasks/batch_update/",
         }
     }
     static timeout = 20 //timeout in 20s
@@ -112,6 +115,12 @@ export class API {
                 break;
             case "PATCH":
                 return API.requestJSON(queryObj)
+            case "DELETE":
+                return API.requestJSON(queryObj)
+            case "PUT":
+                return API.requestJSON(queryObj)
+            case "GET":
+                return API.requestJSON(queryObj)
             default:
                 return fetch(`${BASE_API_URL}${queryObj.endpoint}`, queryObj.queryData)
                 break;
@@ -119,13 +128,15 @@ export class API {
     }
 
     static requestJSON(queryObj) {
-        return fetch(`${BASE_API_URL}${queryObj.endpoint}`, {
+        const fetchParams = {
             method: queryObj.type,
             headers: {
                 Authorization: `Token ${queryObj.token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(queryObj.queryData)
-        })
+        }
+        if (queryObj.queryData) fetchParams.body = JSON.stringify(queryObj.queryData)
+
+        return fetch(`${BASE_API_URL}${queryObj.endpoint}`, fetchParams)
     }
 }
