@@ -1,0 +1,64 @@
+:root {
+    --color-primary--bg: #4b4b4b;
+    --color-component--container--border: gray;
+    --color-component--bg: #aaa;
+    --color-component--border: white;
+    --color-nudge-bg: whitesmoke;
+  }
+
+.td-update-info{
+
+    position: fixed;
+    width: 30rem;
+    height: 95vh;
+    top: 3rem;
+    background: #b5b1b1;
+    right: 18.4rem;
+    box-shadow: 0 0 3px;
+}
+
+.info-update-heading{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    padding: 0.8rem 0;
+    margin-bottom: 2rem;
+}
+
+.info-update-content{
+    display: flex;
+    justify-content: center;
+    padding: 0 3rem;
+}
+
+.update-form-box{
+    height: 4rem;
+}
+
+.update-form-box, .update-form-box > input{
+    width: 100%;
+}
+
+.update-form-box > input{
+    color: var(--color-primary--bg);
+    height: 100%;
+    font-size: 1.4rem;
+    background: #ededed;
+    border: none;
+    padding: 0 0 0 0.8rem;
+}
+
+
+.update-form-box > input::placeholder{
+    padding-left: 0.4rem !important;
+}
+
+.update-form-box > input:focus{
+    /* padding-left: 0.4rem; */
+    outline: none;
+}
+
+.update-info-active .td-render--container{
+    width: 36.5rem !important;
+}

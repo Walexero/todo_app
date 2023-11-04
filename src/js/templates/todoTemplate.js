@@ -15,7 +15,8 @@ export class TodoTemplate {
                   <div class="td-render-todo--add-btn">+ Add Todo</div>
                   <div class="component-container" id="component-container"></div>
                 </div>
-                <div class="td-render--container hidden mobile-nav--hidden">
+                <div class="td-render--container hidden mobile-nav--hidden"> 
+                  <!--  -->
                   <div class="td-render--body">
                     <div class="td-render--content">
                       <div class="td-render-component-title">
@@ -30,7 +31,17 @@ export class TodoTemplate {
                       </div>
                     </div>
                   </div>
-                </div>
+                  <!-- <div class="td-update-info">
+                    <div class="info-update-heading">
+
+                      <h2>Update Your Info</h2>
+                    </div>
+                    <div class="info-update-content">
+                      
+                    </div>
+
+                  </div> -->
+                </div>   
               </div>
             </div>
             </div>

@@ -134,6 +134,21 @@ input[type="checkbox"] {
   width: 6rem !important;
 }
 
+.btn-submit{
+  cursor: pointer;
+}
+
+.btn-update{
+  border: none;
+  border-radius: 0.4rem;
+  height: 2rem;
+  width: 9rem;
+  transform: translate(-12%,18%);
+  color: var(--color-primary--bg);
+  background: #b1b1b1;
+  cursor: pointer;
+}
+
 .bd-radius{
   border-radius: 0.2rem;
 }

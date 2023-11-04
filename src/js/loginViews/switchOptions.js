@@ -55,10 +55,10 @@ export class SwitchOption {
 
     _generateMarkup() {
         return `
-            <div class="login-option">
-                <div class="option-box login-box ${this.authType.includes(this.AUTH_TYPES.LOGIN) ? "active" : "inactive"}">
+            <div class="form-option">
+                <div class="option-box ${this.AUTH_TYPES[this.authType]}-box ${this.authType.includes(this.AUTH_TYPES[this.authType.toUpperCase()]) ? "active" : "inactive"}">
                     <h2 class="login-heading option-heading">
-                        Login
+                        ${}
                     </h2>
                 </div>
                 <div class="option-box create-box ${this.authType.includes(this.AUTH_TYPES.CREATE) ? "active" : "inactive"}"">

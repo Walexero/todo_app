@@ -130,7 +130,7 @@ body{
     overflow: scroll;
 }
 
-.login-option{
+.form-option{
     display: flex;
     /* gap: 0.2rem; */
     /* background-color: #7d7d7d; */

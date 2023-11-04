@@ -6,9 +6,10 @@ import Login from "./loginViews/login.js";
 import { Loader } from "./components/loader.js";
 import { TodoTemplate } from "./templates/todoTemplate.js";
 import { LoginTemplate } from "./templates/loginTemplate.js";
-import { DEFAULT_LOGIN_PAGE_TIMEOUT } from "./config.js";
+import { DEFAULT_LOGIN_PAGE_TIMEOUT, DEFAULT_REQUEST_TIMEOUT } from "./config.js";
 import { API } from "./api.js";
-import { formatAPIPayloadForUpdateReorder, timeoutWithoutPromise } from "./helper.js";
+import { formatAPIPayloadForUpdateReorder } from "./helper.js";
+import { UpdateUserInfoComponent } from "./views/updateUserInfoComponent.js";
 
 
 //make the modules a variable before init
@@ -42,6 +43,14 @@ const controlLogin = function (loginComponentCallBack, token) {
   //switch template
   init();
   loader.remove()
+}
+
+const controlUpdateUserInfo = function (updateInfoComponentCallback, token) {
+  // const loader = new Loader(DEFAULT_REQUEST_TIMEOUT)
+  // loader.component()
+
+  //implement api query
+
 }
 
 const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
@@ -510,9 +519,14 @@ const controlAddTask = function (task) {
 const controlWaitForDB = function () {
   if (model.dbDataLoaded) {
 
-    console.log(model.state.todo)
     todoListComponentView.addHandlerTodoAdd(controlTodoDataLoad);
     taskAddRenderView.addHandlerTaskAdd(controlAddTask, controlCreateNewTask, controlUpdateTodoTitle);
+
+    //add update userinfo component
+    const updateUserInfo = new UpdateUserInfoComponent
+    updateUserInfo.addEventListeners(controlUpdateUserInfo)
+
+
   }
 }
 

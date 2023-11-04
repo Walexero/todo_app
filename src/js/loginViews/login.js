@@ -63,7 +63,6 @@ class Login {
         overlay.render()
     }
 
-    // handleLogin
     getComponent() {
         return this._component
     }
