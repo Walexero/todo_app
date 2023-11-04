@@ -1,5 +1,6 @@
 import { ComponentMethods } from "../componentMethods.js"
-import { Form } from "../loginViews/form"
+import { Form } from "../loginViews/form.js"
+import { SwitchOption } from "../loginViews/switchOptions.js"
 
 export class UpdateUserInfoComponent {
 
@@ -44,15 +45,21 @@ export class UpdateUserInfoComponent {
             document.querySelector(this._container).classList.remove("update-info-active")
             return
         }
-
         document.querySelector(this._container).classList.add("update-info-active")
 
+        this._renderUpdateType()
+
+    }
+
+    _renderUpdateType(){
+        // const switcher = new SwitchOption() 
         const form = Form.form("updateInfo")
         form.addControlHandler(this.requestHandler)
         this._children.push(form)
         this._component = this.component(this._generateMarkup(), form)
 
         document.querySelector(this._contentContainer).insertAdjacentElement("beforeend", this._component)
+
     }
 
     _generateBtnMarkup() {
