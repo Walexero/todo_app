@@ -103,6 +103,7 @@ const formatAPITodoTasks = (APITasks, formatType) => {
 }
 
 export const formatAPIResponseBody = (responseBody, type) => {
+  debugger;
   let formattedBody;
 
   if (type === "todo")

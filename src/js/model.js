@@ -8,6 +8,14 @@ export let state = {
   completed: [],
   currentTodo: null,
   loadedFromDb: false,
+  //diffing related properties
+  taskToDelete: [],
+  todoToDelete: [],
+  taskToComplete: [],
+  todoToComplete: [],
+  taskToCreate: [],
+  todoToCreate: [],
+
 };
 
 export let token = {}
@@ -51,6 +59,7 @@ const getTodoIndexAndTodo = (todoID) => {
 };
 
 export const APIAddTodoOrTask = function (typeObj, type) {
+  debugger;
   let currentTodo;
 
   if (type)
@@ -223,8 +232,9 @@ export const completeTodo = function (todoID, uncompleteStatus) {
 const formatLoadedAPIData = function (APIResp) {
   const todoList = [];
 
-  APIResp.forEach(resp => todoList.push(formatAPIResponseBody(resp, "todo")))
-  const orderedTodoList = todoList.sort((a, d) => a?.ordering - d?.ordering)
+  if (APIResp.length > 0)
+    APIResp.forEach(resp => todoList.push(formatAPIResponseBody(resp, "todo")))
+  const orderedTodoList = todoList.length > 0 ? todoList.sort((a, d) => a?.ordering - d?.ordering) : null
   if (!orderedTodoList) return todoList
 
   return orderedTodoList

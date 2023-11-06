@@ -39,6 +39,7 @@ export class API {
             PATCH: ((taskId) => `todo/tasks/${taskId}/`),
             DELETE: ((taskId) => `todo/tasks/${taskId}/`),
             BATCH_UPDATE: "todo/tasks/batch_update/",
+            DELETED: "todo/dskflksdfsdff/"
         }
     }
     static timeout = 20 //timeout in 20s

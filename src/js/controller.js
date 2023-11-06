@@ -63,12 +63,19 @@ const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
   todoListComponentView.render(model.state.todo);
 };
 
+const controlAPITaskDeleteFallback = function (taskId) {
+  debugger;
+  model.state.taskToDelete.push(taskId)
+}
+
 const controlDeleteTask = function (taskId, todoId) {
   //delete task and return the todo
   const updatedTodo = model.deleteTask(taskId);
 
   const queryObj = {
-    endpoint: API.APIEnum.TASK.DELETE(taskId),
+    // endpoint: API.APIEnum.TASK.DELETE(taskId),
+    endpoint: API.APIEnum.TASK.DELETED(taskId),
+
     token: model.token.value,
     sec: null,
     actionType: "deleteTask",
@@ -76,6 +83,7 @@ const controlDeleteTask = function (taskId, todoId) {
     spinner: false,
     alert: false,
     type: "DELETE",
+    callBack: controlAPITaskDeleteFallback.bind(null, taskId)
   }
   API.queryAPI(queryObj)
 
@@ -83,6 +91,10 @@ const controlDeleteTask = function (taskId, todoId) {
   //update todo and task view
   controlUpdateTodoAndTaskView(updatedTodo);
 };
+
+const controlAPITaskCompleteFallback = function (taskId) {
+  model.state.taskToComplete.push(taskId)
+}
 
 const controlCompleteTask = function (taskId, completeStatus) {
   const queryObj = {
@@ -431,10 +443,15 @@ const controlCreateNewTodo = function (task, api = false, currentTodoContainer =
 
 };
 
-const controlAddTaskIdToTaskInput = function (taskInput, task) {
+const controlAddTaskIdToTaskInput = function (todoId, taskInput, task) {
+  debugger;
   //add created task to the task Input
   taskInput.setAttribute("data-taskId", task.id)
   model.APIAddTodoOrTask(task, "task")
+}
+
+const controlAPICreateNewTaskFallback = function (todoId, taskInput) {
+  //TODO:
 }
 
 const controlCreateNewTask = function (todoId, api = false, currentTaskInput = undefined) {
@@ -448,7 +465,7 @@ const controlCreateNewTask = function (todoId, api = false, currentTaskInput = u
       sec: null,
       actionType: "createTask",
       queryData: { task: "", todo_id: todoId, completed: false },
-      callBack: controlAddTaskIdToTaskInput.bind(null, currentTaskInput),
+      callBack: controlAddTaskIdToTaskInput.bind(null, todoId, currentTaskInput),
       spinner: false,
       alert: false,
       type: "POST",
@@ -480,6 +497,7 @@ const controlUpdateTaskUIState = function (currentTask = undefined) {
   const { updatedTodo, reOrdered } = model.updateTaskIndex(taskUIState, currentTask);
 
   if (reOrdered) controlUpdateAPITaskOrdering(updatedTodo)
+
 
   return updatedTodo;
 };
