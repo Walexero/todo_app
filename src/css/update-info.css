@@ -30,6 +30,7 @@
     display: flex;
     justify-content: center;
     padding: 0 3rem;
+    flex-direction: column;
 }
 
 .update-form-box{
@@ -59,6 +60,19 @@
     outline: none;
 }
 
+.info-update-content .form-option{
+    margin-bottom: 2rem;
+}
+
+.info-update-content .form-option .option-box{
+    padding: .8rem 0rem !important;
+}
+
 .update-info-active .td-render--container{
     width: 36.5rem !important;
+}
+
+.updateInfo-box,.updatePwd-box{
+    font-size: 1rem !important;
+    white-space: nowrap;
 }

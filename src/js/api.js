@@ -1,5 +1,5 @@
 import { timeout } from "./helper.js"
-import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400_RESPONSE_CREATE_USER } from "./config.js"
+import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400_RESPONSE_CREATE_USER, ALERT_STATUS_ERRORS, GENERIC_SUCCESS_ALERT } from "./config.js"
 import { Loader } from "./components/loader.js"
 import { Alert } from "./components/alerts.js"
 
@@ -14,6 +14,10 @@ export class API {
             PUT: "user/me/",
             PATCH: "user/me/",
             TOKEN: "user/token/",
+            UPDATE_INFO: "user/update_info/",
+            UPDATE_PWD: "user/change_password/",
+            RESET_PWD: "user/password-reset/",
+            RESET_PWD_CONFIRM: "user/password-reset-confirm/"
         },
 
         TODO: {
@@ -60,7 +64,7 @@ export class API {
         (async () => await API.querier(queryObj))().then(returnData => {
             if (returnData) {
                 queryObj.loader ? queryObj.loader.remove() : null
-                queryObj.alert ? new Alert(HTTP_200_RESPONSE[queryObj.actionType], null, "success").component() : null
+                queryObj.alert ? new Alert(HTTP_200_RESPONSE[queryObj.actionType](returnData), null, "success").component() : null
                 if (queryObj.callBack) queryObj.callBack(returnData, queryObj.callBackParam ?? true)
 
                 queryObj = {};
@@ -76,27 +80,34 @@ export class API {
 
             const resContent = await res.json()
 
-            if (!res.ok) throw new Error(`${res.status === 400 ? API.getResponseToRender(resContent, queryObj) : res.message} (${res.status})`)
+            if (!res.ok) throw new Error(`${ALERT_STATUS_ERRORS.find(s => s === res.status) ? API.getResponseToRender(resContent, queryObj, res.status) : res.message} (${res.status})`)
 
-            if (!resContent.non_field_errors) data = resContent
+            if (!resContent.non_field_errors) data = API.destructureSuccessResponse(resContent)
         } catch (err) {
             if (queryObj.loader) await queryObj.loader.remove()
-            if (queryObj.alert) await new Alert(err.message, null, "error").component()
+            if (queryObj.alert) await new Alert(err.message ?? err, null, "error").component()
+            // if(queryObj.resStatus === 401) API.logoutUser()
+
         } finally {
             return data
         }
     }
 
-    static getResponseToRender(response, queryObj) {
+    static getResponseToRender(response, queryObj, resStatus) {
+        //set the resStatus on the queryObj
+        if (resStatus) queryObj.resStatus = resStatus
+
         if (response.non_field_errors)
             return HTTP_400_RESPONSE_LOGIN_USER
+
+        if (response instanceof Array) return response[0]
 
         const formError = Object.getOwnPropertyNames(response)
         const formErrorsLength = Object.getOwnPropertyNames(response).length
 
         if (formErrorsLength > 0) return (() => {
-            queryObj.callBack(response);
-            return formErrorsLength === 1 ? response[formError[0]] : HTTP_400_RESPONSE_CREATE_USER
+            if (queryObj.callBack) queryObj.callBack(response);
+            return formErrorsLength >= 1 ? API.destructureError(response[formError[0]], formError[0]) : queryObj.actionType === "create" ? HTTP_400_RESPONSE_CREATE_USER : API.destructureError(response[formError[0]], formError[0])
         })()
     }
 
@@ -106,6 +117,20 @@ export class API {
             queryObj.loader = new Loader(queryObj.sec)
             queryObj.loader.component();
         }
+    }
+
+    static destructureError(error, key) {
+        if (error instanceof Object) return error[key] ?? error.join("\n")
+        if (error instanceof Array) return error.join("\n")
+        return error
+    }
+
+    static destructureSuccessResponse(resp) {
+        if (resp instanceof Object) {
+            const respKey = Object.keys(resp)
+            return resp[respKey[0]]
+        }
+        return resp
     }
 
     static makeRequest(queryObj) {
@@ -128,15 +153,21 @@ export class API {
     }
 
     static requestJSON(queryObj) {
+        debugger;
         const fetchParams = {
             method: queryObj.type,
             headers: {
-                Authorization: `Token ${queryObj.token}`,
                 "Content-Type": "application/json"
             },
         }
         if (queryObj.queryData) fetchParams.body = JSON.stringify(queryObj.queryData)
+        if (queryObj.token) fetchParams.headers.Authorization = `Token ${queryObj.token}`
 
         return fetch(`${BASE_API_URL}${queryObj.endpoint}`, fetchParams)
+    }
+
+    static logoutUser() {
+        localStorage.removeItem("token")
+        window.location.reload()
     }
 }

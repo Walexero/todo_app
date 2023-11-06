@@ -27,10 +27,13 @@ export class SwitchOption {
 
     customEvent = "switch"
 
-    constructor(authType) {
+    constructor(authType,separator = false) {
         this._validateAuthType(authType)
         this.authType = authType
+        this.separator = separator ? "_" : null
     }
+
+    pass(){}
 
     _validateAuthType(authType) {
         const authTypeExists = this.AUTH_TYPES[authType.toUpperCase()]
@@ -45,11 +48,16 @@ export class SwitchOption {
         return this._component
     }
 
+    getComponent(){
+        return this._component
+    }
+
     _handleEvents(ev) {
         if (delegateMatch(ev, "option-box")) this._handleSwitchToggle(ev)
     }
 
     _handleSwitchToggle(ev) {
+
         const options = this._component.querySelectorAll(".option-box")
         options.forEach(option => {
             option.classList.toggle("active")
@@ -57,8 +65,10 @@ export class SwitchOption {
         })
 
         const authType = this._replaceAuthTypeValue(ev.target.textContent.toLowerCase().trim().replaceAll("\n", ""))
-        const currentAuthType = this._replaceAuthTypeValue(this.AUTH_TYPES[authType.toUpperCase()])
-        const subAuthType = this._replaceAuthTypeValue(this.AUTH_TYPES_SUB[authType.toUpperCase()])
+      
+        const currentAuthType = 
+        this.AUTH_TYPES[this._formatAuthType(authType).toUpperCase()]
+        const subAuthType = this.AUTH_TYPES_SUB[this._formatAuthType(authType).toUpperCase()]
 
         this.authType = authType ===  currentAuthType ? currentAuthType : subAuthType 
 
@@ -68,7 +78,31 @@ export class SwitchOption {
     _replaceAuthTypeValue(authType){
         
         if(authType.trim() === "sign up") return "create"
+        if(authType.trim() === "update info") return "updateInfo"
+        if(authType.trim() === "update password") return "updatePwd"
         return authType
+    }
+
+    _formatAuthType(authType){
+        if(authType.includes("_")) return authType
+        if(this.separator){
+            const split = this._getAuthTypeSplitChar(authType)
+            return this._addAuthTypeSeparator(authType,split)
+        }
+        return authType
+    }
+
+    _getAuthTypeSplitChar(authType){
+        let splitIndex; 
+        authType.split("").forEach((char,i)=> char.toUpperCase() === authType[i] ? splitIndex = i : this.pass())
+        if(splitIndex) return authType[splitIndex];
+        return authType
+    }
+
+    _addAuthTypeSeparator(authType,splitChar){
+        const splitter = authType.split(splitChar)
+        splitter[1] = splitChar + splitter[1]
+        return splitter.join("_")
     }
 
     addToggler(toggler) {
@@ -80,13 +114,26 @@ export class SwitchOption {
     }
 
     _setMarkupProperties(){
-        this.currentAuthType = this.AUTH_TYPES[this.authType.toUpperCase()]
-        this.currentAuthTypeStatus =  this.authType.includes(this.AUTH_TYPES[this.authType.toUpperCase()]) ? "active" : "inactive"
-        this.currentAuthTypePlaceholder = this.AUTH_TYPE_PLACEHOLDER[this.authType.toUpperCase()]
+        this.currentAuthType = this.AUTH_TYPES[this._formatAuthType(this.authType).toUpperCase()]
 
-        this.subAuthType = this.AUTH_TYPES_SUB[this.authType.toUpperCase()]
-        this.subAuthTypeStatus = this.authType.toUpperCase().includes(this.AUTH_TYPES_SUB[this.authType.toUpperCase()]) ? "active" : "inactive"
-        this.subAuthTypePlaceholder = this.AUTH_TYPE_PLACEHOLDER[this.AUTH_TYPES_SUB[this.authType.toUpperCase()].toUpperCase()]
+        this.currentAuthTypeStatus =  this._formatAuthType(this.authType).includes(
+            this._formatAuthType(
+                this.AUTH_TYPES[this._formatAuthType(this.authType).toUpperCase()])
+            ) ? "active" : "inactive"
+
+        this.currentAuthTypePlaceholder = this.AUTH_TYPE_PLACEHOLDER[this._formatAuthType(this.authType).toUpperCase()]
+
+        this.subAuthType = this.AUTH_TYPES_SUB[this._formatAuthType(this.authType).toUpperCase()]
+
+        this.subAuthTypeStatus = this._formatAuthType(this.authType).toUpperCase().includes(
+            this._formatAuthType(
+                this.AUTH_TYPES_SUB[this._formatAuthType(this.authType).toUpperCase()])
+            ) ? "active" : "inactive"
+
+        this.subAuthTypePlaceholder = this.AUTH_TYPE_PLACEHOLDER[
+            this._formatAuthType(
+                this.AUTH_TYPES_SUB[this._formatAuthType(this.authType).toUpperCase()]
+            ).toUpperCase()]
     }
 
     _generateMarkup() {
@@ -112,6 +159,7 @@ export class SwitchOption {
     remove() {
         const cls = this;
         this._eventListeners.forEach(ev => this._component.removeEventListener(ev, cls._handleEvents))
+        this._component.remove()
         delete this;
     }
 }

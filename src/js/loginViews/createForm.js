@@ -3,7 +3,6 @@ import { selector } from "../helper";
 import { BaseForm } from "./baseForm";
 
 export class CreateForm extends BaseForm {
-
     constructor() {
         super()
     }
@@ -11,11 +10,6 @@ export class CreateForm extends BaseForm {
     _handleEvents(ev) {
         if (this.activeFormErrors) this._clearErrorSignal()
         if (ev.type === "submit") this._handleSubmit(ev)
-    }
-
-    _clearErrorSignal() {
-        const inputs = this._component.querySelectorAll("input")
-        inputs.forEach(input => input.classList.contains("form-field-error") && input.classList.remove("form-field-error"))
     }
 
     _handleSubmit(ev) {
@@ -32,22 +26,13 @@ export class CreateForm extends BaseForm {
             callBack: this._renderFormErrors.bind(this),
             spinner: true,
             alert: true,
-            type: null
+            type: null,
         }
         // API.queryAPI(, null, "create", payload, this._renderFormErrors.bind(this))
         API.queryAPI(queryObj)
 
     }
 
-    _renderFormErrors(errors, success = false) {
-        if (success) return;
-        const errorKeys = Object.getOwnPropertyNames(errors)
-        errorKeys.forEach(formFieldKey => {
-            const formField = selector(`[name=${formFieldKey}]`, this._component)
-            formField.classList.add("form-field-error")
-        })
-        this.activeFormErrors = true;
-    }
 
     _generateMarkup() {
         return `
@@ -65,7 +50,7 @@ export class CreateForm extends BaseForm {
                     <input type="password" name="password" placeholder="password" required>
                 </div>
                 <div class="password-box form-box">
-                    <input type="password" name="password1" placeholder="confirm password" required>
+                    <input type="password" name="password2" placeholder="confirm password" required>
                 </div>
                 <button class="btn-login btn-submit">Submit</button>
             </form>

@@ -3,7 +3,7 @@ import { ComponentMethods } from "../componentMethods.js";
 
 export class Alert {
     _eventListeners = ["click"]
-    timeout = 1 //1 sec to timeout
+    timeout = 3 //1 sec to timeout
 
     constructor(msg, timeout, alertType) {
         this.msg = msg

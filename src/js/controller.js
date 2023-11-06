@@ -46,6 +46,7 @@ const controlLogin = function (loginComponentCallBack, token) {
 }
 
 const controlUpdateUserInfo = function (updateInfoComponentCallback, token) {
+
   // const loader = new Loader(DEFAULT_REQUEST_TIMEOUT)
   // loader.component()
 
@@ -524,7 +525,7 @@ const controlWaitForDB = function () {
 
     //add update userinfo component
     const updateUserInfo = new UpdateUserInfoComponent
-    updateUserInfo.addEventListeners(controlUpdateUserInfo)
+    updateUserInfo.addEventListeners(controlUpdateUserInfo,model.token.value)
 
 
   }
@@ -532,7 +533,6 @@ const controlWaitForDB = function () {
 
 const init = function () {
   model.loadToken()
-
   if (!model.token.value) {
     document.body.innerHTML = LoginTemplate.template()
     Login.addEventListeners(controlLogin);

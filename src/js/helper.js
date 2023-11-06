@@ -44,6 +44,7 @@ export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
 };
 
 export const selector = (identifier, nodeObj = undefined) => {
+  console.log(identifier, nodeObj)
   if (nodeObj) return nodeObj.querySelector(identifier)
 
   if (!nodeObj) return document.querySelector(identifier)
@@ -54,6 +55,14 @@ export const delegateMatch = (ev, className, optional = undefined) => {
     return true
 
   if (optional && ev.target.nodeName.toLowerCase() === optional) return true;
+}
+
+export const delegateMatchId = (ev, id, optional = undefined) => {
+  if (ev.target.id === id || ev.target.closest(`#${id}`)) return true
+}
+
+export const delegateMatchChild = (ev, className) => {
+  if (ev.target.querySelector(`.${className}`)) return true
 }
 
 export const delegateConditional = (ev, className, optional = undefined) => {

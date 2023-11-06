@@ -219,3 +219,36 @@ body{
     border: none;
     font-size: 1.8rem;
 }
+
+.btn-reset{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    color: #ededed;
+}
+
+.reset-heading{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+}
+
+.reset-confirm{
+    display: flex;
+    flex-direction: column;
+    gap: 3.2rem;
+}
+
+.auth-btns{
+    width: 68%;
+    font-size: 1.8rem;
+    justify-content: space-between;
+    display: flex;
+    color: #ededed;
+  }
+
+.auth-btn:visited,.auth-btn:active{
+    color: #ededed;
+}

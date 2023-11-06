@@ -44,13 +44,14 @@ export class LoginForm extends BaseForm {
                     <input type="password" name="password" placeholder="password" required>
                 </div>
                 <button class="btn-login btn-submit">Submit</button>
+
             </form>
 
         `
     }
 
-    remove() {
-        this._component.remove()
-        delete this
-    }
+    // remove() {
+    //     this._component.remove()
+    //     delete this
+    // }
 }
