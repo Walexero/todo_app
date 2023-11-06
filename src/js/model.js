@@ -8,6 +8,9 @@ export let state = {
   completed: [],
   currentTodo: null,
   loadedFromDb: false,
+};
+
+export let diffState = {
   //diffing related properties
   taskToDelete: [],
   todoToDelete: [],
@@ -15,8 +18,7 @@ export let state = {
   todoToComplete: [],
   taskToCreate: [],
   todoToCreate: [],
-
-};
+}
 
 export let token = {}
 
@@ -25,6 +27,11 @@ const pass = () => { };
 const persistTodo = function () {
   localStorage.setItem("todos", JSON.stringify(state));
 };
+
+export const persistDiff = function () {
+  localStorage.setItem("diff", JSON.stringify(diffState))
+  console.log(diffState)
+}
 
 export const persistToken = function () {
   localStorage.setItem("token", JSON.stringify(token))
@@ -58,12 +65,12 @@ const getTodoIndexAndTodo = (todoID) => {
   return { currentTodo, todoIndex };
 };
 
-export const APIAddTodoOrTask = function (typeObj, type) {
+export const APIAddTodoOrTask = function (typeObj, type, fallback = false) {
   debugger;
   let currentTodo;
 
   if (type)
-    typeObj = formatAPIResponseBody(typeObj, type)
+    typeObj = formatAPIResponseBody(typeObj, type, fallback)
 
   if (state.currentTodo) {
     currentTodo = getCurrentTodo(typeObj.todoId);
@@ -264,6 +271,9 @@ export const loadToken = function () {
 //get persisted data on page load
 export function init(callBack, api = false, APIResp = undefined) {
   if (!api)
+    //TODO: add diff state load before apidata load
+    //TODO: any todo that was created by the fallback should have a property to indicate it
+    //TODO: complete all task todo
     //load the data from the API
     loadDataFromAPI(token.value, callBack)
 

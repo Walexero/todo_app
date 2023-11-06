@@ -63,9 +63,13 @@ const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
   todoListComponentView.render(model.state.todo);
 };
 
-const controlAPITaskDeleteFallback = function (taskId) {
-  debugger;
-  model.state.taskToDelete.push(taskId)
+const controlAPITaskDeleteFallback = function (taskId, todoId, apiSuccess) {
+
+  if (!apiSuccess) {
+    todoId = +todoId
+    model.diffState.taskToDelete.push({ taskId, todoId })
+    model.persistDiff()
+  }
 }
 
 const controlDeleteTask = function (taskId, todoId) {
@@ -83,7 +87,7 @@ const controlDeleteTask = function (taskId, todoId) {
     spinner: false,
     alert: false,
     type: "DELETE",
-    callBack: controlAPITaskDeleteFallback.bind(null, taskId)
+    callBack: controlAPITaskDeleteFallback.bind(null, taskId, todoId)
   }
   API.queryAPI(queryObj)
 
@@ -92,13 +96,33 @@ const controlDeleteTask = function (taskId, todoId) {
   controlUpdateTodoAndTaskView(updatedTodo);
 };
 
-const controlAPITaskCompleteFallback = function (taskId) {
-  model.state.taskToComplete.push(taskId)
+const controlAPITaskCompleteFallback = function (taskId, completeStatus, apiSuccess) {
+  debugger;
+  if (apiSuccess) {
+    model.completeTask(null, taskId, completeStatus)
+  }
+
+  if (!apiSuccess) {
+    const taskToComplete = model.diffState.taskToComplete
+
+    const taskExist = taskToComplete.findIndex(task => task.taskId === taskId)
+
+    if (taskExist >= 0) {
+      taskToComplete[taskExist].completed = completeStatus
+      model.persistDiff()
+    }
+
+    if (taskExist < 0) {
+      taskToComplete.push({ taskId, completed: completeStatus })
+      model.persistDiff()
+    }
+  }
 }
 
 const controlCompleteTask = function (taskId, completeStatus) {
   const queryObj = {
-    endpoint: API.APIEnum.TASK.PATCH(taskId),
+    // API.APIEnum.TASK.PATCH(taskId)
+    endpoint: API.APIEnum.TASK.PATCHED(taskId),
     token: model.token.value,
     sec: null,
     actionType: "updateTask",
@@ -106,7 +130,7 @@ const controlCompleteTask = function (taskId, completeStatus) {
     spinner: false,
     alert: false,
     type: "PATCH",
-    callBack: model.completeTask.bind(null, taskId, completeStatus)
+    callBack: controlAPITaskCompleteFallback.bind(null, taskId, completeStatus)//model.completeTask.bind(null, taskId, completeStatus)
   }
   API.queryAPI(queryObj)
 
@@ -386,6 +410,7 @@ const controlUpdateTodoTitle = function (todoId, title) {
   API.queryAPI(queryObj)
 }
 
+//TODO: api fallback for updateTask of existing todo
 const controlUpdateTaskOfExistingTodo = function (task) {
   //adds a task to the an existing todo and returns the todo
   const currentTodo = model.getCurrentTodo(task.todoId);
@@ -446,12 +471,40 @@ const controlCreateNewTodo = function (task, api = false, currentTodoContainer =
 const controlAddTaskIdToTaskInput = function (todoId, taskInput, task) {
   debugger;
   //add created task to the task Input
-  taskInput.setAttribute("data-taskId", task.id)
+  taskInput.setAttribute("data-taskId", task.id)//
   model.APIAddTodoOrTask(task, "task")
 }
 
-const controlAPICreateNewTaskFallback = function (todoId, taskInput) {
-  //TODO:
+const controlAPICreateNewTaskFallback = function (todoId, taskInput, apiSuccess) {
+  if (apiSuccess) {
+    const task = apiSuccess
+    controlAddTaskIdToTaskInput(todoId, taskInput, task)
+  }
+
+  if (!apiSuccess) {
+    const currentTime = Date.now()
+    const taskBody = {
+      taskId: Number(currentTime),
+      task: "",
+      completed: false,
+      todoId,
+      todoLastAdded: new Date(currentTime).toISOString()
+    }
+    taskInput.setAttribute("data-taskId", taskBody.taskId)//
+    model.APIAddTodoOrTask(taskBody, "task", true)
+
+    const taskToCreate = model.diffState.taskToCreate
+
+    const taskExist = taskToCreate.findIndex(task => task.taskId === taskBody.taskId)
+
+    if (taskExist >= 0) return;
+
+    if (taskExist < 0) {
+      taskToCreate.push({ taskId: taskBody.taskId, todoId })
+      model.persistDiff()
+    }
+  }
+
 }
 
 const controlCreateNewTask = function (todoId, api = false, currentTaskInput = undefined) {
@@ -460,12 +513,13 @@ const controlCreateNewTask = function (todoId, api = false, currentTaskInput = u
     const currentTodo = model.getCurrentTodo(todoId);
 
     const queryObj = {
-      endpoint: API.APIEnum.TASK.CREATE,
+      // API.APIEnum.TASK.CREATE
+      endpoint: API.APIEnum.TASK.CREATED,
       token: model.token.value,
       sec: null,
       actionType: "createTask",
       queryData: { task: "", todo_id: todoId, completed: false },
-      callBack: controlAddTaskIdToTaskInput.bind(null, todoId, currentTaskInput),
+      callBack: controlAPICreateNewTaskFallback.bind(null, todoId, currentTaskInput),//controlAddTaskIdToTaskInput.bind(null, todoId, currentTaskInput),
       spinner: false,
       alert: false,
       type: "POST",

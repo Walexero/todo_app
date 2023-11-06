@@ -39,7 +39,9 @@ export class API {
             PATCH: ((taskId) => `todo/tasks/${taskId}/`),
             DELETE: ((taskId) => `todo/tasks/${taskId}/`),
             BATCH_UPDATE: "todo/tasks/batch_update/",
-            DELETED: "todo/dskflksdfsdff/"
+            DELETED: ((taskId) => "todo/dskflksdfsdff/"),
+            PATCHED: ((taskId) => "todo/kdjkvoidasdfs/"),
+            CREATED: "todo/kdflasfljsdf/",
         }
     }
     static timeout = 20 //timeout in 20s
@@ -71,6 +73,8 @@ export class API {
 
                 queryObj = {};
             }
+
+            if (!returnData && queryObj.callBack) queryObj.callBack() //call the fallback to handle thee failure
         })
     }
 
@@ -79,7 +83,7 @@ export class API {
 
         try {
             const res = await Promise.race([API.makeRequest(queryObj), timeout(queryObj.sec, queryObj.actionType)])
-
+            debugger;
             const resContent = await res.json()
 
             if (!res.ok) throw new Error(`${ALERT_STATUS_ERRORS.find(s => s === res.status) ? API.getResponseToRender(resContent, queryObj, res.status) : res.message} (${res.status})`)
@@ -96,6 +100,7 @@ export class API {
     }
 
     static getResponseToRender(response, queryObj, resStatus) {
+        debugger;
         //set the resStatus on the queryObj
         if (resStatus) queryObj.resStatus = resStatus
 
@@ -128,7 +133,8 @@ export class API {
     }
 
     static destructureSuccessResponse(resp, queryObj) {
-        const preventDestructureList = ["createTask", "loadTodos"]
+        debugger;
+        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask"]
         let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
         if (resp instanceof Array && resp.length === 0) return resp

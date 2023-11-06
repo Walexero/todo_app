@@ -102,8 +102,10 @@ const formatAPITodoTasks = (APITasks, formatType) => {
   return APITasks
 }
 
-export const formatAPIResponseBody = (responseBody, type) => {
+export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
   let formattedBody;
+
+  if (fallback) return responseBody
 
   if (type === "todo")
     formattedBody = {
