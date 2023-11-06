@@ -63,6 +63,7 @@ export class API {
 
         (async () => await API.querier(queryObj))().then(returnData => {
             if (returnData) {
+                debugger;
                 queryObj.loader ? queryObj.loader.remove() : null
                 queryObj.alert ? new Alert(HTTP_200_RESPONSE[queryObj.actionType](returnData), null, "success").component() : null
                 if (queryObj.callBack) queryObj.callBack(returnData, queryObj.callBackParam ?? true)
@@ -126,6 +127,9 @@ export class API {
     }
 
     static destructureSuccessResponse(resp) {
+        //if theres an empty data value returned as an empty array reeturn it
+        if (resp instanceof Array && resp.length === 0) return resp
+        //if its not empty destructure
         if (resp instanceof Object) {
             const respKey = Object.keys(resp)
             return resp[respKey[0]]

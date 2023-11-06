@@ -1,5 +1,5 @@
 export class Toggles {
-    constructor(initiator, dependent, dependentClass,token) {
+    constructor(initiator, dependent, dependentClass, token) {
         this.initiator = initiator
         this.dependent = dependent
         this.dependentClass = dependentClass
@@ -17,7 +17,7 @@ export class Toggles {
         this.dependent = newDependent
     }
 
-    remove(){
+    remove() {
         delete this
     }
 }

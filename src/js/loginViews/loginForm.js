@@ -49,9 +49,4 @@ export class LoginForm extends BaseForm {
 
         `
     }
-
-    // remove() {
-    //     this._component.remove()
-    //     delete this
-    // }
 }

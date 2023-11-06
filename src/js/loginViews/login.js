@@ -53,9 +53,6 @@ class Login {
         if (delegateMatch(ev, "auth-btn-signup")) this._reRenderComponentContent("create")
         //reset ev
         if (delegateMatch(ev, "btn-reset")) this._handleReset("reset")
-
-
-
     }
 
     handleAuth(authType) {
@@ -214,6 +211,7 @@ class Login {
                 )
             })
             this._removeChildren()
+            this._removeTempNodes()
 
             delete this;
         }

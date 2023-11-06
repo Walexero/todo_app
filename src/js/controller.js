@@ -34,7 +34,7 @@ const controlLogin = function (loginComponentCallBack, token) {
   loader.component()
 
   //set model token
-  model.token.value = token.token
+  model.token.value = token
   model.persistToken()
 
   //remove auth components
@@ -525,7 +525,7 @@ const controlWaitForDB = function () {
 
     //add update userinfo component
     const updateUserInfo = new UpdateUserInfoComponent
-    updateUserInfo.addEventListeners(controlUpdateUserInfo,model.token.value)
+    updateUserInfo.addEventListeners(controlUpdateUserInfo, model.token.value)
 
 
   }
