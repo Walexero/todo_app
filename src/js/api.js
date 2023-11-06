@@ -84,7 +84,7 @@ export class API {
 
             if (!res.ok) throw new Error(`${ALERT_STATUS_ERRORS.find(s => s === res.status) ? API.getResponseToRender(resContent, queryObj, res.status) : res.message} (${res.status})`)
 
-            if (!resContent.non_field_errors) data = API.destructureSuccessResponse(resContent)
+            if (!resContent.non_field_errors) data = API.destructureSuccessResponse(resContent, queryObj)
         } catch (err) {
             if (queryObj.loader) await queryObj.loader.remove()
             if (queryObj.alert) await new Alert(err.message ?? err, null, "error").component()
@@ -127,13 +127,19 @@ export class API {
         return error
     }
 
-    static destructureSuccessResponse(resp) {
+    static destructureSuccessResponse(resp, queryObj) {
+        const preventDestructureList = ["createTask", "loadTodos"]
+        let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
         if (resp instanceof Array && resp.length === 0) return resp
         //if its not empty destructure
         if (resp instanceof Object) {
-            const respKey = Object.keys(resp)
-            return resp[respKey[0]]
+            preventDestructure = preventDestructureList.some(listItem => listItem === queryObj.actionType)
+
+            if (!preventDestructure) {
+                const respKey = Object.keys(resp)
+                return resp[respKey[0]]
+            }
         }
         return resp
     }
