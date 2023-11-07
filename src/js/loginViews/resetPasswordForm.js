@@ -1,6 +1,6 @@
 import { BaseForm } from "./baseForm.js"
 import { API } from "../api.js"
-import { ComponentMethods } from "../componentMethods.js";
+import { ComponentMethods } from "../components/componentMethods.js";
 import { delegateMatch, delegateMatchId, delegateMatchChild, selector } from "../helper.js";
 
 export class ResetPasswordForm extends BaseForm {

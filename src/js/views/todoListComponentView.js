@@ -1,5 +1,5 @@
 import { cleanFormData, createObjectFromForm } from "../helper.js";
-import todoActionsView from "./todoActionsView.js";
+import { importTodoActionsView } from "./todoActionsView.js"
 
 class TodoListComponentView {
   _data;
@@ -8,7 +8,7 @@ class TodoListComponentView {
   _parentElementContainer = document.querySelector(".td-component--container");
   _parentElement = document.querySelector("#component-container");
   _renderContainer = document.querySelector(".td-render--container");
-  _todoActions = todoActionsView;
+  _todoActions = importTodoActionsView();
   _renderContainerVisibility = false;
   _addTodoBtn;
   _initRenderFormActivated;

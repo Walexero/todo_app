@@ -1,4 +1,4 @@
-import { ComponentMethods } from "../componentMethods.js";
+import { ComponentMethods } from "../components/componentMethods.js";
 import { Alert } from "../components/alerts.js";
 import { PASSWORD_NOT_MATCH_ERROR, DEFAULT_ALERT_TIMEOUT, INVALID_EMAIL_ERROR, INVALID_NAME_FORMAT } from "../config.js";
 import { selector } from "../helper.js";

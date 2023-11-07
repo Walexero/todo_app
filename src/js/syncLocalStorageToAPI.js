@@ -1,5 +1,5 @@
 import { Loader } from "./components/loader.js";
-import { ComponentMethods } from "./componentMethods.js";
+import { ComponentMethods } from "./components/componentMethods.js";
 
 class SyncLocalStorageToAPI {
 

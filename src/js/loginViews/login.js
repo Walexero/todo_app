@@ -2,7 +2,7 @@ import { SwitchOption } from "./switchOptions.js"
 import { Form } from "./form.js"
 import { Overlay } from "../components/overlay.js"
 import { delegateMatch } from "../helper.js"
-import { ComponentMethods } from "../componentMethods.js"
+import { ComponentMethods } from "../components/componentMethods.js"
 import { Toggles } from "../components/toggles.js"
 
 class Login {

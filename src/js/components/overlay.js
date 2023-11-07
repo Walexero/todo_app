@@ -1,5 +1,5 @@
 
-import { ComponentMethods } from "../componentMethods";
+import { ComponentMethods } from "./componentMethods";
 import { delegateConditional } from "../helper";
 
 export class Overlay {

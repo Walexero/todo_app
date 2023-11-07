@@ -48,4 +48,5 @@ class TaskActionsView {
   }
 }
 
-export default new TaskActionsView();
+export const importTaskActionsView = (() => new TaskActionsView());
+// export default new TaskActionsView();

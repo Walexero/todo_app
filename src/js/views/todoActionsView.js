@@ -69,4 +69,4 @@ class TodoActionsView {
   }
 }
 
-export default new TodoActionsView();
+export const importTodoActionsView = (() => new TodoActionsView());

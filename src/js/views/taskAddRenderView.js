@@ -1,5 +1,6 @@
-import taskActionsView from "./taskActionsView.js";
-import { ComponentMethods } from "../componentMethods.js";
+// import taskActionsView from "./taskActionsView.js";
+import { importTaskActionsView } from "./taskActionsView.js";
+import { ComponentMethods } from "../components/componentMethods.js";
 
 class TaskAddRenderView {
   _handler;
@@ -15,7 +16,7 @@ class TaskAddRenderView {
   );
   _taskContainerSelector = ".td-component-content";
   _taskActionsActive = false;
-  _taskActions = taskActionsView;
+  _taskActions = importTaskActionsView();
   _taskEditHandler;
   _handlerUpdateTodoTitle
   _currentTodo;

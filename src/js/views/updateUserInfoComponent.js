@@ -1,4 +1,4 @@
-import { ComponentMethods } from "../componentMethods.js"
+import { ComponentMethods } from "../components/componentMethods.js"
 import { Form } from "../loginViews/form.js"
 import { SwitchOption } from "../loginViews/switchOptions.js"
 import { Toggles } from "../components/toggles.js"
@@ -17,7 +17,7 @@ export class UpdateUserInfoComponent {
         return this._component
     }
 
-    addEventListeners(requestHandler = undefined,token) {
+    addEventListeners(requestHandler = undefined, token) {
         this.requestHandler = requestHandler
         this._token = token
         this._insertBtnComponent()
@@ -34,7 +34,7 @@ export class UpdateUserInfoComponent {
         if (ev.target.closest(".btn-update")) this.handleUpdateRequest()
     }
 
-    component(updateInfoEl,switchComponent, formComponent) {
+    component(updateInfoEl, switchComponent, formComponent) {
         const componentCont = updateInfoEl
         const componentSelector = componentCont.querySelector(".info-update-content")
         componentSelector.insertAdjacentElement("afterbegin", switchComponent.component())
@@ -60,20 +60,20 @@ export class UpdateUserInfoComponent {
 
     }
 
-    _renderUpdateType(btnContent){
+    _renderUpdateType(btnContent) {
         const updateType = this._formatBtnContentForSwitcher(btnContent)
-        const switcher = new SwitchOption(updateType.switchType,true)
+        const switcher = new SwitchOption(updateType.switchType, true)
         const form = Form.form(updateType.updateType)
-        
+
         //add form token
         form.addToken(this._token)
 
         //toggle the form based on the swicher
-        switcher.addToggler(new Toggles(switcher, form, Form,this._token))
-        
+        switcher.addToggler(new Toggles(switcher, form, Form, this._token))
+
         //add control handler to form
         form.addControlHandler(this.requestHandler)
-        
+
         this._children.push(switcher, form)
 
         this._component = this.component(this._generateMarkup(), switcher, form)
@@ -82,11 +82,11 @@ export class UpdateUserInfoComponent {
 
     }
 
-    _formatBtnContentForSwitcher(btnContent){
+    _formatBtnContentForSwitcher(btnContent) {
         let updateType = btnContent.split(" ")
-        const switchType = updateType[0].toLowerCase() + "_" + updateType[1] 
-        updateType = updateType[0].toLowerCase() + updateType[1].slice(0,1).toUpperCase() + updateType[1].slice(1)
-        return {updateType, switchType}
+        const switchType = updateType[0].toLowerCase() + "_" + updateType[1]
+        updateType = updateType[0].toLowerCase() + updateType[1].slice(0, 1).toUpperCase() + updateType[1].slice(1)
+        return { updateType, switchType }
     }
 
     _generateBtnMarkup() {

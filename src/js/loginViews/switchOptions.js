@@ -1,4 +1,4 @@
-import { ComponentMethods } from "../componentMethods"
+import { ComponentMethods } from "../components/componentMethods"
 import { delegateMatch } from "../helper"
 
 export class SwitchOption {

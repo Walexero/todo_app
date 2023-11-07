@@ -1,5 +1,5 @@
 import { Overlay } from "./overlay.js";
-import { ComponentMethods } from "../componentMethods.js";
+import { ComponentMethods } from "./componentMethods.js";
 import { timeout } from "../helper.js";
 import { Alert } from "./alerts.js";
 // import { API } from "../api.js";
