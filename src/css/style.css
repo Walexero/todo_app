@@ -240,3 +240,33 @@ body {
   font-size: 1.8rem;
   word-break: break-word;
 }
+
+/* sync component styling */
+.sync-alert{
+  display: flex;
+  background: crimson;
+  align-items: center;
+  justify-content: center;
+  gap: 13.8rem;
+  height: 3.4rem;
+}
+
+.sync-msg{
+  font-size: 1.6rem;
+  color: #ededed;
+}
+
+.btn-sync{
+  height: 2.6rem;
+  width: 8.6rem;
+  border: none;
+}
+
+.btn-sync-now{
+  color: var(--color-component--bg);
+}
+
+.btn-sync-later{
+  background-color :var(--color-component--bg);
+  color: #ededed;
+}

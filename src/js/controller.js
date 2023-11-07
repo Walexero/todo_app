@@ -1,6 +1,7 @@
 import * as model from "./model.js";
 import { importTodoListComponentView } from "./views/todoListComponentView.js";
 import { importTaskAddRenderView } from "./views/taskAddRenderView.js";
+import { importSyncLocalStorageToAPI } from "./syncLocalStorageToAPI.js";
 import { MOBILE_MAX_SCREEN_SIZE } from "./config.js";
 import Login from "./loginViews/login.js";
 import { Loader } from "./components/loader.js";
@@ -15,6 +16,7 @@ import { UpdateUserInfoComponent } from "./views/updateUserInfoComponent.js";
 //make the modules a variable before init
 let todoListComponentView;
 let taskAddRenderView;
+let syncLocalStorageToAPI;
 
 //distinguish mobile render from other screensize
 const mobileDeviceTrigger = window.matchMedia(MOBILE_MAX_SCREEN_SIZE);
@@ -707,6 +709,9 @@ const init = function () {
     //initialize the components so it only gets loaded after its template is present
     todoListComponentView = importTodoListComponentView()
     taskAddRenderView = importTaskAddRenderView()
+
+    //initialize the data sync to listen for change differences between the API and the localstorage
+    syncLocalStorageToAPI = importSyncLocalStorageToAPI()
 
     model.init(controlWaitForDB)
 
