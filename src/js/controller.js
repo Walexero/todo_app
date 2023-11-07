@@ -6,7 +6,7 @@ import Login from "./loginViews/login.js";
 import { Loader } from "./components/loader.js";
 import { TodoTemplate } from "./templates/todoTemplate.js";
 import { LoginTemplate } from "./templates/loginTemplate.js";
-import { DEFAULT_LOGIN_PAGE_TIMEOUT, DEFAULT_REQUEST_TIMEOUT } from "./config.js";
+import { DEFAULT_LOGIN_PAGE_TIMEOUT } from "./config.js";
 import { API } from "./api.js";
 import { formatAPIPayloadForUpdateReorder } from "./helper.js";
 import { UpdateUserInfoComponent } from "./views/updateUserInfoComponent.js";
@@ -213,15 +213,30 @@ const controlAddTodoMobileView = function (renderTasks = undefined) {
   }
 };
 
+const controlAPITodoDeleteFallback = function (todoId, apiSuccess) {
+  debugger;
+  if (!apiSuccess) {
+    const todoToDelete = model.diffState.todoToDelete;
+
+    const todoExists = todoToDelete.findIndex(todo => todo === todoId)
+
+
+    if (todoExists < 0) todoToDelete.push(todoId)
+    model.persistDiff()
+  }
+}
+
 const controlTodoDelete = function (todoID) {
   const queryObj = {
-    endpoint: API.APIEnum.TODO.DELETE(todoID),
+    // API.APIEnum.TODO.DELETE(todoID),
+    endpoint: API.APIEnum.TODO.DELETED(todoID),
     token: model.token.value,
     sec: null,
     actionType: "deleteTodo",
     queryData: { id: todoID },
     spinner: false,
     alert: false,
+    callBack: controlAPITodoDeleteFallback.bind(null, todoID),
     type: "DELETE",
   }
   API.queryAPI(queryObj)
@@ -248,12 +263,31 @@ const controlTodoDelete = function (todoID) {
   }
 };
 
+const controlAPITodoCompleteFallback = function (todoId, completeStatus, apiSuccess) {
+  debugger;
+  if (!apiSuccess) {
+    const todoToComplete = model.diffState.todoToComplete
+    const todoExists = todoToComplete.findIndex(todo => todo.todoId === todoId)
+    if (todoExists >= 0) {
+      todoToComplete[todoExists].completed = completeStatus
+      model.persistDiff()
+    }
+
+    if (todoExists < 0) {
+      todoToComplete.push({ todoId, completed: completeStatus })
+      model.persistDiff()
+    }
+  }
+
+}
+
 const controlTodoComplete = function (todoID, uncompleteStatus = undefined) {
 
   //complete a todo
   const todo = model.completeTodo(Number(todoID), uncompleteStatus);
 
   const queryObj = {
+    // API.APIEnum.TODO.PATCH(todoID),
     endpoint: API.APIEnum.TODO.PATCH(todoID),
     token: model.token.value,
     sec: null,
@@ -261,6 +295,7 @@ const controlTodoComplete = function (todoID, uncompleteStatus = undefined) {
     queryData: { completed: todo.completed },
     spinner: false,
     alert: false,
+    callBack: controlAPITodoCompleteFallback.bind(null, todoID, todo.completed),
     type: "PATCH",
   }
   API.queryAPI(queryObj)
@@ -410,8 +445,27 @@ const controlUpdateTodoTitle = function (todoId, title) {
   API.queryAPI(queryObj)
 }
 
+const controlAPITaskUpdateFallback = function (todoId, taskId, apiSuccess, requestState) {
+  debugger;
+  //the requestState would only be set if the request was succeessful from the API component because the callBack params is set on the api request object
+  if (requestState) model.APIAddTodoOrTask(apiSuccess)
+  if (!requestState) {
+    const taskToUpdate = model.diffState.taskToUpdate
+
+    const taskExist = taskToUpdate.findIndex(task => task.taskId === taskId)
+
+    if (taskExist >= 0) return
+
+    if (taskExist < 0) {
+      taskToUpdate.push({ taskId, todoId })
+      model.persistDiff()
+    }
+  }
+}
+
 //TODO: api fallback for updateTask of existing todo
 const controlUpdateTaskOfExistingTodo = function (task) {
+  debugger;
   //adds a task to the an existing todo and returns the todo
   const currentTodo = model.getCurrentTodo(task.todoId);
 
@@ -431,7 +485,7 @@ const controlUpdateTaskOfExistingTodo = function (task) {
       sec: null,
       actionType: "updateTask",
       queryData: { task: task.task, completed: task.completed },
-      callBack: model.APIAddTodoOrTask,
+      callBack: controlAPITaskUpdateFallback.bind(null, +task.todoId, +task.taskId),//model.APIAddTodoOrTask,
       spinner: false,
       alert: false,
       type: "PATCH",
@@ -444,16 +498,52 @@ const controlUpdateTaskOfExistingTodo = function (task) {
   return model.APIAddTodoOrTask(task)
 };
 
+const controlAPICreateNewTodoFallback = function (currentTodoContainer, apiSuccess) {
+  debugger;
+  if (apiSuccess) {
+    const todo = apiSuccess
+    controlAddTodoIdToRenderContainer(currentTodoContainer, todo)
+  }
+
+  if (!apiSuccess) {
+    const currentTime = Date.now()
+    const todoBody = {
+      todoId: Number(currentTime),
+      title: "",
+      completed: false,
+      tasks: [],
+      lastAdded: new Date(currentTime).toISOString()
+    }
+
+    //set UI attr
+    currentTodoContainer.setAttribute("data-id", todoBody.todoId)
+    model.APIAddTodoOrTask(todoBody, "todo", true)
+    taskAddRenderView.setCurrentTodoState(todoBody.todoId)
+
+    const todoToCreate = model.diffState.todoToCreate
+
+    const todoExist = todoToCreate.findIndex(todo => todo.todoId === todoBody.todoId)
+
+    if (todoExist >= 0) return;
+
+    if (todoExist < 0) {
+      todoToCreate.push({ todoId: todoBody.todoId, todoId: todoBody.todoId })
+      model.persistDiff()
+    }
+  }
+}
+
 const controlCreateNewTodo = function (task, api = false, currentTodoContainer = undefined) {
   if (api) {
 
     const queryObj = {
-      endpoint: API.APIEnum.TODO.CREATE,
+      // API.APIEnum.TODO.CREATE
+      endpoint: API.APIEnum.TODO.CREATED,
       token: model.token.value,
       sec: null,
       actionType: "createTodo",
       queryData: { "title": "" },
-      callBack: controlAddTodoIdToRenderContainer.bind(null, currentTodoContainer),
+      callBack: controlAPICreateNewTodoFallback.bind(null, currentTodoContainer),//controlAddTodoIdToRenderContainer.bind(null, currentTodoContainer),
       spinner: false,
       alert: false,
       type: "POST"

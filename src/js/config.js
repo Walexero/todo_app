@@ -18,5 +18,6 @@ export const HTTP_200_RESPONSE = {
     "resetPwd": ((APIResp) => `${APIResp}\n Please fill in the form with the email details`),
     "resetConfirmPwd": ((APIResp) => APIResp),
 } //if needed for other response, add here
-export const ALERT_STATUS_ERRORS = [400, 401]
+export const ALERT_STATUS_ERRORS = [400, 401, 404]
 export const GENERIC_SUCCESS_ALERT = "Request completed Successfully"
+export const HTTP_204_SUCCESS_NO_CONTENT = 204

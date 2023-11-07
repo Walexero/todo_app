@@ -18,6 +18,7 @@ export let diffState = {
   todoToComplete: [],
   taskToCreate: [],
   todoToCreate: [],
+  taskToUpdate: [],
 }
 
 export let token = {}

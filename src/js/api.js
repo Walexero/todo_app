@@ -1,5 +1,5 @@
 import { timeout } from "./helper.js"
-import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400_RESPONSE_CREATE_USER, ALERT_STATUS_ERRORS, GENERIC_SUCCESS_ALERT } from "./config.js"
+import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400_RESPONSE_CREATE_USER, ALERT_STATUS_ERRORS, GENERIC_SUCCESS_ALERT, HTTP_204_SUCCESS_NO_CONTENT } from "./config.js"
 import { Loader } from "./components/loader.js"
 import { Alert } from "./components/alerts.js"
 
@@ -28,7 +28,9 @@ export class API {
             PATCH: ((todoId) => `todo/todos/${todoId}/`),
             DELETE: ((todoId) => `todo/todos/${todoId}/`),
             BATCH_UPDATE: "todo/todos/batch_update/",
-
+            DELETED: ((todoId) => "todo/vadklafdf/"),
+            PATCHED: ((todoId) => "todo/kdlfasdkjf/"),
+            CREATED: "todo/skdflafadf/"
         },
 
         TASK: {
@@ -84,7 +86,7 @@ export class API {
         try {
             const res = await Promise.race([API.makeRequest(queryObj), timeout(queryObj.sec, queryObj.actionType)])
             debugger;
-            const resContent = await res.json()
+            const resContent = res.status !== HTTP_204_SUCCESS_NO_CONTENT ? await res.json() : {}
 
             if (!res.ok) throw new Error(`${ALERT_STATUS_ERRORS.find(s => s === res.status) ? API.getResponseToRender(resContent, queryObj, res.status) : res.message} (${res.status})`)
 
@@ -134,7 +136,7 @@ export class API {
 
     static destructureSuccessResponse(resp, queryObj) {
         debugger;
-        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask"]
+        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "updateTodo"]
         let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
         if (resp instanceof Array && resp.length === 0) return resp
