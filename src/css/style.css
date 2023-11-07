@@ -73,6 +73,7 @@ body {
   padding: 1.2rem 0;
   text-align: center;
   font-size: 1.4rem;
+  cursor: pointer;
 }
 
 /* component section */
@@ -260,6 +261,7 @@ body {
   height: 2.6rem;
   width: 8.6rem;
   border: none;
+  cursor: pointer;
 }
 
 .btn-sync-now{

@@ -1,4 +1,3 @@
-import { BASE_API_URL } from "./config.js";
 
 export const cleanFormData = function (formData) {
   return {
@@ -50,7 +49,7 @@ export const selector = (identifier, nodeObj = undefined) => {
   if (!nodeObj) return document.querySelector(identifier)
 }
 
-export const delegateMatchTarget = (ev, className){
+export const delegateMatchTarget = (ev, className) => {
   //on selects based on thee classlist and not with closest
   if (ev.target.classList.contains(className)) return true
 }

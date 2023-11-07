@@ -14,12 +14,15 @@ export let diffState = {
   //diffing related properties
   taskToDelete: [],
   todoToDelete: [],
-  taskToComplete: [],
-  todoToComplete: [],
+  taskToUpdate: [],//should be to update,sould work with complete and title update
+  todoToUpdate: [], //should be to update,sould work with complete and title update
   taskToCreate: [],
   todoToCreate: [],
   taskToUpdate: [],
+  diffActive: false,
 }
+
+let stateCopyForDiff;
 
 export let token = {}
 
@@ -259,7 +262,7 @@ const loadDataFromAPI = function (token, callBack) {
     spinner: true,
     alert: true,
     type: "GET",
-    callBack: init.bind(null, callBack, true)
+    callBack: init.bind(null, null, callBack, true)
   }
   API.queryAPI(queryObj)
 }
@@ -270,13 +273,32 @@ export const loadToken = function () {
 }
 
 //get persisted data on page load
-export function init(callBack, api = false, APIResp = undefined) {
-  if (!api)
-    //TODO: add diff state load before apidata load
-    //TODO: any todo that was created by the fallback should have a property to indicate it
-    //TODO: complete all task todo
-    //load the data from the API
-    loadDataFromAPI(token.value, callBack)
+export function init(sync, callBack, api = false, APIResp = undefined) {
+  debugger;
+  if (!api) {
+    const savedState = localStorage.getItem("todos")
+    const diffSavedState = localStorage.getItem("diff")
+    if (savedState) {
+      const localState = JSON.parse(savedState);
+      const diffLocalState = JSON.parse(diffSavedState)
+      console.log(localState)
+
+      if (diffLocalState && diffLocalState.diffActive) {
+
+        sync.addModelData(localState, diffLocalState)
+        sync.startModelInit(init)
+      }
+
+      if (!diffLocalState || !diffLocalState.diffActive)
+        //load api after no more data to sync
+        //TODO: add diff state load before apidata load
+        //TODO: any todo that was created by the fallback should have a property to indicate it
+        //load the data from the API
+        //TODO: if sync fails user should still be able to access data
+        loadDataFromAPI(token.value, callBack)
+    }
+
+  }
 
   if (api) {
     const APIData = formatLoadedAPIData(APIResp)
