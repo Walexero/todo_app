@@ -47,14 +47,7 @@ const controlLogin = function (loginComponentCallBack, token) {
   loader.remove()
 }
 
-const controlUpdateUserInfo = function (updateInfoComponentCallback, token) {
-
-  // const loader = new Loader(DEFAULT_REQUEST_TIMEOUT)
-  // loader.component()
-
-  //implement api query
-
-}
+const controlUpdateUserInfo = function (updateInfoComponentCallback, token) { }
 
 const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
   //update UI
@@ -71,6 +64,7 @@ const controlAPITaskDeleteFallback = function (taskId, todoId, apiSuccess) {
     todoId = +todoId
     model.diffState.taskToDelete.push({ taskId, todoId })
     model.persistDiff()
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
   }
 }
 
@@ -118,6 +112,7 @@ const controlAPITaskCompleteFallback = function (taskId, completeStatus, apiSucc
       taskToComplete.push({ taskId, completed: completeStatus })
       model.persistDiff()
     }
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
   }
 }
 
@@ -225,6 +220,8 @@ const controlAPITodoDeleteFallback = function (todoId, apiSuccess) {
 
     if (todoExists < 0) todoToDelete.push(todoId)
     model.persistDiff()
+
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
   }
 }
 
@@ -279,6 +276,8 @@ const controlAPITodoCompleteFallback = function (todoId, completeStatus, apiSucc
       todoToComplete.push({ todoId, completed: completeStatus })
       model.persistDiff()
     }
+
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
   }
 
 }
@@ -456,16 +455,17 @@ const controlAPITaskUpdateFallback = function (todoId, taskId, apiSuccess, reque
 
     const taskExist = taskToUpdate.findIndex(task => task.taskId === taskId)
 
-    if (taskExist >= 0) return
+    // if (taskExist >= 0) return
 
     if (taskExist < 0) {
       taskToUpdate.push({ taskId, todoId })
       model.persistDiff()
     }
+
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
   }
 }
 
-//TODO: api fallback for updateTask of existing todo
 const controlUpdateTaskOfExistingTodo = function (task) {
   debugger;
   //adds a task to the an existing todo and returns the todo
@@ -526,12 +526,14 @@ const controlAPICreateNewTodoFallback = function (currentTodoContainer, apiSucce
 
     const todoExist = todoToCreate.findIndex(todo => todo.todoId === todoBody.todoId)
 
-    if (todoExist >= 0) return;
+    // if (todoExist >= 0) return;
 
     if (todoExist < 0) {
       todoToCreate.push({ todoId: todoBody.todoId, todoId: todoBody.todoId })
       model.persistDiff()
     }
+
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
   }
 }
 
@@ -589,12 +591,14 @@ const controlAPICreateNewTaskFallback = function (todoId, taskInput, apiSuccess)
 
     const taskExist = taskToCreate.findIndex(task => task.taskId === taskBody.taskId)
 
-    if (taskExist >= 0) return;
+    // if (taskExist >= 0) return;
 
     if (taskExist < 0) {
       taskToCreate.push({ taskId: taskBody.taskId, todoId })
       model.persistDiff()
     }
+
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
   }
 
 }
@@ -602,7 +606,7 @@ const controlAPICreateNewTaskFallback = function (todoId, taskInput, apiSuccess)
 const controlCreateNewTask = function (todoId, api = false, currentTaskInput = undefined) {
   debugger;
   if (api) {
-    const currentTodo = model.getCurrentTodo(todoId);
+    // const currentTodo = model.getCurrentTodo(todoId);
 
     const queryObj = {
       // API.APIEnum.TASK.CREATE
@@ -691,6 +695,9 @@ const controlWaitForDB = function () {
     const updateUserInfo = new UpdateUserInfoComponent
     updateUserInfo.addEventListeners(controlUpdateUserInfo, model.token.value)
 
+    //add model that to sync component
+    syncLocalStorageToAPI.addModelData(model.state, model.diffState)
+
 
   }
 }
@@ -712,6 +719,7 @@ const init = function () {
 
     //initialize the data sync to listen for change differences between the API and the localstorage
     syncLocalStorageToAPI = importSyncLocalStorageToAPI()
+    syncLocalStorageToAPI.component()
 
     model.init(controlWaitForDB)
 
