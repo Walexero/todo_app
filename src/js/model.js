@@ -46,9 +46,9 @@ export const getCurrentTodo = function (todoID = state.currentTodo) {
   return currentTodo;
 };
 
-export const updateTodoTitle = function (updateObj) {
-  const currentTodo = getCurrentTodo(+updateObj.id)
-  currentTodo.title = updateObj.title
+export const updateTodoTitle = function (todoId, title) {
+  const currentTodo = getCurrentTodo(todoId)
+  currentTodo.title = title
   persistTodo()
   return state.todo
 }

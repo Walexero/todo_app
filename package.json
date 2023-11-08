@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@parcel/hash": "^2.9.3",
+    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "parcel": "^2.9.3",
     "sortablejs": "^1.15.0"
   },

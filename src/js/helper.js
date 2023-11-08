@@ -96,20 +96,27 @@ export const formatDateTime = (dateTime) => {
 }
 
 const formatAPITodoTasks = (APITasks, formatType) => {
-  if (APITasks.length > 1) {
+  if (APITasks.length > 0) {
     const APItaskList = []
     APITasks.forEach(task => APItaskList.push(formatAPIResponseBody(task, formatType)))
     const orderedTaskList = APItaskList.sort((a, d) => a?.ordering - d?.ordering)
     if (!orderedTaskList) return APItaskList
     return orderedTaskList
   }
+
+  // return [formatAPIResponseBody(APITasks[0], formatType)]
   return APITasks
 }
 
 const formatAPIRequestTodoTasks = (APIRequestTasks, formatType) => {
   if (APIRequestTasks.length > 0) {
+    const APItaskList = []
+    APIRequestTasks.forEach(task => APItaskList.push(formatAPIRequestBody(task, formatType)))
+    return APItaskList
+
     //implement task todo request formatting
   }
+  return [formatAPIRequestBody(APIRequestTasks[0], formatType)]
 }
 
 export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
@@ -146,7 +153,10 @@ export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
 }
 
 export const formatAPIRequestBody = (requestBody, type) => {
+  // debugger;
   let formattedBody;
+
+  if (!requestBody.length > 0) return requestBody
 
   if (type === "todo")
     formattedBody = {
@@ -159,15 +169,17 @@ export const formatAPIRequestBody = (requestBody, type) => {
   if (type === "todoTask")
     formattedBody = {
       task: requestBody.task,
-      completed: requestBody,
+      completed: requestBody.completed,
     }
 
   if (type === "task")
     formattedBody = {
       task: requestBody.task,
-      completed: requestBody,
+      completed: requestBody.completed,
       todo_id: requestBody.todoId,
     }
+
+  return formattedBody
 }
 
 export const formatAPIPayloadForUpdateReorder = function (payload, type) {
