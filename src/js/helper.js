@@ -106,6 +106,12 @@ const formatAPITodoTasks = (APITasks, formatType) => {
   return APITasks
 }
 
+const formatAPIRequestTodoTasks = (APIRequestTasks, formatType) => {
+  if (APIRequestTasks.length > 0) {
+    //implement task todo request formatting
+  }
+}
+
 export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
   let formattedBody;
 
@@ -137,6 +143,31 @@ export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
       ordering: responseBody.ordering ?? null
     }
   return formattedBody
+}
+
+export const formatAPIRequestBody = (requestBody, type) => {
+  let formattedBody;
+
+  if (type === "todo")
+    formattedBody = {
+      title: requestBody.title,
+      tasks: formatAPIRequestTodoTasks(requestBody.tasks, "todoTask"),
+      last_added: requestBody.lastAdded,
+      completed: requestBody.completed
+    }
+
+  if (type === "todoTask")
+    formattedBody = {
+      task: requestBody.task,
+      completed: requestBody,
+    }
+
+  if (type === "task")
+    formattedBody = {
+      task: requestBody.task,
+      completed: requestBody,
+      todo_id: requestBody.todoId,
+    }
 }
 
 export const formatAPIPayloadForUpdateReorder = function (payload, type) {

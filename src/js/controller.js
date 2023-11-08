@@ -231,7 +231,6 @@ const controlAPITodoDeleteFallback = function (todoId, apiSuccess) {
 
     const todoExists = todoToDelete.findIndex(todo => todo === todoId)
 
-
     if (todoExists < 0) todoToDelete.push(todoId)
     model.persistDiff()
 

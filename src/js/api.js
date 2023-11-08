@@ -22,12 +22,15 @@ export class API {
 
         TODO: {
             CREATE: "todo/todos/",
+            CREATE_BATCH: "", //TODO: add endpoint url,
             LIST: "todo/todos/",
             GET: ((todoId) => `todo/todos/${todoId}/`),
             PUT: ((todoId) => `todo/todos/${todoId}/`),
             PATCH: ((todoId) => `todo/todos/${todoId}/`),
+            BATCH_UPDATE: "todo/todos/batch_update/", //should be renamd to batch_update_ordering
+            BATCH_UPDATE_ALL: "", //TODO: add endpoint url
             DELETE: ((todoId) => `todo/todos/${todoId}/`),
-            BATCH_UPDATE: "todo/todos/batch_update/",
+            DELETE_BATCH: "",//TODO: add endpoint url
             DELETED: ((todoId) => "todo/vadklafdf/"),
             PATCHED: ((todoId) => "todo/kdlfasdkjf/"),
             CREATED: "todo/skdflafadf/"
@@ -35,12 +38,15 @@ export class API {
 
         TASK: {
             CREATE: "todo/tasks/",
+            CREATE_BATCH: "",//TODO:add endpoint url
             LIST: "todo/tasks/",
             GET: ((taskId) => `todo/tasks/${taskId}/`),
             PUT: ((taskId) => `todo/tasks/${taskId}/`),
             PATCH: ((taskId) => `todo/tasks/${taskId}/`),
             DELETE: ((taskId) => `todo/tasks/${taskId}/`),
-            BATCH_UPDATE: "todo/tasks/batch_update/",
+            DELETE_BATCH: "",//TODO:add endpoint url
+            BATCH_UPDATE_ALL: "", //TODO:add endpoint url
+            BATCH_UPDATE: "todo/tasks/batch_update/", //rename to batch_update_ordering
             DELETED: ((taskId) => "todo/dskflksdfsdff/"),
             PATCHED: ((taskId) => "todo/kdjkvoidasdfs/"),
             CREATED: "todo/kdflasfljsdf/",
@@ -136,7 +142,7 @@ export class API {
 
     static destructureSuccessResponse(resp, queryObj) {
         debugger;
-        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "updateTodo"]
+        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "updateTodo", "createBatchTodo", "createBatchTask", "updateBatchTodo", "updateBatchTask"]
         let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
         if (resp instanceof Array && resp.length === 0) return resp

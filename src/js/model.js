@@ -285,7 +285,7 @@ export function init(sync, callBack, api = false, APIResp = undefined) {
 
       if (diffLocalState && diffLocalState.diffActive) {
 
-        sync.addModelData(localState, diffLocalState)
+        sync.addModelData(localState, diffLocalState, token.value)
         sync.startModelInit(init)
       }
 
@@ -297,6 +297,9 @@ export function init(sync, callBack, api = false, APIResp = undefined) {
         //TODO: if sync fails user should still be able to access data
         loadDataFromAPI(token.value, callBack)
     }
+
+    if (!savedState)
+      loadDataFromAPI(token.value, callBack)
 
   }
 
