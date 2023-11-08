@@ -107,7 +107,7 @@ class SyncLocalStorageToAPI {
         console.log("the created todo payload", this.createTodoPayload)
 
         //create todo to update payload
-        this._createTodoUpdatePayload(this.pendingTodoToUpdate, this.createPendingTodosToUpdate, this.createPendingTodos, this.pendingTodosToDelete, this.createTodoToUpdatePayload)
+        this._createTodoUpdatePayload(this.pendingTodoToUpdate, this.createPendingTodosToUpdate, this.createPendingTodos, this.createTodoToUpdatePayload)
 
         console.log("the created todo to update payload", this.createTodoToUpdatePayload)
 
@@ -120,17 +120,13 @@ class SyncLocalStorageToAPI {
 
         console.log("the filtered pending tasks to update linked to api todo", this.createPendingTaskLinkedToAPITodoToUpdate)
 
-
-
-
-
         //task not linked to todos to create payload body
         this._createTaskLinkedToAPITodoBody(this.pendingTasks, this.createPendingTaskLinkedToAPITodo, this.createTaskPayload)
 
         console.log(this.createTaskPayload, "task to create payload for api todo ")
 
         //sort tasks which are to be updated not in createPendingTaskLinkedToAPITodo Array
-        this._createTaskToUpdateBody(this.pendingTaskToUpdate, this.createPendingTaskLinkedToAPITodo, this.createPendingTaskLinkedToAPITodo, this.createTaskToUpdatePayload)
+        this._createTaskToUpdateBody(this.pendingTaskToUpdate, this.createPendingTaskLinkedToAPITodoToUpdate, this.createPendingTaskLinkedToAPITodo, this.createTaskToUpdatePayload)
 
         console.log(this.createTaskToUpdatePayload, "task to update payload for api todo")
 
@@ -274,7 +270,7 @@ class SyncLocalStorageToAPI {
                     if (!deletedObjectExistsInObject) returnList.push(obj)
                 })
             }
-            if (!deletedObjectsExists) objectType === "todo" ? returnList = object : null
+            if (!deletedObjectsExists && objectType === "todo") returnList.push(object[0])
 
             if (objectType === "task" && returnList.length > 0) {
 
@@ -311,7 +307,7 @@ class SyncLocalStorageToAPI {
 
     _createTodoUpdatePayload(todoToUpdateDiffArray, todoToUpdateFilteredArray, todoToCreateFilteredArray, todoToUpdatePayloadArray) {
         //create todo to update payload
-        if (todoToUpdateDiffArray.length > 0)
+        if (todoToUpdateDiffArray.length > 0 && todoToUpdateFilteredArray.length > 0)
             todoToUpdateFilteredArray.forEach(todo => {
                 const todoToUpdateExistsInTodoToCreate = todoToCreateFilteredArray.some(pendingTodo => pendingTodo.todoId === todo.todoId)
 
@@ -333,7 +329,6 @@ class SyncLocalStorageToAPI {
     }
 
     _createTaskLinkedToAPITodoBody(taskToCreateDiffArray, pendingTaskLinkedToAPITodoArray, taskToCreatePayloadArray) {
-        debugger;
 
         //task not linked to todos to create payload body
         if (taskToCreateDiffArray.length > 0 && pendingTaskLinkedToAPITodoArray.length > 0)
@@ -349,7 +344,7 @@ class SyncLocalStorageToAPI {
 
     _createTaskToUpdateBody(taskToUpdateDiffArray, pendingTaskLinkedToAPITodoToUpdate, pendingTaskLinkedToAPITodo, taskToUpdatePayloadArray) {
         //sort tasks which are to be updated not in createPendingTaskLinkedToAPITodo Array
-        if (taskToUpdateDiffArray.length > 0 && pendingTaskLinkedToAPITodoToUpdate > 0)
+        if (taskToUpdateDiffArray.length > 0 && pendingTaskLinkedToAPITodoToUpdate.length > 0)
             pendingTaskLinkedToAPITodoToUpdate.forEach(task => {
                 // const taskToUpdateExists
                 const taskToUpdateExistsInTaskAPITodo = pendingTaskLinkedToAPITodo.some(APITodoTask => APITodoTask.taskId === task.taskId)

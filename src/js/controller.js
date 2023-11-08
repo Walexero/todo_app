@@ -97,11 +97,11 @@ const controlAPITaskUpdateFallback = function (todoId, taskId, type, updateValue
   //the requestState would only be set if the request was succeessful from the API component because the callBack params is set on the api request object for the complete request
   debugger;
 
-  if (type === "update")
-    if (requestState) model.APIAddTodoOrTask(apiSuccess)
-  if (apiSuccess) {
-    model.completeTask(null, taskId, completeStatus)
-  }
+  // if (type === "update")
+  // if (requestState) model.APIAddTodoOrTask(apiSuccess)
+  // if (apiSuccess) {
+  // model.completeTask(null, taskId, up)
+  // }
 
   const completeAPIRequestFail = type === "complete" && !apiSuccess
   const updateAPIRequestFail = type === "update" && !requestState
@@ -457,7 +457,6 @@ const controlTodoDataLoad = function () {
 };
 
 const controlUpdateTodoTitle = function (todoId, title) {
-  debugger;
   const queryObj = {
     endpoint: API.APIEnum.TODO.PATCH(todoId),
     token: model.token.value,
