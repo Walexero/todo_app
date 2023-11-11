@@ -23,7 +23,6 @@ class TaskActionsView {
   }
 
   actionHandler(action, task) {
-    debugger;
     if (!this._dragElementActive) {
       this._dragElement = importDragComponentRenderView();
       this._dragElementActive = true;

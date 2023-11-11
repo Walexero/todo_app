@@ -19,10 +19,10 @@ export let diffState = {
   taskToCreate: [],
   todoToCreate: [],
   taskToUpdate: [],
+  todoOrdering: [],
+  taskOrdering: [],
   diffActive: false,
 }
-
-let stateCopyForDiff;
 
 export let token = {}
 
@@ -241,11 +241,12 @@ export const completeTodo = function (todoID, uncompleteStatus) {
 };
 
 const formatLoadedAPIData = function (APIResp) {
-  debugger
+
   const todoList = [];
 
   if (APIResp.length > 0)
     APIResp.forEach(resp => todoList.push(formatAPIResponseBody(resp, "todo")))
+
   const orderedTodoList = todoList.length > 0 ? todoList.sort((a, d) => a?.ordering - d?.ordering) : null
   if (!orderedTodoList) return todoList
 

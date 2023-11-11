@@ -97,11 +97,6 @@ const controlAPITaskUpdateFallback = function (todoId, taskId, type, updateValue
   //the requestState would only be set if the request was succeessful from the API component because the callBack params is set on the api request object for the complete request
   debugger;
 
-  // if (type === "update")
-  // if (requestState) model.APIAddTodoOrTask(apiSuccess)
-  // if (apiSuccess) {
-  // model.completeTask(null, taskId, up)
-  // }
 
   const completeAPIRequestFail = type === "complete" && !apiSuccess
   const updateAPIRequestFail = type === "update" && !requestState
@@ -171,13 +166,15 @@ const controlUpdateAPITodoOrdering = function (updatedTodo) {
   const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "todos")
 
   const queryObj = {
-    endpoint: API.APIEnum.TODO.BATCH_UPDATE,
+    // API.APIEnum.TODO.BATCH_UPDATE_ORDERING
+    endpoint: API.APIEnum.TODO.CREATED,
     token: model.token.value,
     sec: null,
     actionType: "updateTodo",
     queryData: payload,
     spinner: false,
     alert: false,
+    callBack: controlAPITodoOrderingFallback.bind(null, payload["ordering_list"]),
     type: "PATCH",
   }
   API.queryAPI(queryObj)
@@ -638,17 +635,41 @@ const controlCreateNewTask = function (todoId, api = false, currentTaskInput = u
   }
 }
 
+const controlAPITodoOrderingFallback = function (orderedTodo, apiSuccess, requestState) {
+  if (!requestState) {
+    let todoOrdering = model.diffState.todoOrdering;
+    todoOrdering = orderedTodo
+
+    model.persistDiff()
+    model.diffState.diffActive = true;
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
+  }
+}
+
+const controlAPITaskOrderingFallback = function (orderedTask, apiSuccess, requestState) {
+  if (!requestState) {
+    let taskOrdering = model.diffState.taskOrdering;
+
+    taskOrdering = orderedTask
+    model.persistDiff()
+    model.diffState.diffActive = true;
+    syncLocalStorageToAPI.notifyUIToSyncChanges()
+  }
+}
+
 const controlUpdateAPITaskOrdering = function (updatedTodo) {
   const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "tasks")
 
   const queryObj = {
-    endpoint: API.APIEnum.TASK.BATCH_UPDATE,
+    // API.APIEnum.TASK.BATCH_UPDATE_ORDERING
+    endpoint: API.APIEnum.TASK.CREATED,
     token: model.token.value,
     sec: null,
     actionType: "updateTask",
     queryData: payload,
     spinner: false,
     alert: false,
+    callBack: controlAPITaskOrderingFallback.bind(null, payload["ordering_list"]),
     type: "PATCH",
   }
   API.queryAPI(queryObj)

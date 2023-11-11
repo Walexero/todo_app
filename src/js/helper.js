@@ -38,6 +38,7 @@ export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
       const toPush = arr.find((todo) => todo.todoId === Number(ind.at(0)));
       cloneCurrentTask.push(toPush);
     });
+  debugger;
   console.log("the cloned task", cloneCurrentTask);
   return cloneCurrentTask;
 };
@@ -109,6 +110,7 @@ const formatAPITodoTasks = (APITasks, formatType) => {
 }
 
 const formatAPIRequestTodoTasks = (APIRequestTasks, formatType) => {
+  debugger
   if (APIRequestTasks.length > 0) {
     const APItaskList = []
     APIRequestTasks.forEach(task => APItaskList.push(formatAPIRequestBody(task, formatType)))
@@ -130,7 +132,8 @@ export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
       title: responseBody.title,
       tasks: formatAPITodoTasks(responseBody.tasks, "todoTask"),
       lastAdded: formatDateTime(responseBody.last_added),
-      completed: responseBody.completed
+      completed: responseBody.completed,
+      ordering: responseBody.ordering
     }
 
   if (type === "task")
@@ -139,7 +142,8 @@ export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
       task: responseBody.task,
       completed: responseBody.completed,
       todoId: responseBody.todo_id,
-      todoLastAdded: responseBody.todo_last_added
+      todoLastAdded: responseBody.todo_last_added,
+      ordering: responseBody.ordering
     }
 
   if (type === "todoTask")
@@ -161,12 +165,16 @@ export const formatAPIRequestBody = (requestBody, type, optionalType = undefined
   if (type === "todo") {
     formattedBody = {
       title: requestBody.title,
-      tasks: formatAPIRequestTodoTasks(requestBody.tasks, "todoTask"),
-      last_added: requestBody.lastAdded,
-      completed: requestBody.completed
     }
     if (optionalType === "update")
+
       formattedBody.id = requestBody.todoId
+
+    if (optionalType !== "update") {
+      formattedBody.tasks = formatAPIRequestTodoTasks(requestBody.tasks, "todoTask")
+      formattedBody.last_added = requestBody.lastAdded
+      formattedBody.completed = requestBody.completed
+    }
   }
 
   if (type === "todoTask")

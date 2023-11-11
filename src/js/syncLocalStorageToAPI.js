@@ -1,6 +1,6 @@
 import { Loader } from "./components/loader.js";
 import { ComponentMethods } from "./components/componentMethods.js";
-import { delegateMatchTarget, formatAPIRequestBody } from "./helper.js";
+import { delegateMatchTarget, formatAPIRequestBody, formatAPIResponseBody } from "./helper.js";
 import { API } from "./api.js";
 import { cloneDeep } from "lodash";
 
@@ -74,6 +74,10 @@ class SyncLocalStorageToAPI {
         this.pendingTodoToUpdate = this._diffState.todoToUpdate;
         this.pendingTaskToUpdate = this._diffState.taskToUpdate
 
+        //ordering
+        this.pendingTodoOrdering = this._diffState.todoOrdering;
+        this.pendingTaskOrdering = this._diffState.todoOrdering;
+
         this.createPendingTodos = []
         this.createPendingTodosToUpdate = []
         this.createPendingTasks = []
@@ -100,6 +104,9 @@ class SyncLocalStorageToAPI {
         this._createPropertiesPayload()
 
         this._makePropertiesRequest()
+
+        //try to complete sync if no data is to be synced after request
+        this._completeSyncAndLoadData()
         console.log(this._syncState)
     }
 
@@ -116,7 +123,6 @@ class SyncLocalStorageToAPI {
 
         //task to update passes deleted check
         this._filterDeletedObjectsFromObjects(this.pendingTaskToUpdate, this.pendingTasksToDelete, this.pendingTodosToDelete, this.createPendingTasksToUpdate, "task")
-
     }
 
     _createPropertiesPayload() {
@@ -170,6 +176,18 @@ class SyncLocalStorageToAPI {
 
         //create batch taskToUpdate
         this._makeTaskToUpdateRequest(this.createTaskToUpdatePayload, this.pendingTaskToUpdate)
+
+        //update ordering todo
+        if (this.pendingTodoOrdering.length > 0) {
+            this._syncState.count += 1
+            this._makeOrderingUpdateRequest(this.pendingTodoOrdering, "todo", this._updateTodoOrderingBatchCallback)
+        }
+
+        //update ordering task
+        if (this.pendingTaskOrdering.length > 0) {
+            this._syncState.count += 1
+            this._makeOrderingUpdateRequest(this.pendingTaskOrdering, "task", this._updateTaskOrderingBatchCallBack)
+        }
 
     }
 
@@ -298,13 +316,56 @@ class SyncLocalStorageToAPI {
 
     }
 
+    _getOrderingUrlFromType(orderingLength, orderingType) {
+        if (orderingLength > 1) {
+            if (orderingType === "todo") return API.APIEnum.TODO.BATCH_UPDATE_ORDERING
+            if (orderingType === "task") return API.APIEnum.TASK.BATCH_UPDATE_ORDERING
+        }
+        if (orderingLength === 1) {
+            if (orderingType === "todo") return API.APIEnum.TODO.PATCH
+            if (orderingType === "task") return API.APIEnum.TASK.PATCH
+        }
+    }
+
+    _makeOrderingUpdateRequest(orderingPayload, type, orderingCallBack) {
+        if (orderingPayload.length > 1) {
+            this._makeBatchRequest(this._getOrderingUrlFromType(orderingPayload.length, type), this._batchRequestWrapper(orderingPayload, "batch_update_ordering"), null, "updateOrdering", orderingCallBack, "PATCH", true)
+        }
+
+        if (orderingPayload.length === 1) {
+            this._makeBatchRequest(this._getOrderingUrlFromType(orderingPayload.length, type), orderingPayload, null, "updateOrdering", orderingCallBack, "PATCH", true)
+        }
+    }
+
+    _formatTodoCreateReturnData(returnData) {
+        let formattedReturnedData = [];
+
+        if (Array.isArray(returnData)) {
+            returnData.forEach((data, i) => formattedReturnedData.push(formatAPIResponseBody(data, "todo")))
+        }
+        if (!Array.isArray(returnData)) formattedReturnedData.push(formatAPIResponseBody(returnData, "todo"))
+
+        return formattedReturnedData
+    }
+
     _createTodoBatchCallBack(payloadIds, returnData, requestStatus) {
         debugger;
 
         if (requestStatus) {
+
+            const formattedReturnedData = this._formatTodoCreateReturnData(returnData)
+
             payloadIds.forEach((payloadId, i) => {
                 let todo = this._modelState.todo.find(todoId => todoId.todoId === payloadId)
-                if (todo) todo = returnData[i]
+
+
+                if (p)
+                    if (todo) todo = formatReturnedData
+
+                if (this.pendingTodoOrdering.length > 0) {
+                    const todoOrderingIdUpdateIfCreatedByFallback = this.pendingTodoOrdering.find(todoOrder => todoOrder.id === payloadId)
+                    if (todoOrderingIdUpdateIfCreatedByFallback) todoOrderingIdUpdateIfCreatedByFallback.id = todo.todoId
+                }
             })
             //clear the data from the diff
             this._diffState.todoToCreate = []
@@ -328,13 +389,26 @@ class SyncLocalStorageToAPI {
         this._completeSyncAndLoadData()
     }
 
+    _updateTodoOrderingBatchCallback(returnData, requestStatus) {
+        if (requestStatus) this._diffState.todoOrdering = []
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
+    }
+
     _createTaskBatchCallBack(payloadIds, returnData, requestStatus) {
         debugger;
 
         if (requestStatus) {
             payloadIds.forEach((payloadId, i) => {
                 let task = this._filterToGetTaskBody(payloadId.taskId, payloadId.todoId, false)
-                task = returnData[i]
+                const formatReturnedData = formatAPIResponseBody(returnData[i], "task")
+                task = formatReturnedData
+
+                if (this.pendingTaskOrdering.length > 0) {
+                    const taskOrderingIdUpdateIfCreatedByFallback = this.pendingTaskOrdering.find(taskOrder => taskOrder.id === payloadId)
+                    if (taskOrderingIdUpdateIfCreatedByFallback) taskOrderingIdUpdateIfCreatedByFallback.id = task.taskId
+                }
+
             })
             //clear the data from the diff
             this._diffState.taskToCreate = []
@@ -356,6 +430,12 @@ class SyncLocalStorageToAPI {
         debugger;
 
         if (requestStatus) this._diffState.taskToUpdate = [];
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
+    }
+
+    _updateTaskOrderingBatchCallBack(returnData, requestStatus) {
+        if (requestStatus) this._diffState.taskOrdering = []
         this._syncState.count -= 1
         this._completeSyncAndLoadData()
     }
@@ -412,12 +492,13 @@ class SyncLocalStorageToAPI {
     }
 
     _createTodoUpdatePayload(todoToUpdateDiffArray, todoToUpdateFilteredArray, todoToCreateFilteredArray, todoToUpdatePayloadArray) {
+        debugger;
         //create todo to update payload
         if (todoToUpdateDiffArray.length > 0 && todoToUpdateFilteredArray.length > 0)
             todoToUpdateFilteredArray.forEach(todo => {
                 const todoToUpdateExistsInTodoToCreate = todoToCreateFilteredArray.some(pendingTodo => pendingTodo.todoId === todo.todoId)
 
-                if (!todoToUpdateExistsInTodoToCreate) todoToUpdatePayloadArray.payload.concat(formatAPIRequestBody(todo, "todo"))
+                if (!todoToUpdateExistsInTodoToCreate) todoToUpdatePayloadArray.payload.push(formatAPIRequestBody(todo, "todo", "update"))
                 todoToUpdatePayloadArray.ids.push(todo.todoId)
             })
         else {
