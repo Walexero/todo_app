@@ -17,20 +17,25 @@ class SyncLocalStorageToAPI {
 
     startModelInit(init) {
         this._init = init
-        this._loader = new Loader(null, null, true)
+        this._createLoader()
         this._loader.component()
         this._handleStartSync()
     }
 
     _completeSyncAndLoadData() {
         if (this._syncState.count === 0) {
-            this._loader.remove()
             debugger;
             this._diffState.diffActive = false
 
+            if (!this._diffObj) {
+                this._removeLoader()
+                this._component.remove()
+            }
+
             if (this._diffObj) {
+                this._removeLoader()
                 this._diffObj = this._diffState
-                if (this.persistDiff) this._persistDiff()
+                if (this._persistDiff) this._persistDiff()
                 this._init();
                 this._clearInitData()
             }
@@ -76,7 +81,7 @@ class SyncLocalStorageToAPI {
 
         //ordering
         this.pendingTodoOrdering = this._diffState.todoOrdering;
-        this.pendingTaskOrdering = this._diffState.todoOrdering;
+        this.pendingTaskOrdering = this._diffState.taskOrdering;
 
         this.createPendingTodos = []
         this.createPendingTodosToUpdate = []
@@ -93,6 +98,10 @@ class SyncLocalStorageToAPI {
     }
 
     _handleStartSync() {
+        if (!this._diffObj) {
+            this._createLoader()
+            this._loader.component()
+        }
         debugger;
         //make new token request
         // this.
@@ -337,13 +346,13 @@ class SyncLocalStorageToAPI {
         }
     }
 
-    _formatTodoCreateReturnData(returnData) {
+    _formatBatchCreatedReturnData(returnData, objType) {
         let formattedReturnedData = [];
 
         if (Array.isArray(returnData)) {
-            returnData.forEach((data, i) => formattedReturnedData.push(formatAPIResponseBody(data, "todo")))
+            returnData.forEach((data, i) => formattedReturnedData.push(formatAPIResponseBody(data, objType)))
         }
-        if (!Array.isArray(returnData)) formattedReturnedData.push(formatAPIResponseBody(returnData, "todo"))
+        if (!Array.isArray(returnData)) formattedReturnedData.push(formatAPIResponseBody(returnData, objType))
 
         return formattedReturnedData
     }
@@ -353,14 +362,12 @@ class SyncLocalStorageToAPI {
 
         if (requestStatus) {
 
-            const formattedReturnedData = this._formatTodoCreateReturnData(returnData)
+            const formattedReturnedData = this._formatBatchCreatedReturnData(returnData, "todo")
 
             payloadIds.forEach((payloadId, i) => {
                 let todo = this._modelState.todo.find(todoId => todoId.todoId === payloadId)
 
-
-                if (p)
-                    if (todo) todo = formatReturnedData
+                if (todo) todo = formattedReturnedData[i]
 
                 if (this.pendingTodoOrdering.length > 0) {
                     const todoOrderingIdUpdateIfCreatedByFallback = this.pendingTodoOrdering.find(todoOrder => todoOrder.id === payloadId)
@@ -399,13 +406,16 @@ class SyncLocalStorageToAPI {
         debugger;
 
         if (requestStatus) {
+            const formattedReturnedData = this._formatBatchCreatedReturnData(returnData, "task")
+
             payloadIds.forEach((payloadId, i) => {
                 let task = this._filterToGetTaskBody(payloadId.taskId, payloadId.todoId, false)
-                const formatReturnedData = formatAPIResponseBody(returnData[i], "task")
-                task = formatReturnedData
+
+
+                if (task) task = formattedReturnedData[i]
 
                 if (this.pendingTaskOrdering.length > 0) {
-                    const taskOrderingIdUpdateIfCreatedByFallback = this.pendingTaskOrdering.find(taskOrder => taskOrder.id === payloadId)
+                    const taskOrderingIdUpdateIfCreatedByFallback = this.pendingTaskOrdering.find(taskOrder => taskOrder.id === payloadId.taskId)
                     if (taskOrderingIdUpdateIfCreatedByFallback) taskOrderingIdUpdateIfCreatedByFallback.id = task.taskId
                 }
 
@@ -644,6 +654,15 @@ class SyncLocalStorageToAPI {
                     </div>
                 </div>
             `
+    }
+
+    _createLoader() {
+        this._loader = new Loader(null, null, true)
+    }
+
+    _removeLoader() {
+        this._loader.remove()
+        this._loader = null;
     }
 
     _removeNotifier() {

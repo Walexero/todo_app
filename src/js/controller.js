@@ -637,8 +637,7 @@ const controlCreateNewTask = function (todoId, api = false, currentTaskInput = u
 
 const controlAPITodoOrderingFallback = function (orderedTodo, apiSuccess, requestState) {
   if (!requestState) {
-    let todoOrdering = model.diffState.todoOrdering;
-    todoOrdering = orderedTodo
+    model.diffState.todoOrdering = orderedTodo
 
     model.persistDiff()
     model.diffState.diffActive = true;
@@ -648,9 +647,7 @@ const controlAPITodoOrderingFallback = function (orderedTodo, apiSuccess, reques
 
 const controlAPITaskOrderingFallback = function (orderedTask, apiSuccess, requestState) {
   if (!requestState) {
-    let taskOrdering = model.diffState.taskOrdering;
-
-    taskOrdering = orderedTask
+    model.diffState.taskOrdering = orderedTask
     model.persistDiff()
     model.diffState.diffActive = true;
     syncLocalStorageToAPI.notifyUIToSyncChanges()
