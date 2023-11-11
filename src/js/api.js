@@ -1,4 +1,4 @@
-import { timeout } from "./helper.js"
+import { timeout, timeoutWithoutPromise } from "./helper.js"
 import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400_RESPONSE_CREATE_USER, ALERT_STATUS_ERRORS, GENERIC_SUCCESS_ALERT, HTTP_204_SUCCESS_NO_CONTENT } from "./config.js"
 import { Loader } from "./components/loader.js"
 import { Alert } from "./components/alerts.js"
@@ -87,6 +87,8 @@ export class API {
             //if token expired render credeential issues msg and logout user
             if (queryObj.resStatus === 401) {
                 new Alert(HTTP_200_RESPONSE[queryObj.actionType](returnData), null, "success").component()
+                timeoutWithoutPromise(5, API.logoutUser)
+
             }
         })
     }

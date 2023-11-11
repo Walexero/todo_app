@@ -252,6 +252,15 @@ const formatLoadedAPIData = function (APIResp) {
   return orderedTodoList
 }
 
+const replaceLocalDataOrPersist = function (sync, callBack, api = false, ApiResp, requestState) {
+  debugger;
+  if (requestState)
+    init(null, callBack, true, ApiResp)
+
+  if (!requestState)
+    init(null, callBack, true, false)
+}
+
 
 
 const loadDataFromAPI = function (token, callBack) {
@@ -264,7 +273,7 @@ const loadDataFromAPI = function (token, callBack) {
     spinner: true,
     alert: true,
     type: "GET",
-    callBack: init.bind(null, null, callBack, true)
+    callBack: replaceLocalDataOrPersist.bind(null, null, callBack, true)
   }
   API.queryAPI(queryObj)
 }
@@ -304,14 +313,16 @@ export function init(sync, callBack, api = false, APIResp = undefined) {
   }
 
   if (api) {
-    const APIData = formatLoadedAPIData(APIResp)
+    let APIData;
     const storage = localStorage.getItem("todos");
-
     if (storage)
       state = JSON.parse(storage);
 
+    if (APIResp) {
+      APIData = formatLoadedAPIData(APIResp)
+      state.todo = APIData
+    }
 
-    state.todo = APIData
     state.loadedFromDb = true;
 
     if (!storage)
