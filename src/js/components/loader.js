@@ -6,8 +6,9 @@ import { Alert } from "./alerts.js";
 
 export class Loader {
 
-    constructor(timeout, actionType) {
+    constructor(timeout, actionType, syncMsg = false) {
         this.timeout = timeout
+        this.syncMsg = syncMsg
     }
 
     component() {
@@ -21,13 +22,24 @@ export class Loader {
     }
 
     getComponent() {
+        console.log(this._component)
         return this._component;
     }
 
     _generateMarkup() {
-        return `
-            <div class="custom-loader"></div>
-        `
+        if (this.syncMsg)
+            return `
+                <div>
+                    <div class="custom-loader"></div>
+                    <div class="loader-sync-msg">Syncing Data Please Wait ...</div>
+                </div>
+            `
+        if (!this.syncMsg)
+            return `
+                <div>
+                    <div class="custom-loader"></div>
+                </div>
+            `
     }
 
     remove() {

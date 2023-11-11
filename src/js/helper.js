@@ -152,20 +152,22 @@ export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
   return formattedBody
 }
 
-export const formatAPIRequestBody = (requestBody, type) => {
+export const formatAPIRequestBody = (requestBody, type, optionalType = undefined) => {
   // debugger;
   let formattedBody;
 
-  if (!requestBody.length > 0) return requestBody
+  if (![requestBody].length > 0) return requestBody
 
-  if (type === "todo")
+  if (type === "todo") {
     formattedBody = {
-      id: requestBody.todoId ?? null,
       title: requestBody.title,
       tasks: formatAPIRequestTodoTasks(requestBody.tasks, "todoTask"),
       last_added: requestBody.lastAdded,
       completed: requestBody.completed
     }
+    if (optionalType === "update")
+      formattedBody.id = requestBody.todoId
+  }
 
   if (type === "todoTask")
     formattedBody = {
@@ -173,12 +175,15 @@ export const formatAPIRequestBody = (requestBody, type) => {
       completed: requestBody.completed,
     }
 
-  if (type === "task")
+  if (type === "task") {
     formattedBody = {
-      task: requestBody.task,
-      completed: requestBody.completed,
-      todo_id: requestBody.todoId,
+      task: requestBody.task ?? null,
+      completed: requestBody.completed ?? null,
     }
+    if (optionalType === "create")
+      formattedBody.todo_id = requestBody.todoId
+    if (optionalType === "update") formattedBody.id = requestBody.taskId
+  }
 
   return formattedBody
 }

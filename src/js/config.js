@@ -21,3 +21,4 @@ export const HTTP_200_RESPONSE = {
 export const ALERT_STATUS_ERRORS = [400, 401, 404]
 export const GENERIC_SUCCESS_ALERT = "Request completed Successfully"
 export const HTTP_204_SUCCESS_NO_CONTENT = 204
+export const EXPIRED_CREDENTIALS_MSG = "Your credentials has expired. Logging you out. Please Login again"

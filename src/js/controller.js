@@ -710,8 +710,6 @@ const controlWaitForDB = function () {
 
     //add model that to sync component
     syncLocalStorageToAPI.addModelData(model.state, model.diffState)
-
-
   }
 }
 

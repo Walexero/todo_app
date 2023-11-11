@@ -241,6 +241,7 @@ export const completeTodo = function (todoID, uncompleteStatus) {
 };
 
 const formatLoadedAPIData = function (APIResp) {
+  debugger
   const todoList = [];
 
   if (APIResp.length > 0)
@@ -250,6 +251,7 @@ const formatLoadedAPIData = function (APIResp) {
 
   return orderedTodoList
 }
+
 
 
 const loadDataFromAPI = function (token, callBack) {
@@ -276,29 +278,27 @@ export const loadToken = function () {
 export function init(sync, callBack, api = false, APIResp = undefined) {
   debugger;
   if (!api) {
-    const savedState = localStorage.getItem("todos")
-    const diffSavedState = localStorage.getItem("diff")
-    if (savedState) {
-      const localState = JSON.parse(savedState);
-      const diffLocalState = JSON.parse(diffSavedState)
-      console.log(localState)
+    if (sync) {
+      const savedState = localStorage.getItem("todos")
+      const diffSavedState = localStorage.getItem("diff")
+      if (savedState) {
+        const localState = JSON.parse(savedState);
+        const diffLocalState = JSON.parse(diffSavedState)
+        console.log(localState)
 
-      if (diffLocalState && diffLocalState.diffActive) {
+        if (diffLocalState && diffLocalState.diffActive) {
 
-        sync.addModelData(localState, diffLocalState, token.value)
-        sync.startModelInit(init)
+          sync.addModelData(localState, diffLocalState, diffState, persistDiff, token)
+          sync.startModelInit(init.bind(this, null, callBack))
+        }
+
+        if (!diffLocalState || !diffLocalState.diffActive) {
+          //load api after no more data to sync
+          loadDataFromAPI(token.value, callBack)
+        }
       }
-
-      if (!diffLocalState || !diffLocalState.diffActive)
-        //load api after no more data to sync
-        //TODO: add diff state load before apidata load
-        //TODO: any todo that was created by the fallback should have a property to indicate it
-        //load the data from the API
-        //TODO: if sync fails user should still be able to access data
-        loadDataFromAPI(token.value, callBack)
     }
-
-    if (!savedState)
+    if (!sync)
       loadDataFromAPI(token.value, callBack)
 
   }

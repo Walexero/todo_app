@@ -248,7 +248,7 @@ body {
   background: crimson;
   align-items: center;
   justify-content: center;
-  gap: 13.8rem;
+  gap: 0.8rem;
   height: 3.4rem;
 }
 
@@ -271,4 +271,12 @@ body {
 .btn-sync-later{
   background-color :var(--color-component--bg);
   color: #ededed;
+}
+
+.loader-sync-msg{
+  font-size: 1.6rem;
+  color: #ededed;
+  position: absolute;
+  width: 20rem;
+  transform: translate(-6rem,3.8rem);
 }

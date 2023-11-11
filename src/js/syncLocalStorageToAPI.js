@@ -11,12 +11,34 @@ class SyncLocalStorageToAPI {
     _token;
     _syncNotifyActive = false;
     _init;
+    _syncState = { count: 0 };
 
     _eventListeners = ["click"]
 
     startModelInit(init) {
         this._init = init
+        this._loader = new Loader(null, null, true)
+        this._loader.component()
         this._handleStartSync()
+    }
+
+    _completeSyncAndLoadData() {
+        if (this._syncState.count === 0) {
+            this._loader.remove()
+            debugger;
+            this._diffState.diffActive = false
+
+            if (this._diffObj) {
+                this._diffObj = this._diffState
+                if (this.persistDiff) this._persistDiff()
+                this._init();
+                this._clearInitData()
+            }
+        }
+    }
+
+    _clearInitData() {
+        this._init = this._loader = this._modelState = this._diffState = this._diffObj = this._persistDiff = null
     }
 
     notifyUIToSyncChanges() {
@@ -30,14 +52,17 @@ class SyncLocalStorageToAPI {
         this._eventListeners.forEach(ev => this._component.addEventListener(ev, cls._handleEvents.bind(cls)))
     }
 
-    addModelData(modelState, diffState, token) {
+    addModelData(modelState, diffState, diffObj, persistDiff, token) {
+        console.log(token)
         this._modelState = modelState
         this._diffState = diffState
-        this._token = token
+        this._diffObj = diffObj
+        this._persistDiff = persistDiff
+        if (!this._token) this._token = token
     }
 
     _handleEvents(ev) {
-        if (delegateMatchTarget(ev, "btn-sync-now")) _handleStartSync(ev)
+        if (delegateMatchTarget(ev, "btn-sync-now")) this._handleStartSync(ev)
         if (delegateMatchTarget(ev, "btn-sync-later")) this._removeNotifier()
     }
 
@@ -56,15 +81,18 @@ class SyncLocalStorageToAPI {
 
         this.createPendingTaskLinkedToAPITodo = []
         this.createPendingTaskLinkedToAPITodoToUpdate = []
-        this.createTodoPayload = []
-        this.createTaskPayload = []
-        this.createTodoToUpdatePayload = []
-        this.createTaskToUpdatePayload = []
+        this.createTodoPayload = { payload: [], ids: [] }
+        this.createTaskPayload = { payload: [], ids: [] }
+        this.createTodoToUpdatePayload = { payload: [], ids: [] };
+        this.createTaskToUpdatePayload = { payload: [], ids: [] };
 
     }
 
     _handleStartSync() {
         debugger;
+        //make new token request
+        // this.
+
         this._initializeSyncProperties()
 
         this._filterProperties()
@@ -72,14 +100,12 @@ class SyncLocalStorageToAPI {
         this._createPropertiesPayload()
 
         this._makePropertiesRequest()
-
-        //TODO: sort data ordering if missing edge cases
-        //TODO: if sync request succeeds delete data from diffstate
-        //TODO: if sync request fails, allow user access to local data
+        console.log(this._syncState)
     }
 
     _filterProperties() {
         //todo to create passes deleted check
+        debugger;
         this._filterDeletedObjectsFromObjects(this.pendingTodos, this.pendingTodosToDelete, null, this.createPendingTodos, "todo")
 
         //todo to update passes deleted check
@@ -90,13 +116,6 @@ class SyncLocalStorageToAPI {
 
         //task to update passes deleted check
         this._filterDeletedObjectsFromObjects(this.pendingTaskToUpdate, this.pendingTasksToDelete, this.pendingTodosToDelete, this.createPendingTasksToUpdate, "task")
-
-        console.log("the todos to deletee", this.pendingTodosToDelete)
-        console.log("the todos to create", this.createPendingTodos)
-        console.log("the todos to update", this.createPendingTodosToUpdate)
-        console.log("the tasks to deletee", this.pendingTasksToDelete)
-        console.log("the tasks to create", this.createPendingTasks)
-        console.log("the tasks to update", this.createPendingTasksToUpdate)
 
     }
 
@@ -133,6 +152,7 @@ class SyncLocalStorageToAPI {
     }
 
     _makePropertiesRequest() {
+        debugger;
         //create batch todoToCreate
         this._makeTodoCreateRequest(this.createTodoPayload, this.pendingTodos)
 
@@ -143,7 +163,7 @@ class SyncLocalStorageToAPI {
         this._makeTodoUpdateRequest(this.createTodoToUpdatePayload, this.pendingTodoToUpdate)
 
         //create batch taskToCreate
-        this._makeTaskToCreateRequest(this.createPendingTasks, this.pendingTasks)
+        this._makeTaskToCreateRequest(this.createTaskPayload, this.pendingTasks)
 
         //create batch taskToDelete
         this._makeTaskToDeleteRequest(this.pendingTasksToDelete)
@@ -155,19 +175,22 @@ class SyncLocalStorageToAPI {
 
     _makeTodoCreateRequest(createTodoPayload, pendingTodos) {
         //create batch todoToCreate
-        if (createTodoPayload.length > 0) {
-            const createTodoPayloadMoreThanOne = createTodoPayload.length > 1
+        if (createTodoPayload.payload.length > 0) {
+            const createTodoPayloadLength = createTodoPayload.payload.length
 
-            if (createTodoPayloadMoreThanOne)
+            if (createTodoPayloadLength > 1) {
                 this._makeBatchRequest(
-                    API.APIEnum.TODO.BATCH_CREATE, this._batchRequestWrapper(createTodoPayload, "batch_create"), pendingTodos, "createTodoBatch", this._createTodoBatchCallBack.bind(this), "POST"
+                    API.APIEnum.TODO.BATCH_CREATE, this._batchRequestWrapper(createTodoPayload.payload, "batch_create"), pendingTodos, "createBatchTodo", this._createTodoBatchCallBack.bind(this, createTodoPayload.ids), "POST", true
                 )
+                this._syncState.count += 1
+            }
 
-            if (!createTodoPayloadMoreThanOne)
+            if (createTodoPayloadLength == 1) {
                 this._makeBatchRequest(
-                    API.APIEnum.TODO.CREATE, createTodoPayload[0], pendingTodos, "createTodo", this._createTodoBatchCallBack.bind(this), "POST"
+                    API.APIEnum.TODO.CREATE, createTodoPayload.payload[0], pendingTodos, "createTodo", this._createTodoBatchCallBack.bind(this, createTodoPayload.ids), "POST", true
                 )
-
+                this._syncState.count += 1
+            }
         }
 
     }
@@ -175,14 +198,18 @@ class SyncLocalStorageToAPI {
     _makeTodoDeleteRequest(pendingTodosToDelete) {
         //create batch todoToDelete
         if (pendingTodosToDelete.length > 0) {
-            const todosToDeleteMoreThanOne = pendingTodosToDelete.length > 1
+            const todosToDeleteLength = pendingTodosToDelete.length
 
             //if todo doesn't exist in API it should return a NOT FOUND so no need to keep track of type of todo
-            if (todosToDeleteMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TODO.BATCH_DELETE, this._batchRequestWrapper(pendingTodosToDelete), pendingTodosToDelete, "deleteTodoBatch", this._deleteTodoBatchCallBack.bind(this), "DELETE")
+            if (todosToDeleteLength > 1) {
+                this._makeBatchRequest(API.APIEnum.TODO.BATCH_DELETE, this._batchRequestWrapper(pendingTodosToDelete, "batch_delete"), pendingTodosToDelete, "deleteTodoBatch", this._deleteTodoBatchCallBack.bind(this, pendingTodosToDelete), "DELETE", true)
+                this._syncState.count += 1
+            }
 
-            if (!todosToDeleteMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TODO.DELETE, pendingTodosToDelete[0], pendingTodosToDelete, "deleteTodo", this._deleteTodoBatchCallBack.bind(this), "DELETE")
+            if (todosToDeleteLength == 1) {
+                this._makeBatchRequest(API.APIEnum.TODO.DELETE, pendingTodosToDelete[0], pendingTodosToDelete, "deleteTodo", this._deleteTodoBatchCallBack.bind(this, pendingTodosToDelete[0]), "DELETE", true)
+                this._syncState.count += 1
+            }
 
 
         }
@@ -192,31 +219,39 @@ class SyncLocalStorageToAPI {
     _makeTodoUpdateRequest(createTodoToUpdatePayload, pendingTodoToUpdate) {
         //create batch todoUpdate
         if (createTodoToUpdatePayload.length > 0) {
-            const todosToUpdateMoreThanOne = createTodoToUpdatePayload.length > 1
+            const todosToUpdateLength = createTodoToUpdatePayload.length
 
-            if (todosToUpdateMoreThanOne)
+            if (todosToUpdateLength > 1) {
                 this._makeBatchRequest(
-                    API.APIEnum.TODO.BATCH_UPDATE, this._batchRequestWrapper(createTodoToUpdatePayload), pendingTodoToUpdate, "updateBatchTodo", this._updateTodoBatchCallBack.bind(this), "PATCH"
+                    API.APIEnum.TODO.BATCH_UPDATE, this._batchRequestWrapper(createTodoToUpdatePayload.payload, "batch_update"), pendingTodoToUpdate, "updateBatchTodo", this._updateTodoBatchCallBack.bind(this, createTodoToUpdatePayload.ids), "PATCH", true
                 )
+                this._syncState.count += 1
+            }
 
-            if (!todosToUpdateMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TODO.PATCH, createTodoToUpdatePayload[0], pendingTodoToUpdate, "updateTodo", this._updateTodoBatchCallBack.bind(this))
+            if (todosToUpdateLength == 1) {
+                this._makeBatchRequest(API.APIEnum.TODO.PATCH, createTodoToUpdatePayload.payload[0], pendingTodoToUpdate, "updateTodo", this._updateTodoBatchCallBack.bind(this, createTodoToUpdatePayload.ids), "PATCH", true)
+                this._syncState.count += 1
+            }
         }
 
     }
 
-    _makeTaskToCreateRequest(createPendingTasks, pendingTasks) {
+    _makeTaskToCreateRequest(createTasksPayload, pendingTasks) {
         //create batch taskToCreate
-        if (createPendingTasks.length > 0) {
-            const tasksToCreateMoreThanOne = createPendingTasks.length > 1
+        if (createTasksPayload.payload.length > 0) {
+            const tasksToCreateLength = createTasksPayload.payload.length
 
-            if (tasksToCreateMoreThanOne)
+            if (tasksToCreateLength > 1) {
                 this._makeBatchRequest(
-                    API.APIEnum.TASK.BATCH_CREATE, this._batchRequestWrapper(createPendingTasks), pendingTasks, "createBatchTask", this._createTaskBatchCallBack.bind(this), "POST"
+                    API.APIEnum.TASK.BATCH_CREATE, this._batchRequestWrapper(createTasksPayload.payload, "batch_create"), pendingTasks, "createBatchTask", this._createTaskBatchCallBack.bind(this, createTasksPayload.ids), "POST", true
                 )
+                this._syncState.count += 1
+            }
 
-            if (!tasksToCreateMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TASK.CREATE, createPendingTasks[0], pendingTasks, "createTask", this._createTaskBatchCallBack.bind(this), "POST")
+            if (tasksToCreateLength == 1) {
+                this._makeBatchRequest(API.APIEnum.TASK.CREATE, createTasksPayload.payload[0], pendingTasks, "createTask", this._createTaskBatchCallBack.bind(this, createTasksPayload.ids), "POST", true)
+                this._syncState.count += 1
+            }
         }
 
 
@@ -225,14 +260,20 @@ class SyncLocalStorageToAPI {
     _makeTaskToDeleteRequest(pendingTasksToDelete) {
         //create batch taskToDelete
         if (pendingTasksToDelete.length > 0) {
-            const tasksToDeleteMoreThanOne = pendingTasksToDelete.length > 1
+            const tasksToDeleteLength = pendingTasksToDelete.length
 
-            if (tasksToDeleteMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TASK.BATCH_DELETE, this._batchRequestWrapper(pendingTasksToDelete), pendingTasksToDelete, "deleteBatchTask", this._deleteTaskBatchCallBack.bind(this), "DELETE"
+            const pendingTasksToDeletePayload = pendingTasksToDelete.map(task => task.taskId)
+
+            if (tasksToDeleteLength > 1) {
+                this._makeBatchRequest(API.APIEnum.TASK.BATCH_DELETE, this._batchRequestWrapper(pendingTasksToDeletePayload, "batch_delete"), pendingTasksToDelete, "deleteBatchTask", this._deleteTaskBatchCallBack.bind(this, pendingTasksToDelete), "DELETE", true
                 )
+                this._syncState.count += 1
+            }
 
-            if (!tasksToDeleteMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TASK.DELETE, pendingTasksToDelete[0], pendingTasksToDelete, "deleteTask", this._deleteTaskBatchCallBack.bind(this), "DELETE")
+            if (tasksToDeleteLength == 1) {
+                this._makeBatchRequest(API.APIEnum.TASK.DELETE, pendingTasksToDeletePayload[0], pendingTasksToDelete, "deleteTask", this._deleteTaskBatchCallBack.bind(this, pendingTasksToDelete), "DELETE", true)
+                this._syncState.count += 1
+            }
         }
 
     }
@@ -240,36 +281,84 @@ class SyncLocalStorageToAPI {
     _makeTaskToUpdateRequest(createTaskToUpdatePayload, pendingTaskToUpdate) {
         //create batch taskToUpdate
         if (pendingTaskToUpdate.length > 0) {
-            const taskToUpdateMoreThanOne = pendingTaskToUpdate.length > 1
+            const taskToUpdateLength = createTaskToUpdatePayload.payload.length
 
-            if (taskToUpdateMoreThanOne)
+            if (taskToUpdateLength > 1) {
                 this._makeBatchRequest(
-                    API.APIEnum.TASK.BATCH_UPDATE, this._batchRequestWrapper(createTaskToUpdatePayload), pendingTaskToUpdate, "updateBatchTask", this._updateTaskBatchCallBack.bind(this), "PATCH"
+                    API.APIEnum.TASK.BATCH_UPDATE, this._batchRequestWrapper(createTaskToUpdatePayload.payload, "batch_update"), pendingTaskToUpdate, "updateBatchTask", this._updateTaskBatchCallBack.bind(this, createTaskToUpdatePayload.ids), "PATCH", true
                 )
+                this._syncState.count += 1
+            }
 
-            if (!taskToUpdateMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TASK.UPDATE, createTaskToUpdatePayload, pendingTaskToUpdate, "updateTask", this._updateTaskBatchCallBack.bind(this), "PATCH")
+            if (taskToUpdateLength == 1) {
+                this._makeBatchRequest(API.APIEnum.TASK.PATCH, createTaskToUpdatePayload.payload[0], pendingTaskToUpdate, "updateTask", this._updateTaskBatchCallBack.bind(this, createTaskToUpdatePayload.ids), "PATCH", true)
+                this._syncState.count += 1
+            }
         }
 
     }
 
-
-    _createTodoBatchCallBack(returnData, requestStatus) {
+    _createTodoBatchCallBack(payloadIds, returnData, requestStatus) {
         debugger;
-        console.log(returnData)
-        console.log("the rqustat", requestStatus)
 
+        if (requestStatus) {
+            payloadIds.forEach((payloadId, i) => {
+                let todo = this._modelState.todo.find(todoId => todoId.todoId === payloadId)
+                if (todo) todo = returnData[i]
+            })
+            //clear the data from the diff
+            this._diffState.todoToCreate = []
+        }
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
+    }
+    _deleteTodoBatchCallBack(deletePayload, returnData, requestStatus) {
+        debugger;
+
+        if (requestStatus) this._diffState.todoToDelete = []
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
     }
 
-    _deleteTodoBatchCallBack() { }
+    _updateTodoBatchCallBack(payloadIds, returnData, requestStatus) {
+        debugger;
 
-    _updateTodoBatchCallBack() { }
+        if (requestStatus) this._diffState.todoToUpdate = []
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
+    }
 
-    _createTaskBatchCallBack() { }
+    _createTaskBatchCallBack(payloadIds, returnData, requestStatus) {
+        debugger;
 
-    _deleteTaskBatchCallBack() { }
+        if (requestStatus) {
+            payloadIds.forEach((payloadId, i) => {
+                let task = this._filterToGetTaskBody(payloadId.taskId, payloadId.todoId, false)
+                task = returnData[i]
+            })
+            //clear the data from the diff
+            this._diffState.taskToCreate = []
+        }
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
+    }
 
-    _updateTaskBatchCallBack() { }
+    _deleteTaskBatchCallBack(payloadIds, returnData, requestStatus) {
+        debugger;
+
+        if (requestStatus)
+            this._diffState.taskToDelete = [];
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
+    }
+
+    _updateTaskBatchCallBack(payloadIds, returnData, requestStatus) {
+        debugger;
+
+        if (requestStatus) this._diffState.taskToUpdate = [];
+        this._syncState.count -= 1
+        this._completeSyncAndLoadData()
+    }
 
 
     _filterDeletedObjectsFromObjects(object, deletedObjects, deletedObjectParent, returnList, objectType) {
@@ -284,7 +373,7 @@ class SyncLocalStorageToAPI {
                     if (!deletedObjectExistsInObject) returnList.push(obj)
                 })
             }
-            if (!deletedObjectsExists && objectType === "todo") returnList.push(object[0])
+            if (!deletedObjectsExists) returnList.push(...object)// && objectType === "todo"
 
             if (objectType === "task" && returnList.length > 0) {
 
@@ -298,7 +387,6 @@ class SyncLocalStorageToAPI {
     }
 
     _createTodoPayload(todoToCreateDiffArray, todoToCreateFilteredArray, todoToCreatePayloadArray) {
-        const todoIds = []
         //create todo payload
         if (todoToCreateDiffArray.length > 0 && todoToCreateFilteredArray.length > 0)
             todoToCreateFilteredArray.forEach(todo => {
@@ -306,19 +394,21 @@ class SyncLocalStorageToAPI {
                 const modelTodos = this._modelState.todo
                 const todoModelIndex = this._modelState.todo.findIndex(modelTodo => modelTodo.todoId === todo.todoId)
 
-                const [todoBody] = [modelTodos[todoModelIndex]].slice()
+                const todoBody = cloneDeep(modelTodos[todoModelIndex])
 
-                todoIds.push(todoBody.todoId)
+                todoToCreatePayloadArray.ids.push(todoBody.todoId)
                 //remove ids from todo and tasks
                 delete todoBody.todoId
                 console.log("the todo body", todoBody)
                 if (todoBody.tasks?.length > 0)
                     todoBody.tasks.forEach(task => delete task.taskId)
-
                 //add formatted data to todos to create
                 const formattedTodoBody = formatAPIRequestBody(todoBody, "todo")
-                todoToCreatePayloadArray.push(formattedTodoBody)
+                todoToCreatePayloadArray["payload"].push(formattedTodoBody)
             })
+        else {
+            this._diffState.todoToCreate = []
+        }
     }
 
     _createTodoUpdatePayload(todoToUpdateDiffArray, todoToUpdateFilteredArray, todoToCreateFilteredArray, todoToUpdatePayloadArray) {
@@ -327,8 +417,12 @@ class SyncLocalStorageToAPI {
             todoToUpdateFilteredArray.forEach(todo => {
                 const todoToUpdateExistsInTodoToCreate = todoToCreateFilteredArray.some(pendingTodo => pendingTodo.todoId === todo.todoId)
 
-                if (!todoToUpdateExistsInTodoToCreate) todoToUpdatePayloadArray.push(formatAPIRequestBody(todo, "todo"))
+                if (!todoToUpdateExistsInTodoToCreate) todoToUpdatePayloadArray.payload.concat(formatAPIRequestBody(todo, "todo"))
+                todoToUpdatePayloadArray.ids.push(todo.todoId)
             })
+        else {
+            this._diffState.todoToUpdate = []
+        }
 
 
     }
@@ -350,11 +444,19 @@ class SyncLocalStorageToAPI {
         if (taskToCreateDiffArray.length > 0 && pendingTaskLinkedToAPITodoArray.length > 0)
             pendingTaskLinkedToAPITodoArray.forEach(task => {
                 const taskBody = this._filterToGetTaskBody(task.taskId, task.todoId)
+
+                taskToCreatePayloadArray.ids.push({ taskId: task.taskId, todoId: task.todoId })
+
+                //add todoId to taskBody
+                taskBody.todoId = task.todoId
                 //remove id from task
                 delete taskBody.taskId
                 //add formatted data to tasks to create
-                taskToCreatePayloadArray.push(formatAPIRequestBody(taskBody, "task"))
+                taskToCreatePayloadArray.payload.push(formatAPIRequestBody(taskBody, "task", "create"))
             })
+        else {
+            this._diffState.taskToCreate = []
+        }
 
     }
 
@@ -367,28 +469,36 @@ class SyncLocalStorageToAPI {
 
                 if (!taskToUpdateExistsInTaskAPITodo) {
                     const taskBody = this._filterToGetTaskBody(task.taskId, task.todoId)
+                    // taskBody.todoId = task.todoId
+                    taskToUpdatePayloadArray.ids.push({ taskId: task.taskId, todoId: task.todoId })
                     //remove id from task
-                    delete taskBody.taskId
-                    taskToUpdatePayloadArray.push(formatAPIRequestBody(taskBody, "task"))
+                    // delete taskBody.taskId
+                    taskToUpdatePayloadArray.payload.push(formatAPIRequestBody(taskBody, "task", "update"))
                 }
             })
+        else {
+            this._diffState.taskToUpdate = [];
+        }
 
     }
 
-    _filterToGetTaskBody(taskId, todoId) {
+    _filterToGetTaskBody(taskId, todoId, clone = true) {
         //get todo from modelState
         const modelTodos = this._modelState.todo
         const todoModelIndex = this._modelState.todo.findIndex(modelTodo => modelTodo.todoId === todoId)
         const taskIndex = modelTodos[todoModelIndex].tasks.findIndex(modelTask => modelTask.taskId === taskId)
+        if (!clone) return modelTodos[todoModelIndex].tasks[taskIndex]
+
         const taskBody = cloneDeep(modelTodos[todoModelIndex].tasks[taskIndex])
         return taskBody
     }
 
     _makeBatchRequest(requestURL, requestPayload, requestDiffArray, requestActionType, requestCallBack, requestType, requestCallBackParam = false) {
+        console.log(this._token)
         const queryObj = {
             endpoint: requestURL,
-            token: this._token,
-            sec: null,
+            token: this._token.value,
+            sec: 5,
             actionType: requestActionType,
             queryData: requestPayload,
             callBack: requestCallBack.bind(this),
@@ -401,11 +511,10 @@ class SyncLocalStorageToAPI {
     }
 
     _wrapper(wrapperName, requestBody) {
-        return {
-            wrapperName: [
-                requestBody
-            ]
-        }
+        const wrapper = {}
+        wrapper[wrapperName] = requestBody
+
+        return wrapper
 
     }
 
@@ -427,7 +536,9 @@ class SyncLocalStorageToAPI {
         }
     }
 
-    updateAndGetTokenIfSyncFails() { }
+    updateAndGetToken() {
+
+    }
 
     _returnObjType(objType, obj) {
         if (objType === "todo") return obj.todoId
@@ -444,7 +555,7 @@ class SyncLocalStorageToAPI {
         return `
                 <div class="sync-alert">
                     <div class="sync-msg">
-                      It is adviced to save data now to prevent data Loss
+                      Network Connectivity Issue Detected, its advisable to save data now to prevent data Loss If connectivity Still available
                     </div>
                     <div class="sync-btns">
                       <button class="btn-sync btn-sync-now bd-radius">Sync Now</button>

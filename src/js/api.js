@@ -83,6 +83,11 @@ export class API {
             }
 
             if (!returnData && queryObj.callBack) queryObj.callBack() //call the fallback to handle thee failure
+
+            //if token expired render credeential issues msg and logout user
+            if (queryObj.resStatus === 401) {
+                new Alert(HTTP_200_RESPONSE[queryObj.actionType](returnData), null, "success").component()
+            }
         })
     }
 
@@ -109,6 +114,7 @@ export class API {
 
     static getResponseToRender(response, queryObj, resStatus) {
         debugger;
+
         //set the resStatus on the queryObj
         if (resStatus) queryObj.resStatus = resStatus
 
@@ -142,7 +148,7 @@ export class API {
 
     static destructureSuccessResponse(resp, queryObj) {
         debugger;
-        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "updateTodo", "createBatchTodo", "createBatchTask", "updateBatchTodo", "updateBatchTask"]
+        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "updateTodo", "createBatchTodo", "createBatchTask", "updateBatchTodo", "updateBatchTask", "deleteTodoBatch", "deleteBatchTask",]
         let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
         if (resp instanceof Array && resp.length === 0) return resp
