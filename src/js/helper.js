@@ -160,6 +160,7 @@ export const formatAPIRequestBody = (requestBody, type) => {
 
   if (type === "todo")
     formattedBody = {
+      id: requestBody.todoId ?? null,
       title: requestBody.title,
       tasks: formatAPIRequestTodoTasks(requestBody.tasks, "todoTask"),
       last_added: requestBody.lastAdded,

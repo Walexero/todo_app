@@ -22,15 +22,15 @@ export class API {
 
         TODO: {
             CREATE: "todo/todos/",
-            CREATE_BATCH: "", //TODO: add endpoint url,
+            BATCH_CREATE: "todo/todos/batch_create/",
             LIST: "todo/todos/",
             GET: ((todoId) => `todo/todos/${todoId}/`),
             PUT: ((todoId) => `todo/todos/${todoId}/`),
             PATCH: ((todoId) => `todo/todos/${todoId}/`),
-            BATCH_UPDATE: "todo/todos/batch_update/", //should be renamd to batch_update_ordering
-            BATCH_UPDATE_ALL: "", //TODO: add endpoint url
+            BATCH_UPDATE_ORDERING: "todo/todos/batch_update_ordering/",
+            BATCH_UPDATE: "todo/todos/batch_update/",
             DELETE: ((todoId) => `todo/todos/${todoId}/`),
-            DELETE_BATCH: "",//TODO: add endpoint url
+            BATCH_DELETE: "todo/todos/batch_delete",
             DELETED: ((todoId) => "todo/vadklafdf/"),
             PATCHED: ((todoId) => "todo/kdlfasdkjf/"),
             CREATED: "todo/skdflafadf/"
@@ -38,15 +38,15 @@ export class API {
 
         TASK: {
             CREATE: "todo/tasks/",
-            CREATE_BATCH: "",//TODO:add endpoint url
+            BATCH_CREATE: "todo/tasks/batch_create/",
             LIST: "todo/tasks/",
             GET: ((taskId) => `todo/tasks/${taskId}/`),
             PUT: ((taskId) => `todo/tasks/${taskId}/`),
             PATCH: ((taskId) => `todo/tasks/${taskId}/`),
             DELETE: ((taskId) => `todo/tasks/${taskId}/`),
-            DELETE_BATCH: "",//TODO:add endpoint url
-            BATCH_UPDATE_ALL: "", //TODO:add endpoint url
-            BATCH_UPDATE: "todo/tasks/batch_update/", //rename to batch_update_ordering
+            BATCH_DELETE: "todo/tasks/batch_delete/",
+            BATCH_UPDATE: "todo/tasks/batch_update/",
+            BATCH_UPDATE_ORDERING: "todo/tasks/batch_update_ordering/",
             DELETED: ((taskId) => "todo/dskflksdfsdff/"),
             PATCHED: ((taskId) => "todo/kdjkvoidasdfs/"),
             CREATED: "todo/kdflasfljsdf/",

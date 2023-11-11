@@ -159,10 +159,14 @@ class SyncLocalStorageToAPI {
             const createTodoPayloadMoreThanOne = createTodoPayload.length > 1
 
             if (createTodoPayloadMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TODO.CREATE_BATCH, createTodoPayload, pendingTodos, "createTodoBatch", this._createTodoBatchCallBack.bind(this), "POST")
+                this._makeBatchRequest(
+                    API.APIEnum.TODO.BATCH_CREATE, this._batchRequestWrapper(createTodoPayload, "batch_create"), pendingTodos, "createTodoBatch", this._createTodoBatchCallBack.bind(this), "POST"
+                )
 
             if (!createTodoPayloadMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TODO.CREATE, createTodoPayload[0], pendingTodos, "createTodo", this._createTodoBatchCallBack.bind(this), "POST")
+                this._makeBatchRequest(
+                    API.APIEnum.TODO.CREATE, createTodoPayload[0], pendingTodos, "createTodo", this._createTodoBatchCallBack.bind(this), "POST"
+                )
 
         }
 
@@ -175,7 +179,7 @@ class SyncLocalStorageToAPI {
 
             //if todo doesn't exist in API it should return a NOT FOUND so no need to keep track of type of todo
             if (todosToDeleteMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TODO.DELETE_BATCH, pendingTodosToDelete, pendingTodosToDelete, "deleteTodoBatch", this._deleteTodoBatchCallBack.bind(this), "DELETE")
+                this._makeBatchRequest(API.APIEnum.TODO.BATCH_DELETE, this._batchRequestWrapper(pendingTodosToDelete), pendingTodosToDelete, "deleteTodoBatch", this._deleteTodoBatchCallBack.bind(this), "DELETE")
 
             if (!todosToDeleteMoreThanOne)
                 this._makeBatchRequest(API.APIEnum.TODO.DELETE, pendingTodosToDelete[0], pendingTodosToDelete, "deleteTodo", this._deleteTodoBatchCallBack.bind(this), "DELETE")
@@ -191,7 +195,9 @@ class SyncLocalStorageToAPI {
             const todosToUpdateMoreThanOne = createTodoToUpdatePayload.length > 1
 
             if (todosToUpdateMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TODO.BATCH_UPDATE_ALL, createTodoToUpdatePayload, pendingTodoToUpdate, "updateBatchTodo", this._updateTodoBatchCallBack.bind(this), "PATCH")
+                this._makeBatchRequest(
+                    API.APIEnum.TODO.BATCH_UPDATE, this._batchRequestWrapper(createTodoToUpdatePayload), pendingTodoToUpdate, "updateBatchTodo", this._updateTodoBatchCallBack.bind(this), "PATCH"
+                )
 
             if (!todosToUpdateMoreThanOne)
                 this._makeBatchRequest(API.APIEnum.TODO.PATCH, createTodoToUpdatePayload[0], pendingTodoToUpdate, "updateTodo", this._updateTodoBatchCallBack.bind(this))
@@ -205,7 +211,9 @@ class SyncLocalStorageToAPI {
             const tasksToCreateMoreThanOne = createPendingTasks.length > 1
 
             if (tasksToCreateMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TASK.CREATE_BATCH, createPendingTasks, pendingTasks, "createBatchTask", this._createTaskBatchCallBack.bind(this), "POST")
+                this._makeBatchRequest(
+                    API.APIEnum.TASK.BATCH_CREATE, this._batchRequestWrapper(createPendingTasks), pendingTasks, "createBatchTask", this._createTaskBatchCallBack.bind(this), "POST"
+                )
 
             if (!tasksToCreateMoreThanOne)
                 this._makeBatchRequest(API.APIEnum.TASK.CREATE, createPendingTasks[0], pendingTasks, "createTask", this._createTaskBatchCallBack.bind(this), "POST")
@@ -220,7 +228,8 @@ class SyncLocalStorageToAPI {
             const tasksToDeleteMoreThanOne = pendingTasksToDelete.length > 1
 
             if (tasksToDeleteMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TASK.DELETE_BATCH, pendingTasksToDelete, pendingTasksToDelete, "deleteBatchTask", this._deleteTaskBatchCallBack.bind(this), "DELETE")
+                this._makeBatchRequest(API.APIEnum.TASK.BATCH_DELETE, this._batchRequestWrapper(pendingTasksToDelete), pendingTasksToDelete, "deleteBatchTask", this._deleteTaskBatchCallBack.bind(this), "DELETE"
+                )
 
             if (!tasksToDeleteMoreThanOne)
                 this._makeBatchRequest(API.APIEnum.TASK.DELETE, pendingTasksToDelete[0], pendingTasksToDelete, "deleteTask", this._deleteTaskBatchCallBack.bind(this), "DELETE")
@@ -234,7 +243,9 @@ class SyncLocalStorageToAPI {
             const taskToUpdateMoreThanOne = pendingTaskToUpdate.length > 1
 
             if (taskToUpdateMoreThanOne)
-                this._makeBatchRequest(API.APIEnum.TASK.BATCH_UPDATE_ALL, createTaskToUpdatePayload, pendingTaskToUpdate, "updateBatchTask", this._updateTaskBatchCallBack.bind(this), "PATCH")
+                this._makeBatchRequest(
+                    API.APIEnum.TASK.BATCH_UPDATE, this._batchRequestWrapper(createTaskToUpdatePayload), pendingTaskToUpdate, "updateBatchTask", this._updateTaskBatchCallBack.bind(this), "PATCH"
+                )
 
             if (!taskToUpdateMoreThanOne)
                 this._makeBatchRequest(API.APIEnum.TASK.UPDATE, createTaskToUpdatePayload, pendingTaskToUpdate, "updateTask", this._updateTaskBatchCallBack.bind(this), "PATCH")
@@ -243,7 +254,10 @@ class SyncLocalStorageToAPI {
     }
 
 
-    _createTodoBatchCallBack() {
+    _createTodoBatchCallBack(returnData, requestStatus) {
+        debugger;
+        console.log(returnData)
+        console.log("the rqustat", requestStatus)
 
     }
 
@@ -284,6 +298,7 @@ class SyncLocalStorageToAPI {
     }
 
     _createTodoPayload(todoToCreateDiffArray, todoToCreateFilteredArray, todoToCreatePayloadArray) {
+        const todoIds = []
         //create todo payload
         if (todoToCreateDiffArray.length > 0 && todoToCreateFilteredArray.length > 0)
             todoToCreateFilteredArray.forEach(todo => {
@@ -293,6 +308,7 @@ class SyncLocalStorageToAPI {
 
                 const [todoBody] = [modelTodos[todoModelIndex]].slice()
 
+                todoIds.push(todoBody.todoId)
                 //remove ids from todo and tasks
                 delete todoBody.todoId
                 console.log("the todo body", todoBody)
@@ -384,7 +400,32 @@ class SyncLocalStorageToAPI {
         API.queryAPI(queryObj)
     }
 
+    _wrapper(wrapperName, requestBody) {
+        return {
+            wrapperName: [
+                requestBody
+            ]
+        }
 
+    }
+
+    _batchRequestWrapper(requestBody, requestType) {
+        if (requestType === "batch_update") {
+            return this._wrapper("update_list", requestBody)
+        }
+
+        if (requestType === "batch_update_ordering") {
+            return this._wrapper("ordering_list", requestBody)
+        }
+
+        if (requestType === "batch_create") {
+            return this._wrapper("create_list", requestBody)
+        }
+
+        if (requestType === "batch_delete") {
+            return this._wrapper("delete_list", requestBody)
+        }
+    }
 
     updateAndGetTokenIfSyncFails() { }
 
