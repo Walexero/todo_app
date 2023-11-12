@@ -49,10 +49,17 @@ const controlLogin = function (loginComponentCallBack, token) {
 
 const controlUpdateUserInfo = function (updateInfoComponentCallback, token) { }
 
-const controlUpdateTodoAndTaskView = function (currentTodo = undefined) {
+const controlUpdateTodoAndTaskView = function (currentTodo = undefined, hideContainer = false) {
   //update UI
   if (currentTodo) taskAddRenderView.render(currentTodo);
-  if (!currentTodo) taskAddRenderView.clearTaskContainer(); //clears the task view container
+  if (!currentTodo) {
+    if (hideContainer) {
+      taskAddRenderView.clearTaskContainer(true); //clears the task view container
+      todoListComponentView.setInitRenderFormActiveState(false)
+      if (!mobileDeviceTrigger.matches) todoListComponentView.resetTaskContainerRenderState(false)
+    }
+    else taskAddRenderView.clearTaskContainer()
+  }
 
   //update todo component with state object
   todoListComponentView.render(model.state.todo);
@@ -257,7 +264,7 @@ const controlTodoDelete = function (todoID) {
   const todoExists = model.state.todo.length > 0;
 
   //check if there's still todos left
-  if (todoExists) deletedCurrentTodo && controlUpdateTodoAndTaskView();
+  if (todoExists) deletedCurrentTodo && controlUpdateTodoAndTaskView(null, true); //param hides thee taskviewRender
 
   if (!todoExists) {
     model.state.currentTodo = null;
@@ -369,7 +376,13 @@ const controlRenderClickedTodo = function (todoID) {
     if (model.state.currentTodo) {
       //get UI state for currentTodo and save UI statee
       const currentTodoData = model.getCurrentTodo();
+
       currentTodoData.tasks.length > 0 && controlUpdateTaskUIState();
+    }
+    if (todoListComponentView.getRenderContainerHiddenState()) {
+      todoListComponentView.toggleRenderDisplay()
+      todoListComponentView.setInitRenderFormActiveState(true)
+      todoListComponentView.setRenderContainerVisibility(true)
     }
   }
 
@@ -729,7 +742,9 @@ const controlWaitForDB = function () {
     updateUserInfo.addEventListeners(controlUpdateUserInfo, model.token.value)
 
     //add model that to sync component
-    syncLocalStorageToAPI.addModelData(model.state, model.diffState)
+    debugger;
+    syncLocalStorageToAPI.addModelData(model.state, model.diffState, null, model.persistDiff, model.token)
+
   }
 }
 

@@ -136,12 +136,16 @@ class TaskAddRenderView {
     this._handlerUpdateTodoTitle(+todoId, todoTitle)
   }
 
-  _updateUI(markup = undefined, completedMarkup = undefined, title, todo = undefined) {
+  _updateUI(markup = undefined, completedMarkup = undefined, title, todo = undefined, hideComponent = false) {
     //clear container
     this._renderComponentContainerContent.innerHTML =
       this._renderCompletedContainer.innerHTML =
       this._renderTitleInput.textContent =
       "";
+
+    if (hideComponent)
+      this._renderContainer.classList.add("hidden")
+
 
 
     if (markup) {
@@ -178,8 +182,10 @@ class TaskAddRenderView {
     }
   }
 
-  clearTaskContainer() {
-    this._updateUI(null); //set the title to null, only clears container
+  clearTaskContainer(hideContainer = false) {
+    if (hideContainer) this._updateUI(null, null, null, null, true)
+    else
+      this._updateUI(null); //set the title to null, only clears container
   }
 
   render(todo = undefined) {

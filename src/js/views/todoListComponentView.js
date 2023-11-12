@@ -105,12 +105,29 @@ class TodoListComponentView {
     this._mobileNavActive = value;
   }
 
+  setRenderContainerVisibility(value) {
+    this._renderContainerVisibility = value
+  }
+
+  resetTaskContainerRenderState(value) {
+    this.setRenderContainerVisibility(value)
+    this._toggledBeforeAddTodoBtn = value
+  }
+
   setClearAndHideContainer(value) {
     this._clearAndHideContainer = value;
   }
 
+  setInitRenderFormActiveState(value) {
+    this._initRenderFormActivated = value;
+  }
+
   getinitRenderFormActiveState() {
     return this._initRenderFormActivated;
+  }
+
+  getRenderContainerHiddenState() {
+    return this._renderContainer.classList.contains("hidden")
   }
 
   getMobileNavActiveState() {
@@ -231,7 +248,10 @@ class TodoListComponentView {
     this._renderContainer.classList.toggle("hidden");
 
     //if the container is toggled before the add todo button meant to trigger it, set it to true
-    if (toggledBeforeAddTodoBtn) this._toggledBeforeAddTodoBtn = true;
+    if (toggledBeforeAddTodoBtn) {
+      debugger;
+      this._toggledBeforeAddTodoBtn = true;
+    }
   }
 
   _formatEditDate(dateTimestamp) {

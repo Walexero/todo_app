@@ -23,7 +23,8 @@ class SyncLocalStorageToAPI {
     }
 
     _completeSyncAndLoadData() {
-        if (this._syncState.count === 0) {
+        if (this._syncState.count <= 0) {
+            this._syncState.count = 0;
             debugger;
             this._diffState.diffActive = false
 
@@ -64,7 +65,7 @@ class SyncLocalStorageToAPI {
         this._diffState = diffState
         this._diffObj = diffObj
         this._persistDiff = persistDiff
-        if (!this._token) this._token = token
+        if (!this._token && token) this._token = token
     }
 
     _handleEvents(ev) {
@@ -469,7 +470,7 @@ class SyncLocalStorageToAPI {
 
             if (objectType === "task" && returnList.length > 0) {
 
-                for (let i = returnList.length - 1; i > 0; i--) {
+                for (let i = returnList.length - 1; i > -1; i--) {
                     const taskTodoIdInTodoToDeleteExists = deletedObjectParent.some(objId => objId === returnList[i].todoId)
 
                     if (taskTodoIdInTodoToDeleteExists) returnList.splice(i, 1)
@@ -532,7 +533,7 @@ class SyncLocalStorageToAPI {
     }
 
     _createTaskLinkedToAPITodoBody(taskToCreateDiffArray, pendingTaskLinkedToAPITodoArray, taskToCreatePayloadArray) {
-
+        debugger;
         //task not linked to todos to create payload body
         if (taskToCreateDiffArray.length > 0 && pendingTaskLinkedToAPITodoArray.length > 0)
             pendingTaskLinkedToAPITodoArray.forEach(task => {
@@ -579,6 +580,7 @@ class SyncLocalStorageToAPI {
     }
 
     _filterToGetTaskBody(taskId, todoId, clone = true) {
+        debugger;
         //get todo from modelState
         const modelTodos = this._modelState.todo
         const todoModelIndex = this._modelState.todo.findIndex(modelTodo => modelTodo.todoId === todoId)

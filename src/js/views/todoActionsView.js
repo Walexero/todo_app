@@ -58,6 +58,7 @@ class TodoActionsView {
     }
 
     if (action === "saveAndRender") {
+      debugger;
       this._dragElement.setObserver(false);
       this._saveBeforeRenderHandler(todoID);
     }
