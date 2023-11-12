@@ -258,7 +258,7 @@ class SyncLocalStorageToAPI {
             }
 
             if (todosToUpdateLength == 1) {
-                this._makeBatchRequest(API.APIEnum.TODO.PATCH(createTodoToUpdatePayload.payload[0].id), createTodoToUpdatePayload.payload[0], pendingTodoToUpdate, "updateTodo", this._updateTodoBatchCallBack.bind(this, createTodoToUpdatePayload.ids), "PATCH", true)
+                this._makeBatchRequest(API.APIEnum.TODO.PATCH(Number(createTodoToUpdatePayload.payload[0].id)), createTodoToUpdatePayload.payload[0], pendingTodoToUpdate, "updateTodo", this._updateTodoBatchCallBack.bind(this, createTodoToUpdatePayload.ids), "PATCH", true)
                 this._syncState.count += 1
             }
         }

@@ -165,11 +165,13 @@ export const formatAPIRequestBody = (requestBody, type, optionalType = undefined
 
   if (type === "todo") {
     formattedBody = {
-      title: requestBody.title,
-    }
-    if (optionalType === "update")
 
+    }
+    if (requestBody.title) formattedBody.title = requestBody.title
+    if (optionalType === "update") {
       formattedBody.id = requestBody.todoId
+      formattedBody.completed = requestBody.completed
+    }
 
     if (optionalType !== "update") {
       formattedBody.tasks = formatAPIRequestTodoTasks(requestBody.tasks, "todoTask")

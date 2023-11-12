@@ -80,8 +80,10 @@ class TodoListComponentView {
           (e.type === "click" &&
             e.target.classList.contains("component-content")) ||
           (e.type === "click" &&
-            e.target.classList.contains("component-heading"))
+            e.target.classList.contains("component-heading")) || (e.type === "click" &&
+              e.target.classList.contains("component-complete"))
         ) {
+          debugger;
           cls._todoActions.actionHandler("saveAndRender", e.target);
         }
       });
@@ -375,7 +377,7 @@ class TodoListComponentView {
       .slice(0, 10)
       .padEnd(13, ".")
 
-    return todo.completed ? `<s>${todoTitle}</s>` : todoTitle
+    return todo.completed ? `<s class="component-complete">${todoTitle}</s>` : todoTitle
   }
 
   _generateComponentContentMarkup(task) {
