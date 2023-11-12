@@ -64,6 +64,7 @@ body {
 .td-render--container {
   height: 100vh;
   background-color: #b1b1b1;
+  overflow-y: scroll;
   /* hack */
   /* width: 666px; */
 }

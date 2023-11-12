@@ -207,11 +207,12 @@ class TaskAddRenderView {
   }
 
   _renderInput() {
+    debugger;
     const inputEl = ComponentMethods.HTMLToEl(this._generateMarkup())
     this._renderComponentContainerContent.insertAdjacentElement(
-      "afterbegin",
+      "beforeend",
       inputEl
-    );
+    );//afterbegin
 
     //calls controlCreateNewTask
     console.log("cur todo", this._currentTodo)
