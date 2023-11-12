@@ -190,7 +190,10 @@ export const formatAPIRequestBody = (requestBody, type, optionalType = undefined
     }
     if (optionalType === "create")
       formattedBody.todo_id = requestBody.todoId
-    if (optionalType === "update") formattedBody.id = requestBody.taskId
+    if (optionalType === "update") {
+      formattedBody.id = requestBody.taskId
+      formattedBody.todo_last_added = requestBody.todoLastAdded;
+    }
   }
 
   return formattedBody

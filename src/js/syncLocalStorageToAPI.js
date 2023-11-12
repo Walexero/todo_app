@@ -30,6 +30,7 @@ class SyncLocalStorageToAPI {
             if (!this._diffObj) {
                 this._removeLoader()
                 this._component.remove()
+                if (this._persistDiff) this._persistDiff()
             }
 
             if (this._diffObj) {
@@ -43,7 +44,7 @@ class SyncLocalStorageToAPI {
     }
 
     _clearInitData() {
-        this._init = this._loader = this._modelState = this._diffState = this._diffObj = this._persistDiff = null
+        this._init = this._loader = this._modelState = this._diffState = this._diffObj = null
     }
 
     notifyUIToSyncChanges() {
@@ -234,7 +235,7 @@ class SyncLocalStorageToAPI {
             }
 
             if (todosToDeleteLength == 1) {
-                this._makeBatchRequest(API.APIEnum.TODO.DELETE, pendingTodosToDelete[0], pendingTodosToDelete, "deleteTodo", this._deleteTodoBatchCallBack.bind(this, pendingTodosToDelete[0]), "DELETE", true)
+                this._makeBatchRequest(API.APIEnum.TODO.DELETE(pendingTodosToDelete[0]), pendingTodosToDelete[0], pendingTodosToDelete, "deleteTodo", this._deleteTodoBatchCallBack.bind(this, pendingTodosToDelete[0]), "DELETE", true)
                 this._syncState.count += 1
             }
 
@@ -245,8 +246,8 @@ class SyncLocalStorageToAPI {
 
     _makeTodoUpdateRequest(createTodoToUpdatePayload, pendingTodoToUpdate) {
         //create batch todoUpdate
-        if (createTodoToUpdatePayload.length > 0) {
-            const todosToUpdateLength = createTodoToUpdatePayload.length
+        if (createTodoToUpdatePayload.payload.length > 0) {
+            const todosToUpdateLength = createTodoToUpdatePayload.payload.length
 
             if (todosToUpdateLength > 1) {
                 this._makeBatchRequest(
@@ -256,7 +257,7 @@ class SyncLocalStorageToAPI {
             }
 
             if (todosToUpdateLength == 1) {
-                this._makeBatchRequest(API.APIEnum.TODO.PATCH, createTodoToUpdatePayload.payload[0], pendingTodoToUpdate, "updateTodo", this._updateTodoBatchCallBack.bind(this, createTodoToUpdatePayload.ids), "PATCH", true)
+                this._makeBatchRequest(API.APIEnum.TODO.PATCH(createTodoToUpdatePayload.payload[0].id), createTodoToUpdatePayload.payload[0], pendingTodoToUpdate, "updateTodo", this._updateTodoBatchCallBack.bind(this, createTodoToUpdatePayload.ids), "PATCH", true)
                 this._syncState.count += 1
             }
         }
@@ -298,7 +299,7 @@ class SyncLocalStorageToAPI {
             }
 
             if (tasksToDeleteLength == 1) {
-                this._makeBatchRequest(API.APIEnum.TASK.DELETE, pendingTasksToDeletePayload[0], pendingTasksToDelete, "deleteTask", this._deleteTaskBatchCallBack.bind(this, pendingTasksToDelete), "DELETE", true)
+                this._makeBatchRequest(API.APIEnum.TASK.DELETE(pendingTasksToDeletePayload[0]), pendingTasksToDeletePayload[0], pendingTasksToDelete, "deleteTask", this._deleteTaskBatchCallBack.bind(this, pendingTasksToDelete), "DELETE", true)
                 this._syncState.count += 1
             }
         }
@@ -318,21 +319,21 @@ class SyncLocalStorageToAPI {
             }
 
             if (taskToUpdateLength == 1) {
-                this._makeBatchRequest(API.APIEnum.TASK.PATCH, createTaskToUpdatePayload.payload[0], pendingTaskToUpdate, "updateTask", this._updateTaskBatchCallBack.bind(this, createTaskToUpdatePayload.ids), "PATCH", true)
+                this._makeBatchRequest(API.APIEnum.TASK.PATCH(createTaskToUpdatePayload.payload[0].id), createTaskToUpdatePayload.payload[0], pendingTaskToUpdate, "updateTask", this._updateTaskBatchCallBack.bind(this, createTaskToUpdatePayload.ids), "PATCH", true)
                 this._syncState.count += 1
             }
         }
 
     }
 
-    _getOrderingUrlFromType(orderingLength, orderingType) {
+    _getOrderingUrlFromType(orderingLength, orderingType, objId = undefined) {
         if (orderingLength > 1) {
             if (orderingType === "todo") return API.APIEnum.TODO.BATCH_UPDATE_ORDERING
             if (orderingType === "task") return API.APIEnum.TASK.BATCH_UPDATE_ORDERING
         }
         if (orderingLength === 1) {
-            if (orderingType === "todo") return API.APIEnum.TODO.PATCH
-            if (orderingType === "task") return API.APIEnum.TASK.PATCH
+            if (orderingType === "todo") return API.APIEnum.TODO.PATCH(objId)
+            if (orderingType === "task") return API.APIEnum.TASK.PATCH(objId)
         }
     }
 
@@ -342,7 +343,8 @@ class SyncLocalStorageToAPI {
         }
 
         if (orderingPayload.length === 1) {
-            this._makeBatchRequest(this._getOrderingUrlFromType(orderingPayload.length, type), orderingPayload, null, "updateOrdering", orderingCallBack, "PATCH", true)
+            debugger;
+            this._makeBatchRequest(this._getOrderingUrlFromType(orderingPayload.length, type, orderingPayload[0].id), orderingPayload, null, "updateOrdering", orderingCallBack, "PATCH", true)
         }
     }
 
@@ -557,11 +559,14 @@ class SyncLocalStorageToAPI {
             pendingTaskLinkedToAPITodoToUpdate.forEach(task => {
                 // const taskToUpdateExists
                 const taskToUpdateExistsInTaskAPITodo = pendingTaskLinkedToAPITodo.some(APITodoTask => APITodoTask.taskId === task.taskId)
-
+                debugger;
                 if (!taskToUpdateExistsInTaskAPITodo) {
                     const taskBody = this._filterToGetTaskBody(task.taskId, task.todoId)
                     // taskBody.todoId = task.todoId
                     taskToUpdatePayloadArray.ids.push({ taskId: task.taskId, todoId: task.todoId })
+
+                    //add the time added to the taskBody
+                    taskBody.todoLastAdded = task.todoLastAdded
                     //remove id from task
                     // delete taskBody.taskId
                     taskToUpdatePayloadArray.payload.push(formatAPIRequestBody(taskBody, "task", "update"))
@@ -585,6 +590,7 @@ class SyncLocalStorageToAPI {
     }
 
     _makeBatchRequest(requestURL, requestPayload, requestDiffArray, requestActionType, requestCallBack, requestType, requestCallBackParam = false) {
+        console.log(this)
         console.log(this._token)
         const queryObj = {
             endpoint: requestURL,
@@ -661,7 +667,7 @@ class SyncLocalStorageToAPI {
     }
 
     _removeLoader() {
-        this._loader.remove()
+        if (this._loader) this._loader.remove()
         this._loader = null;
     }
 

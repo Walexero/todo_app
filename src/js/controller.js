@@ -109,14 +109,15 @@ const controlAPITaskUpdateFallback = function (todoId, taskId, type, updateValue
     if (taskExist >= 0) {
       if (type === "complete")
         taskToUpdate[taskExist].completed = updateValue
+      taskToUpdate[taskExist].todoLastAdded = new Date(Date.now()).toISOString()
       model.persistDiff()
     }
 
     if (taskExist < 0) {
       if (type === "complete")
-        taskToUpdate.push({ taskId, completed: updateValue, todoId })
+        taskToUpdate.push({ taskId, completed: updateValue, todoId, todoLastAdded: new Date(Date.now()).toISOString() })
       if (type === "update")
-        taskToUpdate.push({ taskId, todoId })
+        taskToUpdate.push({ taskId, todoId, todoLastAdded: new Date(Date.now()).toISOString() })
       model.persistDiff()
     }
     model.diffState.diffActive = true;
@@ -318,7 +319,7 @@ const controlTodoComplete = function (todoID, uncompleteStatus = undefined) {
 
   const queryObj = {
     // API.APIEnum.TODO.PATCH(todoID),
-    endpoint: API.APIEnum.TODO.PATCH(todoID),
+    endpoint: API.APIEnum.TODO.PATCHED,
     token: model.token.value,
     sec: null,
     actionType: "updateTodo",
@@ -455,7 +456,8 @@ const controlTodoDataLoad = function () {
 
 const controlUpdateTodoTitle = function (todoId, title) {
   const queryObj = {
-    endpoint: API.APIEnum.TODO.PATCH(todoId),
+    // API.APIEnum.TODO.PATCH(todoId)
+    endpoint: API.APIEnum.TODO.PATCHED,
     token: model.token.value,
     sec: null,
     actionType: "updateTodo",

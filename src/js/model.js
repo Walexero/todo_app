@@ -295,6 +295,7 @@ export function init(sync, callBack, api = false, APIResp = undefined) {
         const localState = JSON.parse(savedState);
         const diffLocalState = JSON.parse(diffSavedState)
         console.log(localState)
+        console.log(diffLocalState)
 
         if (diffLocalState && diffLocalState.diffActive) {
 
@@ -307,6 +308,8 @@ export function init(sync, callBack, api = false, APIResp = undefined) {
           loadDataFromAPI(token.value, callBack)
         }
       }
+      if (!savedState)
+        loadDataFromAPI(token.value, callBack)
     }
     if (!sync)
       loadDataFromAPI(token.value, callBack)
@@ -316,6 +319,7 @@ export function init(sync, callBack, api = false, APIResp = undefined) {
   if (api) {
     let APIData;
     const storage = localStorage.getItem("todos");
+    // const diffStorage = localStorage.getItem("diff")
     if (storage)
       state = JSON.parse(storage);
 
