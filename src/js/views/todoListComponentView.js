@@ -267,6 +267,7 @@ class TodoListComponentView {
   }
 
   render(todos) {
+    debugger;
     this._generateMarkup(todos);
   }
 

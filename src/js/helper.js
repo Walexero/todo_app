@@ -118,7 +118,8 @@ const formatAPIRequestTodoTasks = (APIRequestTasks, formatType) => {
 
     //implement task todo request formatting
   }
-  return [formatAPIRequestBody(APIRequestTasks[0], formatType)]
+  return APIRequestTasks
+  //return [formatAPIRequestBody(APIRequestTasks[0], formatType)]
 }
 
 export const formatAPIResponseBody = (responseBody, type, fallback = false) => {

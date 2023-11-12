@@ -590,6 +590,7 @@ class SyncLocalStorageToAPI {
     }
 
     _makeBatchRequest(requestURL, requestPayload, requestDiffArray, requestActionType, requestCallBack, requestType, requestCallBackParam = false) {
+        debugger;
         console.log(this)
         console.log(this._token)
         const queryObj = {
