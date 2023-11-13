@@ -1,7 +1,7 @@
 export class TodoTemplate {
   static template() {
     return `
-            <div class="container">
+            <div class="container todo-active">
                 <header>
                   <nav class="navbar">
                     <p class="navbar-back--btn hidden">Back</p>

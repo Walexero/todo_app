@@ -26,6 +26,18 @@ body {
 }
 
 /* header section */
+header{
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 800;
+}
+
+.todo-active header{
+  
+  background-color: #0c0c0c;
+}
+
 .navbar {
   height: 3rem;
   display: flex;
@@ -58,6 +70,7 @@ body {
 .td-row {
   display: grid;
   grid-template-columns: 1fr 2fr;
+  margin-top: 2rem;
 }
 
 .td-component--container {
@@ -72,6 +85,8 @@ body {
   height: 100vh;
   background-color: #b1b1b1;
   overflow-y: scroll;
+  padding-bottom: 30rem;
+  /* overflow-y: scroll; */
   /* hack */
   /* width: 666px; */
 }
@@ -93,6 +108,7 @@ body {
   /* border-radius: 2rem; */
   overflow-y: scroll;
   height: inherit;
+  padding-bottom: 30rem;
   /* margin-top: 2.6rem; */
 }
 
@@ -265,6 +281,8 @@ body {
   min-height: 4rem;
   z-index: 1000;
   position: sticky;
+  top: 0;
+  left: 0;
 }
 
 .sync-msg{
