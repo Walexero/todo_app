@@ -81,9 +81,7 @@ const controlDeleteTask = function (taskId, todoId) {
   const updatedTodo = model.deleteTask(taskId);
 
   const queryObj = {
-    // endpoint: API.APIEnum.TASK.DELETE(taskId),
-    endpoint: API.APIEnum.TASK.DELETED(taskId),
-
+    endpoint: API.APIEnum.TASK.DELETE(taskId),
     token: model.token.value,
     sec: null,
     actionType: "deleteTask",
@@ -102,7 +100,6 @@ const controlDeleteTask = function (taskId, todoId) {
 
 const controlAPITaskUpdateFallback = function (todoId, taskId, type, updateValue, apiSuccess, requestState) {
   //the requestState would only be set if the request was succeessful from the API component because the callBack params is set on the api request object for the complete request
-  debugger;
 
 
   const completeAPIRequestFail = type === "complete" && !apiSuccess
@@ -134,8 +131,7 @@ const controlAPITaskUpdateFallback = function (todoId, taskId, type, updateValue
 
 const controlCompleteTask = function (todoId, taskId, completeStatus) {
   const queryObj = {
-    // API.APIEnum.TASK.PATCH(taskId)
-    endpoint: API.APIEnum.TASK.PATCHED(taskId),
+    endpoint: API.APIEnum.TASK.PATCH(taskId),
     token: model.token.value,
     sec: null,
     actionType: "updateTask",
@@ -174,8 +170,7 @@ const controlUpdateAPITodoOrdering = function (updatedTodo) {
   const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "todos")
 
   const queryObj = {
-    // API.APIEnum.TODO.BATCH_UPDATE_ORDERING
-    endpoint: API.APIEnum.TODO.CREATED,
+    endpoint: API.APIEnum.TODO.BATCH_UPDATE_ORDERING,
     token: model.token.value,
     sec: null,
     actionType: "updateTodo",
@@ -229,7 +224,6 @@ const controlAddTodoMobileView = function (renderTasks = undefined) {
 };
 
 const controlAPITodoDeleteFallback = function (todoId, apiSuccess) {
-  debugger;
   if (!apiSuccess) {
     const todoToDelete = model.diffState.todoToDelete;
 
@@ -245,8 +239,7 @@ const controlAPITodoDeleteFallback = function (todoId, apiSuccess) {
 
 const controlTodoDelete = function (todoID) {
   const queryObj = {
-    // API.APIEnum.TODO.DELETE(todoID),
-    endpoint: API.APIEnum.TODO.DELETED(todoID),
+    endpoint: API.APIEnum.TODO.DELETE(todoID),
     token: model.token.value,
     sec: null,
     actionType: "deleteTodo",
@@ -280,15 +273,7 @@ const controlTodoDelete = function (todoID) {
   }
 };
 
-// const controlUpdateTodoTitleCallback = function (updateObj) {
-//   const updatedTodo = model.updateTodoTitle(updateObj)
-//   //render todos
-//   todoListComponentView.render(updatedTodo);
-
-// }
-
 const controlAPITodoUpdateFallback = function (todoId, type, updateValue, apiSuccess, requestState) {
-  debugger;
   if (!requestState) {
     const todoToUpdate = model.diffState.todoToUpdate
     const todoExists = todoToUpdate.findIndex(todo => todo.todoId === todoId)
@@ -325,8 +310,7 @@ const controlTodoComplete = function (todoID, uncompleteStatus = undefined) {
   const todo = model.completeTodo(Number(todoID), uncompleteStatus);
 
   const queryObj = {
-    // API.APIEnum.TODO.PATCH(todoID),
-    endpoint: API.APIEnum.TODO.PATCHED,
+    endpoint: API.APIEnum.TODO.PATCH(todoID),
     token: model.token.value,
     sec: null,
     actionType: "updateTodo",
@@ -343,7 +327,6 @@ const controlTodoComplete = function (todoID, uncompleteStatus = undefined) {
 };
 
 const controlRenderTodo = function (newCurrentTodo, mobileView = false) {
-  debugger
   const addTodoBtnClicked =
     todoListComponentView.getinitRenderFormActiveState();
 
@@ -370,7 +353,6 @@ const controlRenderTodo = function (newCurrentTodo, mobileView = false) {
 
 const controlRenderClickedTodo = function (todoID) {
   //renders the clicked todo and saves the current state for the previous rendered todo
-  debugger;
 
   if (!mobileDeviceTrigger.matches) {
     if (model.state.currentTodo) {
@@ -470,8 +452,7 @@ const controlTodoDataLoad = function () {
 
 const controlUpdateTodoTitle = function (todoId, title) {
   const queryObj = {
-    // API.APIEnum.TODO.PATCH(todoId)
-    endpoint: API.APIEnum.TODO.PATCHED,
+    endpoint: API.APIEnum.TODO.PATCH(todoId),
     token: model.token.value,
     sec: null,
     actionType: "updateTodo",
@@ -492,7 +473,6 @@ const controlUpdateTodoTitle = function (todoId, title) {
 }
 
 const controlUpdateTaskOfExistingTodo = function (task) {
-  debugger;
   //adds a task to the an existing todo and returns the todo
   const currentTodo = model.getCurrentTodo(task.todoId);
 
@@ -526,7 +506,6 @@ const controlUpdateTaskOfExistingTodo = function (task) {
 };
 
 const controlAPICreateNewTodoFallback = function (currentTodoContainer, apiSuccess) {
-  debugger;
   if (apiSuccess) {
     const todo = apiSuccess
     controlAddTodoIdToRenderContainer(currentTodoContainer, todo)
@@ -567,8 +546,7 @@ const controlCreateNewTodo = function (task, api = false, currentTodoContainer =
   if (api) {
 
     const queryObj = {
-      // API.APIEnum.TODO.CREATE
-      endpoint: API.APIEnum.TODO.CREATED,
+      endpoint: API.APIEnum.TODO.CREATE,
       token: model.token.value,
       sec: null,
       actionType: "createTodo",
@@ -589,7 +567,6 @@ const controlCreateNewTodo = function (task, api = false, currentTodoContainer =
 };
 
 const controlAddTaskIdToTaskInput = function (todoId, taskInput, task) {
-  debugger;
   //add created task to the task Input
   taskInput.setAttribute("data-taskId", task.id)//
   model.APIAddTodoOrTask(task, "task")
@@ -630,13 +607,11 @@ const controlAPICreateNewTaskFallback = function (todoId, taskInput, apiSuccess)
 }
 
 const controlCreateNewTask = function (todoId, api = false, currentTaskInput = undefined) {
-  debugger;
   if (api) {
     // const currentTodo = model.getCurrentTodo(todoId);
 
     const queryObj = {
-      // API.APIEnum.TASK.CREATE
-      endpoint: API.APIEnum.TASK.CREATED,
+      endpoint: API.APIEnum.TASK.CREATE,
       token: model.token.value,
       sec: null,
       actionType: "createTask",
@@ -674,8 +649,7 @@ const controlUpdateAPITaskOrdering = function (updatedTodo) {
   const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "tasks")
 
   const queryObj = {
-    // API.APIEnum.TASK.BATCH_UPDATE_ORDERING
-    endpoint: API.APIEnum.TASK.CREATED,
+    endpoint: API.APIEnum.TASK.BATCH_UPDATE_ORDERING,
     token: model.token.value,
     sec: null,
     actionType: "updateTask",
@@ -743,7 +717,7 @@ const controlWaitForDB = function () {
     updateUserInfo.addEventListeners(model.token.value)
 
     //add model that to sync component
-    debugger;
+
     syncLocalStorageToAPI.addModelData(model.state, model.diffState, null, model.persistDiff, model.token)
 
   }

@@ -38,8 +38,6 @@ export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
       const toPush = arr.find((todo) => todo.todoId === Number(ind.at(0)));
       cloneCurrentTask.push(toPush);
     });
-  debugger;
-  console.log("the cloned task", cloneCurrentTask);
   return cloneCurrentTask;
 };
 
@@ -110,7 +108,6 @@ const formatAPITodoTasks = (APITasks, formatType) => {
 }
 
 const formatAPIRequestTodoTasks = (APIRequestTasks, formatType) => {
-  debugger
   if (APIRequestTasks.length > 0) {
     const APItaskList = []
     APIRequestTasks.forEach(task => APItaskList.push(formatAPIRequestBody(task, formatType)))
@@ -158,7 +155,6 @@ export const formatAPIResponseBody = (responseBody, type, fallback = false) => {
 }
 
 export const formatAPIRequestBody = (requestBody, type, optionalType = undefined) => {
-  // debugger;
   let formattedBody;
 
   if (![requestBody].length > 0) return requestBody

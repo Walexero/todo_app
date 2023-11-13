@@ -189,7 +189,6 @@ class TaskAddRenderView {
   }
 
   render(todo = undefined) {
-    debugger;
     //generate UI markupg
     let markup, completedMarkup;
 
@@ -213,7 +212,6 @@ class TaskAddRenderView {
   }
 
   _renderInput() {
-    debugger;
     const inputEl = ComponentMethods.HTMLToEl(this._generateMarkup())
     this._renderComponentContainerContent.insertAdjacentElement(
       "beforeend",

@@ -74,7 +74,7 @@ export class API {
 
         (async () => await API.querier(queryObj))().then(returnData => {
             if (returnData) {
-                debugger;
+
                 queryObj.loader ? queryObj.loader.remove() : null
                 queryObj.alert ? new Alert(HTTP_200_RESPONSE[queryObj.actionType](returnData), null, "success").component() : null
                 if (queryObj.callBack) queryObj.callBack(returnData, queryObj.callBackParam ?? true)
@@ -98,7 +98,7 @@ export class API {
 
         try {
             const res = await Promise.race([API.makeRequest(queryObj), timeout(queryObj.sec, queryObj.actionType)])
-            debugger;
+
             const resContent = res.status !== HTTP_204_SUCCESS_NO_CONTENT ? await res.json() : {}
 
             if (!res.ok) throw new Error(`${ALERT_STATUS_ERRORS.find(s => s === res.status) ? API.getResponseToRender(resContent, queryObj, res.status) : res.message} (${res.status})`)
@@ -115,7 +115,7 @@ export class API {
     }
 
     static getResponseToRender(response, queryObj, resStatus) {
-        debugger;
+
 
         //set the resStatus on the queryObj
         if (resStatus) queryObj.resStatus = resStatus
@@ -149,7 +149,7 @@ export class API {
     }
 
     static destructureSuccessResponse(resp, queryObj) {
-        debugger;
+
         const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "updateTodo", "createBatchTodo", "createBatchTask", "updateBatchTodo", "updateBatchTask", "deleteTodoBatch", "deleteBatchTask", "updateOrdering"]
         let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
@@ -186,7 +186,7 @@ export class API {
     }
 
     static requestJSON(queryObj) {
-        debugger;
+
         const fetchParams = {
             method: queryObj.type,
             headers: {

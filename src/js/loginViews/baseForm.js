@@ -94,7 +94,6 @@ export class BaseForm {
     }
 
     _renderFormErrors(errors, success = false) {
-        debugger;
         let renderError;
         if (success) {
             this._clearForm()

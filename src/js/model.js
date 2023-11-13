@@ -34,7 +34,6 @@ const persistTodo = function () {
 
 export const persistDiff = function () {
   localStorage.setItem("diff", JSON.stringify(diffState))
-  console.log(diffState)
 }
 
 export const persistToken = function () {
@@ -70,7 +69,6 @@ const getTodoIndexAndTodo = (todoID) => {
 };
 
 export const APIAddTodoOrTask = function (typeObj, type, fallback = false) {
-  debugger;
   let currentTodo;
 
   if (type)
@@ -104,7 +102,6 @@ export const APIAddTodoOrTask = function (typeObj, type, fallback = false) {
   }
   //persist data
   persistTodo();
-  console.log(state.todo)
   return currentTodo;
 }
 
@@ -254,7 +251,6 @@ const formatLoadedAPIData = function (APIResp) {
 }
 
 const replaceLocalDataOrPersist = function (sync, callBack, api = false, ApiResp, requestState) {
-  debugger;
   if (requestState)
     init(null, callBack, true, ApiResp)
 
@@ -286,7 +282,6 @@ export const loadToken = function () {
 
 //get persisted data on page load
 export function init(sync, callBack, api = false, APIResp = undefined) {
-  debugger;
   if (!api) {
     if (sync) {
       const savedState = localStorage.getItem("todos")
@@ -294,8 +289,6 @@ export function init(sync, callBack, api = false, APIResp = undefined) {
       if (savedState) {
         const localState = JSON.parse(savedState);
         const diffLocalState = JSON.parse(diffSavedState)
-        console.log(localState)
-        console.log(diffLocalState)
 
         if (diffLocalState && diffLocalState.diffActive) {
 

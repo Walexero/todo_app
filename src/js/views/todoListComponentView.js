@@ -83,7 +83,7 @@ class TodoListComponentView {
             e.target.classList.contains("component-heading")) || (e.type === "click" &&
               e.target.classList.contains("component-complete"))
         ) {
-          debugger;
+
           cls._todoActions.actionHandler("saveAndRender", e.target);
         }
       });
@@ -213,7 +213,7 @@ class TodoListComponentView {
   }
 
   _renderAddTodoForm() {
-    debugger;
+
     //notify Controller that the form logic has been triggered
     this._initRenderFormActivated = true;
 
@@ -251,7 +251,7 @@ class TodoListComponentView {
 
     //if the container is toggled before the add todo button meant to trigger it, set it to true
     if (toggledBeforeAddTodoBtn) {
-      debugger;
+
       this._toggledBeforeAddTodoBtn = true;
     }
   }
@@ -289,7 +289,7 @@ class TodoListComponentView {
   }
 
   render(todos) {
-    debugger;
+
     this._generateMarkup(todos);
   }
 
