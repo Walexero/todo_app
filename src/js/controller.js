@@ -462,9 +462,10 @@ const controlTodoDataLoad = function () {
     controlAddTodo();
   }
 
-  if (!todoExists)
-    //call controlAddTodo and handle form events
-    controlAddTodo();
+  if (!mobileDeviceTrigger.matches)
+    if (!todoExists)
+      //call controlAddTodo and handle form events
+      controlAddTodo();
 };
 
 const controlUpdateTodoTitle = function (todoId, title) {
