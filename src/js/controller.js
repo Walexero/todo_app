@@ -649,7 +649,6 @@ const controlAPITaskOrderingFallback = function (orderedTask, apiSuccess, reques
 }
 
 const controlUpdateAPITaskOrdering = function (updatedTodo) {
-  // debugger
   const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "tasks")
 
   const queryObj = {
