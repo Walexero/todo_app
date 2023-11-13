@@ -47,7 +47,7 @@ const controlLogin = function (loginComponentCallBack, token) {
   loader.remove()
 }
 
-const controlUpdateUserInfo = function (updateInfoComponentCallback, token) { }
+// const controlUpdateUserInfo = function (updateInfoComponentCallback, token) { }
 
 const controlUpdateTodoAndTaskView = function (currentTodo = undefined, hideContainer = false) {
   //update UI
@@ -739,7 +739,7 @@ const controlWaitForDB = function () {
 
     //add update userinfo component
     const updateUserInfo = new UpdateUserInfoComponent
-    updateUserInfo.addEventListeners(controlUpdateUserInfo, model.token.value)
+    updateUserInfo.addEventListeners(model.token.value)
 
     //add model that to sync component
     debugger;

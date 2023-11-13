@@ -32,11 +32,18 @@ body {
 }
 
 .navbar-back--btn {
-  background: var(--color-component--bg);
-  font-size: 2rem;
-  border-radius: 0.2rem;
-  margin-left: 0.1rem;
-  padding: 0 2rem;
+  color: var(--color-primary--bg);
+  cursor: pointer;
+  background: #b1b1b1;
+  border: none;
+  border-radius: 0.4rem;
+  width: 5rem;
+  height: 2rem;
+  transform: translate(14%, 18%);
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar-header-title {
@@ -90,7 +97,8 @@ body {
 .component-container--box {
   background-color: var(--color-component--bg);
   border: 1px solid var(--color-component--border);
-  height: 10rem;
+  /* height: 10rem; */
+  height: 11rem;
   position: relative;
   border-radius: 0.5rem;
   padding: 0.5rem 0.5rem;
@@ -250,7 +258,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  height: 3.4rem;
+  /* height: 3.4rem; */
+  height: auto;
+  min-height: 4rem;
+  z-index: 1000;
+  position: sticky;
 }
 
 .sync-msg{

@@ -17,8 +17,8 @@ export class UpdateUserInfoComponent {
         return this._component
     }
 
-    addEventListeners(requestHandler = undefined, token) {
-        this.requestHandler = requestHandler
+    addEventListeners(token) {
+        // this.requestHandler = requestHandler
         this._token = token
         this._insertBtnComponent()
     }

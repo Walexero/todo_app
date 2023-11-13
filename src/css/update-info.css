@@ -6,6 +6,11 @@
     --color-nudge-bg: whitesmoke;
   }
 
+.td-render--content{
+    width: 100%;
+    overflow-x: hidden;
+}
+
 .td-update-info{
 
     position: fixed;
@@ -13,8 +18,10 @@
     height: 95vh;
     top: 3rem;
     background: #b5b1b1;
-    right: 18.4rem;
+    /* right: 18.4rem; */
+    transform: translate(233%);
     box-shadow: 0 0 3px;
+    overflow-y: hidden;
 }
 
 .info-update-heading{
@@ -70,6 +77,10 @@
 
 .update-info-active .td-render--container{
     width: 36.5rem !important;
+}
+
+.update-info-active .td-render--content{
+    overflow-x: scroll !important;
 }
 
 .updateInfo-box,.updatePwd-box{

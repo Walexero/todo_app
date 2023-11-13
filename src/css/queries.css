@@ -1,3 +1,4 @@
+
 /* --------------------------- */
 /* BELOW 1000px (smaller desktops) */
 /* ----------------------------- */
@@ -8,6 +9,11 @@
 
   .component-content {
     margin-left: 0;
+  }
+
+  .component-editted-bar{
+    left: 3rem;
+    transform: translateX(0);
   }
 
   .page-content {
@@ -29,6 +35,26 @@
   .alert{
     left: 40%;
   }
+
+  /* .sync-alert{
+    height: 4.4rem;
+  } */
+
+  .sync-btns{   
+    display: flex;
+    gap: 1.4rem;
+    margin-right: 1.4rem;
+  }
+
+  .sync-msg {
+    flex: 1 0 0;
+    margin-left: 1.4rem;
+  }
+
+  .td-update-info{ 
+    transform: translate(166%)
+  }
+
 }
 
 /* --------------------------- */
@@ -45,6 +71,11 @@
 
   .component-container {
     grid-template-columns: 1fr;
+  }
+
+  .component-editted-bar{
+    width: 100%;
+    left: 0;
   }
 
   .form-task-td {
@@ -78,6 +109,16 @@
   .alert {
     left: 37%;
   }
+
+  .td-update-info {
+    position: absolute !important;
+    right: 0;
+    transform: translateX(0%);
+  }
+
+  .td-render--container{ 
+    position: relative;
+  }
 }
 
 /* --------------------------- */
@@ -91,16 +132,20 @@
     grid-template-columns: 1.7fr 3.5fr;
   }
 
-  .form-task-td {
+  /* .form-task-td {
     width: 65%;
   }
 
   .td-label-container {
     width: 65%;
-  }
+  } */
+
+  .form-task-td, .td-label-container {
+    width: 85%;
+}
 
   .component-editted-bar {
-    left: 35%;
+    /* left: 35%; */
     transform: none;
   }
 

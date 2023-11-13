@@ -1,10 +1,10 @@
 export class TodoTemplate {
-    static template() {
-        return `
+  static template() {
+    return `
             <div class="container">
                 <header>
                   <nav class="navbar">
-                    <p class="navbar-back--btn hidden">&lt;</p>
+                    <p class="navbar-back--btn hidden">Back</p>
                     <p class="navbar-header-title">TD App</p>
                   </nav>
                 </header>
@@ -45,6 +45,6 @@ export class TodoTemplate {
               </div>
             </div>
             </div>
-        `
-    }
+        `;
+  }
 }

@@ -167,7 +167,7 @@ export const formatAPIRequestBody = (requestBody, type, optionalType = undefined
     formattedBody = {
 
     }
-    if (requestBody.title) formattedBody.title = requestBody.title
+    if (requestBody.title || requestBody?.title?.length === 0) formattedBody.title = requestBody.title
     if (optionalType === "update") {
       formattedBody.id = requestBody.todoId
       formattedBody.completed = requestBody.completed
