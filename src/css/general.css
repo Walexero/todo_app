@@ -70,6 +70,7 @@ input[type="checkbox"] {
   top: 1rem;
   right: 0.5rem;
   display: none;
+  transform: translateX(0.8rem);
 }
 
 .placeholder {

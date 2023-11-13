@@ -199,6 +199,10 @@ class Login {
             this._children[i].remove(true)
             this._children.splice(i, 1)
         }
+        if (this._forgotBtnComponent) {
+            this._forgotBtnComponent.remove()
+            this._forgotBtnComponent = null;
+        }
     }
 
     remove(children = false) {
