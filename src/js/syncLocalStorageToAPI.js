@@ -138,32 +138,21 @@ class SyncLocalStorageToAPI {
 
         //create todo payload
         this._createTodoPayload(this.pendingTodos, this.createPendingTodos, this.createTodoPayload)
-        ", this.createTodoPayload)
 
         //create todo to update payload
         this._createTodoUpdatePayload(this.pendingTodoToUpdate, this.createPendingTodosToUpdate, this.createPendingTodos, this.createTodoToUpdatePayload)
 
-         update payload", this.createTodoToUpdatePayload)
-
         //sort tasks which are not linked to todos to create
         this._filterPendingTaskLinkedToAPITodo(this.pendingTasks, this.createPendingTasks, this.createPendingTodos, this.createPendingTaskLinkedToAPITodo)
-         linked to api todo", this.createPendingTaskLinkedToAPITodo)
 
         //sort tasks which are not linked to todos to update
         this._filterPendingTaskLinkedToAPITodo(this.pendingTaskToUpdate, this.createPendingTasksToUpdate, this.createPendingTodos, this.createPendingTaskLinkedToAPITodoToUpdate)
 
-         to update linked to api todo", this.createPendingTaskLinkedToAPITodoToUpdate)
-
         //task not linked to todos to create payload body
         this._createTaskLinkedToAPITodoBody(this.pendingTasks, this.createPendingTaskLinkedToAPITodo, this.createTaskPayload)
 
-         create payload for api todo ")
-
         //sort tasks which are to be updated not in createPendingTaskLinkedToAPITodo Array
         this._createTaskToUpdateBody(this.pendingTaskToUpdate, this.createPendingTaskLinkedToAPITodoToUpdate, this.createPendingTaskLinkedToAPITodo, this.createTaskToUpdatePayload)
-
-         update payload for api todo")
-
     }
 
     _makePropertiesRequest() {
@@ -490,7 +479,6 @@ class SyncLocalStorageToAPI {
                 todoToCreatePayloadArray.ids.push(todoBody.todoId)
                 //remove ids from todo and tasks
                 delete todoBody.todoId
-
                 if (todoBody.tasks?.length > 0)
                     todoBody.tasks.forEach(task => delete task.taskId)
                 //add formatted data to todos to create
@@ -558,7 +546,7 @@ class SyncLocalStorageToAPI {
             pendingTaskLinkedToAPITodoToUpdate.forEach(task => {
                 // const taskToUpdateExists
                 const taskToUpdateExistsInTaskAPITodo = pendingTaskLinkedToAPITodo.some(APITodoTask => APITodoTask.taskId === task.taskId)
-                debugger;
+
                 if (!taskToUpdateExistsInTaskAPITodo) {
                     const taskBody = this._filterToGetTaskBody(task.taskId, task.todoId)
                     // taskBody.todoId = task.todoId

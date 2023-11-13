@@ -70,19 +70,20 @@ header{
 .td-row {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
 }
 
 .td-component--container {
-  height: 100vh;
+  height: 94vh;
   border-inline: 2px solid var(--color-component--container--border);
+  overflow: hidden;
   /* overflow-y: scroll; */
   /* hack */
   /* width: 334px; */
 }
 
 .td-render--container {
-  height: 100vh;
+  height: 94vh;
   background-color: #b1b1b1;
   overflow-y: scroll;
   padding-bottom: 30rem;

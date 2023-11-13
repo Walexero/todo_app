@@ -150,7 +150,7 @@ export class API {
 
     static destructureSuccessResponse(resp, queryObj) {
 
-        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "updateTodo", "createBatchTodo", "createBatchTask", "updateBatchTodo", "updateBatchTask", "deleteTodoBatch", "deleteBatchTask", "updateOrdering"]
+        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "deleteTask", "updateTodo", "createBatchTodo", "createBatchTask", "updateBatchTodo", "updateBatchTask", "deleteTodoBatch", "deleteBatchTask", "updateOrdering"]
         let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
         if (resp instanceof Array && resp.length === 0) return resp

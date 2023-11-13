@@ -204,8 +204,10 @@ export const formatAPIPayloadForUpdateReorder = function (payload, type) {
   if (type === "tasks") {
     const listItems = []
 
-    payload.tasks.forEach((task, i) =>
-      listItems.push({ id: task.taskId, ordering: i + 1 })
+    payload.tasks.forEach((task, i) => {
+      if (!listItems.find(item => item.id === task.taskId))
+        listItems.push({ id: task.taskId, ordering: i + 1 })
+    }
     )
     requestObj = {
       "ordering_list": listItems

@@ -65,9 +65,9 @@ const controlUpdateTodoAndTaskView = function (currentTodo = undefined, hideCont
   todoListComponentView.render(model.state.todo);
 };
 
-const controlAPITaskDeleteFallback = function (taskId, todoId, apiSuccess) {
+const controlAPITaskDeleteFallback = function (taskId, todoId, apiSuccess, requestState) {
 
-  if (!apiSuccess) {
+  if (!requestState) {
     todoId = +todoId
     model.diffState.taskToDelete.push({ taskId, todoId })
     model.persistDiff()
@@ -89,7 +89,8 @@ const controlDeleteTask = function (taskId, todoId) {
     spinner: false,
     alert: false,
     type: "DELETE",
-    callBack: controlAPITaskDeleteFallback.bind(null, taskId, todoId)
+    callBack: controlAPITaskDeleteFallback.bind(null, taskId, todoId),
+    callBackParam: true
   }
   API.queryAPI(queryObj)
 
@@ -100,10 +101,8 @@ const controlDeleteTask = function (taskId, todoId) {
 
 const controlAPITaskUpdateFallback = function (todoId, taskId, type, updateValue, apiSuccess, requestState) {
   //the requestState would only be set if the request was succeessful from the API component because the callBack params is set on the api request object for the complete request
-
-
   const completeAPIRequestFail = type === "complete" && !apiSuccess
-  const updateAPIRequestFail = type === "update" && !requestState
+  const updateAPIRequestFail = type === "update" && !apiSuccess//!requestState
 
   if (completeAPIRequestFail || updateAPIRequestFail) {
     const taskToUpdate = model.diffState.taskToUpdate
@@ -139,7 +138,8 @@ const controlCompleteTask = function (todoId, taskId, completeStatus) {
     spinner: false,
     alert: false,
     type: "PATCH",
-    callBack: controlAPITaskUpdateFallback.bind(null, todoId, taskId, "complete", completeStatus)//model.completeTask.bind(null, taskId, completeStatus)
+    callBack: controlAPITaskUpdateFallback.bind(null, todoId, taskId, "complete", completeStatus),//model.completeTask.bind(null, taskId, completeStatus)
+    callBackParam: true
   }
   API.queryAPI(queryObj)
 
@@ -367,6 +367,9 @@ const controlRenderClickedTodo = function (todoID) {
       todoListComponentView.setRenderContainerVisibility(true)
     }
   }
+
+  const taskActionsActive = taskAddRenderView.getTaskActionState();
+  if (!taskActionsActive) controlAddTaskEventHandlers();
 
   //reset currentTodo and get its data
   model.state.currentTodo = Number(todoID);
@@ -646,6 +649,7 @@ const controlAPITaskOrderingFallback = function (orderedTask, apiSuccess, reques
 }
 
 const controlUpdateAPITaskOrdering = function (updatedTodo) {
+  // debugger
   const payload = formatAPIPayloadForUpdateReorder(updatedTodo, "tasks")
 
   const queryObj = {
