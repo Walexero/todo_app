@@ -1,4 +1,4 @@
-import { checkValidator, reOrderObjectIndex, formatAPIResponseBody } from "./helper.js";
+import { checkValidator, reOrderObjectIndex, formatAPIResponseBody, formatLoadedAPIData } from "./helper.js";
 import { API } from "./api.js";
 
 export let dbDataLoaded;
@@ -237,18 +237,6 @@ export const completeTodo = function (todoID, uncompleteStatus) {
   return currentTodo
 };
 
-const formatLoadedAPIData = function (APIResp) {
-
-  const todoList = [];
-
-  if (APIResp.length > 0)
-    APIResp.forEach(resp => todoList.push(formatAPIResponseBody(resp, "todo")))
-
-  const orderedTodoList = todoList.length > 0 ? todoList.sort((a, d) => a?.ordering - d?.ordering) : null
-  if (!orderedTodoList) return todoList
-
-  return orderedTodoList
-}
 
 const replaceLocalDataOrPersist = function (sync, callBack, api = false, ApiResp, requestState) {
   if (requestState)
@@ -257,8 +245,6 @@ const replaceLocalDataOrPersist = function (sync, callBack, api = false, ApiResp
   if (!requestState)
     init(null, callBack, true, false)
 }
-
-
 
 const loadDataFromAPI = function (token, callBack) {
   const queryObj = {
@@ -280,55 +266,60 @@ export const loadToken = function () {
   if (storedToken) token = JSON.parse(storedToken)
 }
 
+const initSyncAndLoadAPI = function (sync, callBack) {
+  if (sync) {
+    const savedState = localStorage.getItem("todos")
+    const diffSavedState = localStorage.getItem("diff")
+    if (savedState) {
+      const localState = JSON.parse(savedState);
+      const diffLocalState = JSON.parse(diffSavedState)
+
+      if (diffLocalState && diffLocalState.diffActive) {
+
+        sync.addModelData(localState, diffLocalState, diffState, persistDiff, token)
+        sync.startModelInit(init.bind(this, null, callBack))
+      }
+
+      if (!diffLocalState || !diffLocalState.diffActive) {
+        //load api after no more data to sync
+        loadDataFromAPI(token.value, callBack)
+      }
+    }
+    if (!savedState)
+      loadDataFromAPI(token.value, callBack)
+  }
+  if (!sync)
+    loadDataFromAPI(token.value, callBack)
+}
+
+const storeAPIData = function (controllerCallBack, APIResp) {
+  let APIData;
+  const storage = localStorage.getItem("todos");
+  // const diffStorage = localStorage.getItem("diff")
+  if (storage)
+    state = JSON.parse(storage);
+
+  if (APIResp) {
+    APIData = formatLoadedAPIData(APIResp)
+    state.todo = APIData
+  }
+
+  state.loadedFromDb = true;
+
+  if (!storage)
+    persistTodo()
+
+  dbDataLoaded = true;
+
+  //load the UI
+  // callBack()
+  controllerCallBack()
+}
+
 //get persisted data on page load
 export function init(sync, callBack, api = false, APIResp = undefined) {
-  if (!api) {
-    if (sync) {
-      const savedState = localStorage.getItem("todos")
-      const diffSavedState = localStorage.getItem("diff")
-      if (savedState) {
-        const localState = JSON.parse(savedState);
-        const diffLocalState = JSON.parse(diffSavedState)
+  if (!api)
+    initSyncAndLoadAPI(sync, callBack)
 
-        if (diffLocalState && diffLocalState.diffActive) {
-
-          sync.addModelData(localState, diffLocalState, diffState, persistDiff, token)
-          sync.startModelInit(init.bind(this, null, callBack))
-        }
-
-        if (!diffLocalState || !diffLocalState.diffActive) {
-          //load api after no more data to sync
-          loadDataFromAPI(token.value, callBack)
-        }
-      }
-      if (!savedState)
-        loadDataFromAPI(token.value, callBack)
-    }
-    if (!sync)
-      loadDataFromAPI(token.value, callBack)
-
-  }
-
-  if (api) {
-    let APIData;
-    const storage = localStorage.getItem("todos");
-    // const diffStorage = localStorage.getItem("diff")
-    if (storage)
-      state = JSON.parse(storage);
-
-    if (APIResp) {
-      APIData = formatLoadedAPIData(APIResp)
-      state.todo = APIData
-    }
-
-    state.loadedFromDb = true;
-
-    if (!storage)
-      persistTodo()
-
-    dbDataLoaded = true;
-
-    //load the UI
-    callBack()
-  }
+  if (api) storeAPIData(callBack, APIResp)
 };

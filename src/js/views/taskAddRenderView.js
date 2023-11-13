@@ -193,7 +193,6 @@ class TaskAddRenderView {
     let markup, completedMarkup;
 
     //render tasks markup only if tasks exist
-    console.log("render ....")
 
     if (todo && todo?.tasks) {
       markup = Array(...new Set(todo?.tasks))

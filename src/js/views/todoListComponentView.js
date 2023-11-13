@@ -1,4 +1,3 @@
-import { cleanFormData, createObjectFromForm } from "../helper.js";
 import { importTodoActionsView } from "./todoActionsView.js"
 
 class TodoListComponentView {
@@ -94,7 +93,7 @@ class TodoListComponentView {
     this._handleAddTodoEvent();
   }
 
-  //used to reset handler back to controlAddTodo if data is loaded from the db
+  //use to reset handler back to controlAddTodo if data is loaded from the db
   setAddTodoHandler(handler) {
     this._handler = handler;
   }
