@@ -63,7 +63,7 @@ body {
 .td-component--container {
   height: 100vh;
   border-inline: 2px solid var(--color-component--container--border);
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   /* hack */
   /* width: 334px; */
 }
@@ -90,7 +90,9 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   padding: 0.5rem 0.5rem;
-  border-radius: 2rem;
+  /* border-radius: 2rem; */
+  overflow-y: scroll;
+  height: inherit;
   /* margin-top: 2.6rem; */
 }
 
