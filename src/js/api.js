@@ -1,9 +1,7 @@
 import { timeout, timeoutWithoutPromise } from "./helper.js"
-import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400_RESPONSE_CREATE_USER, ALERT_STATUS_ERRORS, GENERIC_SUCCESS_ALERT, HTTP_204_SUCCESS_NO_CONTENT } from "./config.js"
+import { BASE_API_URL, HTTP_400_RESPONSE_LOGIN_USER, HTTP_200_RESPONSE, HTTP_400_RESPONSE_CREATE_USER, ALERT_STATUS_ERRORS, HTTP_204_SUCCESS_NO_CONTENT, PREVENT_DESTRUCTURING_FROM_API_ENDPOINT_RESP } from "./config.js"
 import { Loader } from "./components/loader.js"
 import { Alert } from "./components/alerts.js"
-
-// TODO: js docs for params
 
 export class API {
     static APIEnum = {
@@ -31,9 +29,6 @@ export class API {
             BATCH_UPDATE: "todo/todos/batch_update/",
             DELETE: ((todoId) => `todo/todos/${todoId}/`),
             BATCH_DELETE: "todo/todos/batch_delete",
-            DELETED: ((todoId) => "todo/vadklafdf/"),
-            PATCHED: ((todoId) => "todo/kdlfasdkjf/"),
-            CREATED: "todo/skdflafadf/"
         },
 
         TASK: {
@@ -47,9 +42,6 @@ export class API {
             BATCH_DELETE: "todo/tasks/batch_delete/",
             BATCH_UPDATE: "todo/tasks/batch_update/",
             BATCH_UPDATE_ORDERING: "todo/tasks/batch_update_ordering/",
-            DELETED: ((taskId) => "todo/dskflksdfsdff/"),
-            PATCHED: ((taskId) => "todo/kdjkvoidasdfs/"),
-            CREATED: "todo/kdflasfljsdf/",
         }
     }
     static timeout = 20 //timeout in 20s
@@ -150,7 +142,7 @@ export class API {
 
     static destructureSuccessResponse(resp, queryObj) {
 
-        const preventDestructureList = ["createTask", "loadTodos", "createTodo", "updateTask", "deleteTodo", "deleteTask", "updateTodo", "createBatchTodo", "createBatchTask", "updateBatchTodo", "updateBatchTask", "deleteTodoBatch", "deleteBatchTask", "updateOrdering"]
+        const preventDestructureList = PREVENT_DESTRUCTURING_FROM_API_ENDPOINT_RESP
         let preventDestructure = false;
         //if theres an empty data value returned as an empty array reeturn it
         if (resp instanceof Array && resp.length === 0) return resp
