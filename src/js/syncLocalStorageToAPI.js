@@ -497,8 +497,16 @@ class SyncLocalStorageToAPI {
             todoToUpdateFilteredArray.forEach(todo => {
                 const todoToUpdateExistsInTodoToCreate = todoToCreateFilteredArray.some(pendingTodo => pendingTodo.todoId === todo.todoId)
 
-                if (!todoToUpdateExistsInTodoToCreate) todoToUpdatePayloadArray.payload.push(formatAPIRequestBody(todo, "todo", "update"))
-                todoToUpdatePayloadArray.ids.push(todo.todoId)
+                if (!todoToUpdateExistsInTodoToCreate) {
+                    todoToUpdatePayloadArray.payload.push(formatAPIRequestBody(todo, "todo", "update"))
+                    todoToUpdatePayloadArray.ids.push(todo.todoId)
+                }
+
+                if (todoToUpdateExistsInTodoToCreate) {
+                    //fallback for removing the object from the diffState if it already exists elsewhere
+                    const todoIndex = todoToUpdateDiffArray.findIndex(updateTodo => updateTodo.todoId === todo.todoId)
+                    if (todoIndex > -1) this._diffState.todoToUpdate.splice(todoIndex, 1)
+                }
             })
         else {
             this._diffState.todoToUpdate = []
@@ -525,14 +533,21 @@ class SyncLocalStorageToAPI {
             pendingTaskLinkedToAPITodoArray.forEach(task => {
                 const taskBody = this._filterToGetTaskBody(task.taskId, task.todoId)
 
-                taskToCreatePayloadArray.ids.push({ taskId: task.taskId, todoId: task.todoId })
+                if (taskBody) {
+                    taskToCreatePayloadArray.ids.push({ taskId: task.taskId, todoId: task.todoId })
 
-                //add todoId to taskBody
-                taskBody.todoId = task.todoId
-                //remove id from task
-                delete taskBody.taskId
-                //add formatted data to tasks to create
-                taskToCreatePayloadArray.payload.push(formatAPIRequestBody(taskBody, "task", "create"))
+                    //add todoId to taskBody
+                    taskBody.todoId = task.todoId
+                    //remove id from task
+                    delete taskBody.taskId
+                    //add formatted data to tasks to create
+                    taskToCreatePayloadArray.payload.push(formatAPIRequestBody(taskBody, "task", "create"))
+                }
+                if (!taskBody) {
+                    //fallback for deleting the task from the diffState incase the task has already been deleted and passed through the filter
+                    const taskIndex = this._diffState.taskToCreate.findIndex(createTask => createTask.taskId === task.taskId)
+                    if (taskIndex > -1) this._diffState.taskToCreate.splice(taskIndex, 1)
+                }
             })
         else {
             this._diffState.taskToCreate = []
@@ -549,14 +564,21 @@ class SyncLocalStorageToAPI {
 
                 if (!taskToUpdateExistsInTaskAPITodo) {
                     const taskBody = this._filterToGetTaskBody(task.taskId, task.todoId)
-                    // taskBody.todoId = task.todoId
-                    taskToUpdatePayloadArray.ids.push({ taskId: task.taskId, todoId: task.todoId })
+                    if (taskBody) {
+                        taskToUpdatePayloadArray.ids.push({ taskId: task.taskId, todoId: task.todoId })
 
-                    //add the time added to the taskBody
-                    taskBody.todoLastAdded = task.todoLastAdded
-                    //remove id from task
-                    // delete taskBody.taskId
-                    taskToUpdatePayloadArray.payload.push(formatAPIRequestBody(taskBody, "task", "update"))
+                        //add the time added to the taskBody
+                        taskBody.todoLastAdded = task.todoLastAdded
+                        //remove id from task
+                        // delete taskBody.taskId
+                        taskToUpdatePayloadArray.payload.push(formatAPIRequestBody(taskBody, "task", "update"))
+                    }
+                    if (!taskBody) {
+                        //fallback for deleting objects from the diffState if they passed through the filter
+                        const taskIndex = this._diffState.taskToUpdate.findIndex(updateTask => updateTask.taskId === task.taskId)
+                        if (taskIndex > -1) this._diffState.taskToUpdate.splice(taskIndex, 1)
+
+                    }
                 }
             })
         else {
@@ -570,10 +592,10 @@ class SyncLocalStorageToAPI {
         const modelTodos = this._modelState.todo
         const todoModelIndex = this._modelState.todo.findIndex(modelTodo => modelTodo.todoId === todoId)
         const taskIndex = modelTodos[todoModelIndex].tasks.findIndex(modelTask => modelTask.taskId === taskId)
-        if (!clone) return modelTodos[todoModelIndex].tasks[taskIndex]
+        if (!clone) return modelTodos[todoModelIndex]?.tasks[taskIndex]
 
-        const taskBody = cloneDeep(modelTodos[todoModelIndex].tasks[taskIndex])
-        return taskBody
+        const taskBody = modelTodos[todoModelIndex]?.tasks[taskIndex]
+        return taskBody ? cloneDeep(taskBody) : taskBody
     }
 
     _makeBatchRequest(requestURL, requestPayload, requestDiffArray, requestActionType, requestCallBack, requestType, requestCallBackParam = false) {

@@ -72,6 +72,10 @@ class TaskAddRenderView {
     this._toggleRenderContainer();
   }
 
+  removeContainerHiddenState() {
+    if (this._renderContainer.classList.contains("hidden")) this._renderContainer.classList.toggle("hidden")
+  }
+
   _toggleRenderContainer() {
     this._renderContainer.classList.toggle("mobile-nav--hidden");
   }

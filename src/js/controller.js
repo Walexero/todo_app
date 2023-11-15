@@ -63,6 +63,11 @@ const controlUpdateTodoAndTaskView = function (currentTodo = undefined, hideCont
 
   //update todo component with state object
   todoListComponentView.render(model.state.todo);
+
+  //add event listeners on todo view if they dont exist
+  const eventListenersOnTodoView =
+    todoListComponentView.getAddListenerEventState();
+  if (!eventListenersOnTodoView) controlAddAndSetTodoEventListeners();
 };
 
 const controlAPITaskDeleteFallback = function (taskId, todoId, apiSuccess, requestState) {
@@ -210,6 +215,9 @@ const controlAddTodoMobileView = function (renderTasks = undefined) {
 
     const todoViewCleared = todoListComponentView.getClearAndHideContainer();
 
+    //if the todoView hasn't been cleared, set the mobileNavactive state to false since it doesn't exist on the todoview
+    if (!todoViewCleared) todoListComponentView.setMobileNavActiveState(false)
+
     if (addTodoBtnClicked) {
       //runs this to render the task view
       const mobileNavOnPage = todoListComponentView.getMobileNavActiveState();
@@ -217,6 +225,7 @@ const controlAddTodoMobileView = function (renderTasks = undefined) {
       !mobileNavOnPage && todoListComponentView.mobileRender();
 
       taskAddRenderView.toggleContainer();
+      taskAddRenderView.removeContainerHiddenState()
     }
 
     if (todoViewCleared) todoListComponentView.mobileRender(); //runs this if all todo is deleted
@@ -261,15 +270,7 @@ const controlTodoDelete = function (todoID) {
 
   if (!todoExists) {
     model.state.currentTodo = null;
-    //runs if not mobile
-    if (!mobileDeviceTrigger.matches) ResetTodoAndTaskView();
-
-    if (mobileDeviceTrigger.matches) {
-      //clear the todoList container
-      todoListComponentView.setClearAndHideContainer(true);
-      //clear and add form to create new todo
-      controlAddTodoMobileView();
-    }
+    ResetTodoAndTaskView();
   }
 };
 
@@ -447,10 +448,16 @@ const controlTodoDataLoad = function () {
     controlAddTodo();
   }
 
-  if (!mobileDeviceTrigger.matches)
-    if (!todoExists)
-      //call controlAddTodo and handle form events
-      controlAddTodo();
+  if (!todoExists)
+    //call controlAddTodo and handle form events
+    controlAddTodo();
+  //TODO: if logic concat causes errors, reenact separate logic
+  //  if (!mobileDeviceTrigger.matches)
+
+  // if (mobileDeviceTrigger.matches)
+  //   if (!todoExists) {
+  //     controlAddTodo()
+  //   }
 };
 
 const controlUpdateTodoTitle = function (todoId, title) {
@@ -471,7 +478,12 @@ const controlUpdateTodoTitle = function (todoId, title) {
   const updatedTodo = model.updateTodoTitle(todoId, title)
   //render todos
   todoListComponentView.render(updatedTodo);
-  // controlUpdateTodoTitleCallback
+
+  //check against event state and add event
+  //add event listeners on todo view if they dont exist
+  const eventListenersOnTodoView =
+    todoListComponentView.getAddListenerEventState();
+  if (!eventListenersOnTodoView) controlAddAndSetTodoEventListeners();
 
 }
 
@@ -679,6 +691,9 @@ const controlUpdateTaskUIState = function (currentTask = undefined) {
 const ResetTodoAndTaskView = function () {
   taskAddRenderView.clearTaskContainer(); //clears the task render container
   todoListComponentView.clearTodoContainer(); //should hide the todolist container
+
+  //hide the task container
+  controlUpdateTodoAndTaskView(null, true)
 };
 
 const controlAddTaskMobileView = function (todoOrTask) {
