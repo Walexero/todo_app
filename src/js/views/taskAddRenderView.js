@@ -86,7 +86,7 @@ class TaskAddRenderView {
     const cls = this;
 
     //listen for event delegation events
-    const events = ["click", "keydown", "keyup", "mousedown", "change"];
+    const events = ["click", "keydown", "mousedown", "change"];
     events.forEach((ev) => {
       document
         .querySelector(".td-render--content")
@@ -122,7 +122,7 @@ class TaskAddRenderView {
           }
 
           //Submit Event
-          if (e.type === "keyup" && e.key === "Enter") {
+          if (e.type === "keydown" && e.key === "Enter") {
             if (e.target.closest(".td-render-title")) cls._handleTitleUpdate(e)
             else cls._handlerAddTask(e);
           }
