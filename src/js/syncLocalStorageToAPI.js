@@ -460,6 +460,9 @@ class SyncLocalStorageToAPI {
                 for (let i = returnList.length - 1; i > -1; i--) {
                     const taskTodoIdInTodoToDeleteExists = deletedObjectParent.some(objId => objId === returnList[i].todoId)
 
+                    //check against null values
+                    if (Object.keys(returnList[i]).includes("todoId")) if (!returnList[i]?.todoId) returnList.splice(i, 1)
+
                     if (taskTodoIdInTodoToDeleteExists) returnList.splice(i, 1)
                 }
             }
