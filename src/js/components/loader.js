@@ -1,8 +1,5 @@
 import { Overlay } from "./overlay.js";
 import { ComponentMethods } from "./componentMethods.js";
-import { timeout } from "../helper.js";
-import { Alert } from "./alerts.js";
-// import { API } from "../api.js";
 
 export class Loader {
 
@@ -22,7 +19,6 @@ export class Loader {
     }
 
     getComponent() {
-        console.log(this._component)
         return this._component;
     }
 

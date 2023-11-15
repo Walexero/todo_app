@@ -24,9 +24,6 @@ export const checkValidator = function (arr, valueArr, arrFrom) {
 
 export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
   let cloneCurrentTask = [];
-  console.log(valueArr.length);
-  console.log(arr.length);
-
   if (arrFrom === "tasks")
     valueArr.forEach((ind, i) => {
       const toPush = arr.find((task) => task.taskId === Number(ind.at(0)));
@@ -42,7 +39,6 @@ export const reOrderObjectIndex = function (arr, valueArr, arrFrom) {
 };
 
 export const selector = (identifier, nodeObj = undefined) => {
-  console.log(identifier, nodeObj)
   if (nodeObj) return nodeObj.querySelector(identifier)
 
   if (!nodeObj) return document.querySelector(identifier)

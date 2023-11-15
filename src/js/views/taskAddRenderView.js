@@ -44,7 +44,6 @@ class TaskAddRenderView {
 
   setCurrentTodoState(value) {
     this._currentTodo = value
-    console.log("current todo set", this._currentTodo)
   }
 
   getTaskActionState() {
@@ -221,7 +220,6 @@ class TaskAddRenderView {
     );//afterbegin
 
     //calls controlCreateNewTask
-    console.log("cur todo", this._currentTodo)
     this._handlerCreateNewTask(this._currentTodo, true, inputEl)
   }
 

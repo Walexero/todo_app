@@ -19,7 +19,6 @@ export default class DragComponentView {
     const cls = this;
     return new Promise(function (resolve) {
       setTimeout(function () {
-        console.log("Disconnected observer");
         observer.disconnect();
         //let taskActionsView know that the observer is no longer observing and allow other 
         resolve(cls._observerHandler());
@@ -29,7 +28,6 @@ export default class DragComponentView {
 
   _observeDOMChanges() {
     this._mutationObserver = new MutationObserver(function (mutations) {
-      console.log("checking muts");
       mutations.forEach(function (mutation) {
         console.log("")
       });
