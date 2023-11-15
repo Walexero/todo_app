@@ -237,6 +237,7 @@ class TaskAddRenderView {
   }
 
   _handlerAddTask(e) {
+    e.preventDefault();
     const todoUIData = {}
     //adds the task related info from the DOM
     this._getTaskInfo(e, todoUIData)
