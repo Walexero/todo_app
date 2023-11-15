@@ -86,7 +86,7 @@ class TaskAddRenderView {
     const cls = this;
 
     //listen for event delegation events
-    const events = ["click", "keydown", "mousedown", "change"];
+    const events = ["click", "keydown", "keyup", "mousedown", "change"];
     events.forEach((ev) => {
       document
         .querySelector(".td-render--content")
@@ -108,6 +108,7 @@ class TaskAddRenderView {
             cls._taskActions.actionHandler("drag", e.target);
           //delete event
           if (
+            e.type === "click" &&
             e.target.classList.contains("delete-component-btn") ||
             e.target.classList.contains("delete-icon") ||
             e.target.classList.contains("delete-icon-path")
@@ -121,7 +122,7 @@ class TaskAddRenderView {
           }
 
           //Submit Event
-          if (e.key === "Enter") {
+          if (e.type === "keyup" && e.key === "Enter") {
             if (e.target.closest(".td-render-title")) cls._handleTitleUpdate(e)
             else cls._handlerAddTask(e);
           }
