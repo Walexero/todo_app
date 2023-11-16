@@ -76,7 +76,7 @@ input[type="checkbox"] {
   visibility: hidden;
   transform: translateX(0.8rem);
   pointer-events: none;
-  transition: 0.2s;
+  transition: 0.4s;
 }
 
 .placeholder {
