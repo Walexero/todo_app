@@ -240,6 +240,8 @@ header{
   background-color: inherit;
   border: none;
   font-size: 2rem;
+  word-break: break-word;
+  width: 85%;
 }
 
 .td-render-title:focus,
