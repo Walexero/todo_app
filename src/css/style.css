@@ -279,6 +279,15 @@ header{
   word-break: break-word;
 }
 
+.form-task-td[contenteditable="true"] > div {
+  padding: 0;
+} 
+
+.form-task-td[contenteditable="true"] > br{
+  display: none;
+  padding: 0;
+}
+
 /* sync component styling */
 .sync-alert{
   display: flex;
