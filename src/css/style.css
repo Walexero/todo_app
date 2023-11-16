@@ -109,7 +109,8 @@ header{
   padding: 0.5rem 0.5rem;
   /* border-radius: 2rem; */
   overflow-y: scroll;
-  /* height: inherit; */
+  height: auto;
+  max-height: 90vh;
   padding-bottom: 20rem;
   /* margin-top: 2.6rem; */
 }
