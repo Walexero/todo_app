@@ -44,7 +44,10 @@ input[type="checkbox"] {
 }
 
 .nudge-btn:hover > .nudge-action--bar {
-  display: block;
+  /* display: block; */
+  visibility: visible;
+  pointer-events: visible;
+  
 }
 
 .nudge-icon {
@@ -69,8 +72,11 @@ input[type="checkbox"] {
   z-index: 1;
   top: 1rem;
   right: 0.5rem;
-  display: none;
+  /* display: none; */
+  visibility: hidden;
   transform: translateX(0.8rem);
+  pointer-events: none;
+  transition: 0.2s;
 }
 
 .placeholder {
