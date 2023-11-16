@@ -240,8 +240,7 @@ header{
   background-color: inherit;
   border: none;
   font-size: 2rem;
-  word-break: break-word;
-  width: 85%;
+  width: 70%;
 }
 
 .td-render-title:focus,
@@ -253,11 +252,17 @@ header{
   display: inline-block;
   background-color: inherit;
   caret-color: black;
+  word-break: break-word;
 }
 
 .td-render-title[contenteditable="true"] > div {
   padding: 0;
 } 
+
+.td-render-title[contenteditable="true"] > br{
+  display: none;
+  padding: 0;
+}
 
 .td-render-title:empty::before {
   content: attr(placeholder) " ";
