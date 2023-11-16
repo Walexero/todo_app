@@ -104,11 +104,12 @@ header{
 .component-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  row-gap: 0.5rem;
   gap: 0.5rem;
   padding: 0.5rem 0.5rem;
   /* border-radius: 2rem; */
   overflow-y: scroll;
-  height: inherit;
+  /* height: inherit; */
   padding-bottom: 20rem;
   /* margin-top: 2.6rem; */
 }
